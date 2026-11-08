@@ -3,7 +3,8 @@
 ## 0.4.0
 
 - **CarPlay Ultra (experimental, off by default; Settings → Advanced).** Ported from LIVI. The iPhone shows climate in the CarPlay dock, and with CarPlay Ultra chosen on the iPhone, its Climate, Radio and Vehicle apps.
-  - TEYES and FYT units give CarPlay the car's climate and the unit's FM radio. With **Climate changes from the iPhone** on, allow-listed changes go back to the car.
+  - TEYES and FYT units give CarPlay the car's climate. With **Climate changes from the iPhone** on, allow-listed changes go back to the car.
+  - The unit's FM stations are passed to the Radio app, but its screen stays blank for now: iOS wants a car maker's theme for it.
   - The Vehicle app shows the car data Tarmac reads (charge or fuel, range, odometer, tyres, outside temperature), read only.
   - None of this has run on a head unit in a car yet.
 - New connecting screen: a car's cabin with the CarPlay icon on its centre screen, laid out for head units.

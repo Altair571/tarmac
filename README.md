@@ -23,7 +23,8 @@ Tarmac turns an Android head unit, or an Android phone or tablet mounted in the 
   - USB, Android Auto and Settings shortcuts;
   - a background that takes calm colours from the album cover.
 - **CarPlay Ultra (experimental, off by default).** The iPhone shows climate in the CarPlay dock, and with CarPlay Ultra chosen on the iPhone, its Climate, Radio and Vehicle apps.
-  - On TEYES and FYT units, the climate and the FM radio come from the head unit. Climate changes from the iPhone are a separate opt-in.
+  - On TEYES and FYT units, the climate comes from the head unit. Climate changes from the iPhone are a separate opt-in.
+  - The unit's FM stations are passed to the Radio app too, but its screen stays blank for now: iOS wants a car maker's theme for it.
   - The Vehicle app shows the car data Tarmac already reads, such as charge, range, odometer and tyres. Read only.
   - All of this is built from the head units' firmware and has run only on a phone so far. See [docs/CARPLAY_ULTRA.md](docs/CARPLAY_ULTRA.md).
 - **Music and directions in Android.** CarPlay's songs appear in the notification shade, on the lock screen and in launcher music widgets, and Apple Maps turns appear as a navigation notification.
