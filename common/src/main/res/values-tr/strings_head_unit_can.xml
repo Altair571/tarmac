@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The head unit's CAN-box profile (docs/HEADUNIT_SPD_TEYES.md, docs/HEADUNIT_FYT_DUDU.md). -->
+<resources>
+    <string name="settings_head_unit_can_title">%1$s CAN kutusu</string>
+    <string name="settings_head_unit_can_description">%1$s ayarlarında seçilen CAN kutusu profili, aracın kendi ekranlarına neyin ulaşacağını belirler. Tarmac onu yalnızca okur, asla değiştirmez.</string>
+    <string name="settings_head_unit_can_reading">CAN kutusu profili okunuyor…</string>
+    <string name="settings_head_unit_can_none">%1$s bir CAN kutusu profili bildirmiyor. Aracınızı %1$s ayarlarında seçin.</string>
+    <string name="settings_head_unit_can_profile">Profil: %1$s (ID %2$s)</string>
+    <string name="settings_head_unit_can_number">protokol %1$d, varyant %2$d</string>
+    <string name="settings_head_unit_can_feature">%1$s: %2$s</string>
+    <string name="settings_head_unit_can_guidance">Gösterge panelinde veya HUD’da adım adım yol tarifi</string>
+    <string name="settings_head_unit_can_track">Gösterge panelinde parça adı</string>
+    <string name="settings_head_unit_can_doors">Kapı durumu</string>
+    <string name="settings_head_unit_can_climate">Klima</string>
+    <string name="settings_head_unit_can_outside">Dış sıcaklık</string>
+    <string name="settings_head_unit_can_camera">360° kamera</string>
+    <string name="settings_head_unit_can_yes">destekleniyor</string>
+    <string name="settings_head_unit_can_no">desteklenmiyor</string>
+    <string name="settings_head_unit_can_root">yalnızca root ile</string>
+    <string name="settings_head_unit_can_hint">Araçta Gelişmiş bölümündeki gösterge paneli ve HUD testleriyle kontrol edin.</string>
+</resources>

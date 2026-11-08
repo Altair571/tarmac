@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The head unit's CAN-box profile (docs/HEADUNIT_SPD_TEYES.md, docs/HEADUNIT_FYT_DUDU.md). -->
+<resources>
+    <string name="settings_head_unit_can_title">%1$sのCANボックス</string>
+    <string name="settings_head_unit_can_description">%1$sの設定で選んだCANボックスのプロファイルによって、車の画面に何が届くかが決まります。Tarmacは読み取るだけで、変更はしません。</string>
+    <string name="settings_head_unit_can_reading">CANボックスのプロファイルを読み取っています…</string>
+    <string name="settings_head_unit_can_none">%1$sはCANボックスのプロファイルを報告していません。%1$sの設定で車を選んでください。</string>
+    <string name="settings_head_unit_can_profile">プロファイル：%1$s（ID %2$s）</string>
+    <string name="settings_head_unit_can_number">プロトコル %1$d、バリエーション %2$d</string>
+    <string name="settings_head_unit_can_feature">%1$s：%2$s</string>
+    <string name="settings_head_unit_can_guidance">メーターやHUDでのターンバイターン案内</string>
+    <string name="settings_head_unit_can_track">メーターでの曲名</string>
+    <string name="settings_head_unit_can_doors">ドアの状態</string>
+    <string name="settings_head_unit_can_climate">エアコン</string>
+    <string name="settings_head_unit_can_outside">外気温</string>
+    <string name="settings_head_unit_can_camera">360°カメラ</string>
+    <string name="settings_head_unit_can_yes">対応</string>
+    <string name="settings_head_unit_can_no">非対応</string>
+    <string name="settings_head_unit_can_root">rootのみ</string>
+    <string name="settings_head_unit_can_hint">詳細設定のメーターとHUDのテストで、車で確認してください。</string>
+</resources>

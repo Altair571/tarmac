@@ -14,3 +14,6 @@
 -keep class com.shilapi.xcertplay.headunit.TeyesTrackTextTool {
     public static void main(java.lang.String[]);
 }
+-keep class com.shilapi.xcertplay.headunit.FytKeyGateTool {
+    public static void main(java.lang.String[]);
+}

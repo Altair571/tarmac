@@ -12,6 +12,11 @@ data class VehicleReading(
     val charging: Boolean? = null,
     val gear: VehicleGear? = null,
     val speedKmh: Double? = null,
+    /** The fuel tank, in percent. */
+    val fuelPercent: Double? = null,
+    val odometerKm: Double? = null,
+    /** Energy left in the traction battery. */
+    val batteryEnergyKwh: Double? = null,
 ) {
     /** [newer]'s known fields win; a field it does not know keeps this reading's value. */
     fun updatedBy(newer: VehicleReading): VehicleReading = VehicleReading(
@@ -20,6 +25,9 @@ data class VehicleReading(
         charging = newer.charging ?: charging,
         gear = newer.gear ?: gear,
         speedKmh = newer.speedKmh ?: speedKmh,
+        fuelPercent = newer.fuelPercent ?: fuelPercent,
+        odometerKm = newer.odometerKm ?: odometerKm,
+        batteryEnergyKwh = newer.batteryEnergyKwh ?: batteryEnergyKwh,
     )
 }
 

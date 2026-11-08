@@ -130,6 +130,18 @@ object Iap2CarPlayMessages {
         return Iap2CarPlayAvailability(wired, wireless, themeAssets)
     }
 
+    /**
+     * The 0x4300 parameters other than the wired and wireless groups (which carry the phone's transport
+     * identifiers), as id and payload hex, for the CarPlay Ultra experiment: themeAssets and anything newer.
+     */
+    fun availabilityExtras(payload: ByteArray): String = try {
+        Iap2ParameterList.parse(payload).asList().filter { it.id != 0 && it.id != 1 }.joinToString(prefix = "[", postfix = "]") {
+            "${it.id}:" + it.payload.take(48).joinToString("") { byte -> "%02x".format(byte.toInt() and 0xff) }
+        }
+    } catch (error: RuntimeException) {
+        "undecodable(${error.javaClass.simpleName})"
+    }
+
     private fun decodeAvailability(value: Int?, label: String): Boolean? {
         if (value == null) return null
         if (value !in 0..1) {

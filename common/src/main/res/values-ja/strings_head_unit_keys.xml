@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FYT's wheel keys for CarPlay on rooted units (docs/HEADUNIT_FYT_DUDU.md). -->
+<resources>
+    <string name="settings_head_unit_link_keys">rootでの音声・通話キー（実験的機能）</string>
+    <string name="settings_head_unit_link_keys_description">CarPlayの動作中、%1$sはrootを通じてステアリングのキーをTarmacに渡します。音声キーでSiriが開き、通話キーでCarPlayの通話に応答・終了します。メディア、ホーム、戻るの各キーはそのまま使えます。CarPlayが止まると、キーは%1$sに戻ります。</string>
+    <string name="settings_head_unit_link_keys_refused">rootが拒否されたため、キーは%1$sのままです。</string>
+</resources>

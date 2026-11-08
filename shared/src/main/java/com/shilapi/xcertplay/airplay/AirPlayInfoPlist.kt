@@ -54,6 +54,11 @@ object AirPlayInfoPlist {
                 config.speechWithout8And16Khz, config.callAtCallRate)
         }
         info["extendedFeatures"] = listOf("vocoderInfo", "enhancedRequestCarUI")
+        if ("uiContext" in config.ultraFeatures) {
+            // What each screen shows now, as xcertplay declares it once SETUP enables uiContext.
+            info["uiContextLastOnDisplayURLs"] = emptyList<String>()
+            info["uiContextNowOnDisplayURLs"] = listOfNotNull(config.main.initialUrl, config.cluster?.initialUrl)
+        }
         info["displays"] = displays
         info["hidDevices"] = listOf(
             AirPlayHid.touchHidDevice(config.main.widthPixels, config.main.heightPixels, MAIN_UUID),
@@ -83,6 +88,38 @@ object AirPlayInfoPlist {
         }
         return info
     }
+
+    /**
+     * The panels the car's screens show, declared with the vehicle-state protocol: one per display with its
+     * stream, plus a cluster panel the car draws itself (`showsInstruments`, a display plugin and no stream).
+     * Based on LIVI by Lasse Heitgres (https://github.com/f-io/LIVI), livi-cp/src/info.rs `add_display_panels`.
+     */
+    fun displayPanels(info: Map<String, Any?>): List<Map<String, Any?>> {
+        val displays = (info["displays"] as? List<*>).orEmpty().filterIsInstance<Map<*, *>>()
+        fun isCluster(d: Map<*, *>) = (d["type"] as? Number)?.toInt() == STREAM_TYPE_ALT_SCREEN
+        fun panel(d: Map<*, *>, uid: String, streams: List<String>, instruments: Boolean, plugin: Boolean) =
+            linkedMapOf<String, Any?>(
+                "uid" to uid,
+                "widthPixels" to (d["widthPixels"] ?: 0),
+                "heightPixels" to (d["heightPixels"] ?: 0),
+                "widthPhysical" to (d["widthPhysical"] ?: 0),
+                "heightPhysical" to (d["heightPhysical"] ?: 0),
+                "properties" to if (instruments) listOf("showsInstruments") else emptyList(),
+                "initialVideoStreams" to streams.map {
+                    linkedMapOf("uuid" to it, "originXPixels" to 0, "originYPixels" to 0, "zIndex" to 0)
+                },
+            ).apply {
+                if (plugin) this["displayPlugins"] = listOf(linkedMapOf("uid" to "$CLUSTER_UID-plugin", "videoStreams" to streams))
+            }
+        val panels = displays.mapNotNull { d ->
+            val uuid = d["uuid"] as? String ?: return@mapNotNull null
+            panel(d, "$uuid-panel", listOf(uuid), isCluster(d), plugin = false)
+        }
+        val sized = displays.firstOrNull(::isCluster) ?: displays.firstOrNull() ?: return panels
+        return panels + panel(sized, "$CLUSTER_UID-panel", emptyList(), instruments = true, plugin = true)
+    }
+
+    private const val CLUSTER_UID = "b7e6c5a0-3333-4000-8000-000000000003"
 
     private fun resource(resourceId: Int): Map<String, Any?> = linkedMapOf(
         "resourceID" to resourceId,

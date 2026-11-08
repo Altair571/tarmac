@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FYT's wheel keys for CarPlay on rooted units (docs/HEADUNIT_FYT_DUDU.md). -->
+<resources>
+    <string name="settings_head_unit_link_keys">Voice and call keys with root (experimental)</string>
+    <string name="settings_head_unit_link_keys_description">While CarPlay runs, %1$s hands its wheel keys to Tarmac through root: the voice key opens Siri and the call keys answer and end CarPlay calls. Media, home and back keys keep working. The keys go back to %1$s when CarPlay stops.</string>
+    <string name="settings_head_unit_link_keys_refused">Root was refused, so the keys stay with %1$s.</string>
+</resources>

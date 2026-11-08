@@ -10,7 +10,7 @@ Tarmac turns an Android head unit, or an Android phone or tablet mounted in the 
   <img src="docs/images/home-phone.png" alt="Tarmac Home on a phone" width="22%">
 </p>
 
-> **Early test release.** Tarmac 0.3.0 has been tested on an Android phone with an iPhone, and **not yet on a DUDU or FYT head unit**. Reports from real cars are very welcome; see [Reporting problems](#reporting-problems).
+> **Early test release.** Tarmac 0.4.0 has been tested on an Android phone with an iPhone, and **not yet on a DUDU or FYT head unit**. Reports from real cars are very welcome; see [Reporting problems](#reporting-problems).
 
 ## Features
 
@@ -22,10 +22,15 @@ Tarmac turns an Android head unit, or an Android phone or tablet mounted in the 
   - the next turn while a route runs;
   - USB, Android Auto and Settings shortcuts;
   - a background that takes calm colours from the album cover.
+- **CarPlay Ultra (experimental, off by default).** The iPhone shows climate in the CarPlay dock, and with CarPlay Ultra chosen on the iPhone, its Climate, Radio and Vehicle apps.
+  - On TEYES and FYT units, the climate and the FM radio come from the head unit. Climate changes from the iPhone are a separate opt-in.
+  - The Vehicle app shows the car data Tarmac already reads, such as charge, range, odometer and tyres. Read only.
+  - All of this is built from the head units' firmware and has run only on a phone so far. See [docs/CARPLAY_ULTRA.md](docs/CARPLAY_ULTRA.md).
 - **Music and directions in Android.** CarPlay's songs appear in the notification shade, on the lock screen and in launcher music widgets, and Apple Maps turns appear as a navigation notification.
 - **Works on more devices:**
   - Phones and tablets get sensible defaults, such as a CarPlay size that matches the screen.
   - Head units have adapters for BYD, Geely/ECARX, TEYES and FYT/DUDU: start with the car, steering-wheel keys, reversing-camera hand-off, and the dashboard map on a second screen.
+  - On TEYES and FYT units, a CAN-box card shows what your car's profile can show on the cluster or HUD.
   - On rooted FYT and TEYES units, Tarmac can use the head unit's own Apple authentication chip.
 - **Make it yours:**
   - accent colour;
@@ -81,7 +86,7 @@ Before a change is done, run the checks in [AGENTS.md](AGENTS.md).
 
 - **Not certified.** Tarmac is not certified by Apple or Google.
 - **Accessory identity.** Release APKs bundle an experimental CarPlay accessory identity recovered from public Carlinkit firmware, the same one the upstream DiPlay project ships. Its private key can be extracted from the APK, and a future iOS update may stop accepting it.
-- **Car controls.** CarPlay Ultra's car-specific features can't be enabled by a third-party receiver. [docs/CAR_CONTROLS.md](docs/CAR_CONTROLS.md) explains what Tarmac can do instead.
+- **Car controls.** CarPlay Ultra's own theme and gauges need a car maker's signed asset, which Tarmac does not have. The Ultra experiment covers climate, radio and car data instead. [docs/CARPLAY_ULTRA.md](docs/CARPLAY_ULTRA.md) and [docs/CAR_CONTROLS.md](docs/CAR_CONTROLS.md) explain what works.
 - **Safety.** Use Tarmac at your own risk, and set it up while parked.
 
 CarPlay is a trademark of Apple Inc., and Android Auto is a trademark of Google LLC. Tarmac is not affiliated with or endorsed by Apple, Google or any car maker.
@@ -89,5 +94,7 @@ CarPlay is a trademark of Apple Inc., and Android Auto is a trademark of Google 
 ## Credits and licence
 
 Tarmac is a fork of [DiPlay](https://github.com/shihabal3amri/DiPlay) by shihabal3amri, which builds on [xcertplay](https://github.com/shilapi/xcertplay) (GPL-3.0) and adapts its home and settings UI from [DiAuto](https://github.com/shihabal3amri/DiAuto) (AGPL-3.0). It bundles the [Inter](https://github.com/rsms/inter) typeface (SIL Open Font License 1.1).
+
+CarPlay's vehicle-state protocol in Tarmac (climate, radio and car data, part of the CarPlay Ultra experiment) is ported from LIVI (GPL-3.0-or-later). Based on LIVI by Lasse Heitgres (https://github.com/f-io/LIVI).
 
 Tarmac is released under the GPL-3.0; see [LICENSE](LICENSE). The licences of the work it builds on are in [docs/THIRD_PARTY_NOTICES.md](docs/THIRD_PARTY_NOTICES.md) and [docs/licenses](docs/licenses). Keep those notices when you distribute modified versions.

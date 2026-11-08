@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The head unit's CAN-box profile (docs/HEADUNIT_SPD_TEYES.md, docs/HEADUNIT_FYT_DUDU.md). -->
+<resources>
+    <string name="settings_head_unit_can_title">صندوق CAN في %1$s</string>
+    <string name="settings_head_unit_can_description">يحدد ملف صندوق CAN المختار في إعدادات %1$s ما يصل إلى شاشات السيارة نفسها. يقرأه Tarmac ولا يغيّره أبدًا.</string>
+    <string name="settings_head_unit_can_reading">جارٍ قراءة ملف صندوق CAN…</string>
+    <string name="settings_head_unit_can_none">لا يذكر %1$s أي ملف لصندوق CAN. اختر سيارتك في إعدادات %1$s.</string>
+    <string name="settings_head_unit_can_profile">الملف: %1$s، المعرّف %2$s</string>
+    <string name="settings_head_unit_can_number">البروتوكول %1$d، الطراز %2$d</string>
+    <string name="settings_head_unit_can_feature">%1$s: %2$s</string>
+    <string name="settings_head_unit_can_guidance">الإرشاد خطوة بخطوة على لوحة العدادات أو HUD</string>
+    <string name="settings_head_unit_can_track">اسم المقطع على لوحة العدادات</string>
+    <string name="settings_head_unit_can_doors">حالة الأبواب</string>
+    <string name="settings_head_unit_can_climate">المكيّف</string>
+    <string name="settings_head_unit_can_outside">درجة الحرارة الخارجية</string>
+    <string name="settings_head_unit_can_camera">كاميرا 360°</string>
+    <string name="settings_head_unit_can_yes">مدعوم</string>
+    <string name="settings_head_unit_can_no">غير مدعوم</string>
+    <string name="settings_head_unit_can_root">مع root فقط</string>
+    <string name="settings_head_unit_can_hint">تحقّق في السيارة باختبارات لوحة العدادات وشاشة HUD في متقدم.</string>
+</resources>

@@ -14,11 +14,14 @@ import android.os.Parcel
 import android.util.Log
 import androidx.core.content.ContextCompat
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 /**
  * FYT head units (`com.syu.*`, also sold with DUDU OS), read from the UIS7870 firmware; see docs/HEADUNIT_FYT_DUDU.md.
- * The car-signal adapter only registers for updates from FYT's module service. Only the display test the driver
- * starts in Settings sends it commands (app ID and play info), and nothing ever sends raw CAN-box frames.
+ * The car-signal adapter only registers for updates from FYT's module service. Commands go only from the display test
+ * the driver starts in Settings (app ID and play info) and, opted in, CarPlay's climate (FytClimate.kt). Nothing ever
+ * sends canbus-module commands, which include raw CAN-box frames and the protocol switch.
  */
 internal object FytSyuPlatform : HeadUnitPlatform {
     const val MODULE_SERVICE_PACKAGE = "com.syu.ms"
@@ -30,6 +33,17 @@ internal object FytSyuPlatform : HeadUnitPlatform {
     const val U_BACKCAR = 12
     const val U_ACC_ON = 50
 
+    /** A wheel key `com.syu.ms` hands to the phone-link app while `sys.carlink.type` is set ([FytKeyLink]). */
+    const val U_LINK_KEY = 133
+
+    // com.lsec.core.util.data.FinalCanbus: update codes of the canbus module (code 7).
+    const val MODULE_CANBUS = 7
+    const val U_CANBUS_ID = 1000
+    const val U_EXIST_DOOR = 1004
+    const val U_EXIST_AIR = 1007
+    const val U_EXIST_PANORAMA = 1009
+    const val U_EXIST_TEMP_OUT = 1012
+
     /** FYT's CarPlay opens this node from a root daemon; the 0660 system:system node is closed to apps. */
     const val MFI_I2C_PATH = "/dev/i2c-2"
 
@@ -39,6 +53,8 @@ internal object FytSyuPlatform : HeadUnitPlatform {
     override val settingsPackage = SETTINGS_APP_PACKAGE
     override val trackTestRoute = TrackTestRoute.FYT_MODULE
     override val forwardsAmapGuidance = true
+    override val readsCanProfile = true
+    override val linksKeysWithRoot = true
 
     override fun matches(probe: HeadUnitProbe): Boolean =
         MODULE_SERVICE_PACKAGE in probe.systemPackages && CANBUS_PACKAGE in probe.systemPackages
@@ -46,6 +62,13 @@ internal object FytSyuPlatform : HeadUnitPlatform {
     override fun signals(context: Context): HeadUnitSignalSource = FytSyuSignals(context.applicationContext)
 
     override fun mfiI2cPath(): String = MFI_I2C_PATH
+
+    override fun readCanProfile(context: Context): HeadUnitCanProfile? = FytCanProfile.read(context.applicationContext)
+    override fun climateSource(context: Context): HeadUnitClimateSource = FytClimateSource(context.applicationContext)
+
+    override val writesClimate = true
+
+    override fun radioSource(context: Context): HeadUnitRadioSource = FytRadioSource(context.applicationContext)
 
     /** The signal an update from the main module carries, or null for every other update. */
     fun signalFor(updateCode: Int, ints: IntArray?): Pair<HeadUnitSignal, Boolean>? {
@@ -80,19 +103,8 @@ internal class FytSyuSignals(private val context: Context) : HeadUnitSignalSourc
     private var bound = false
     private var receiverRegistered = false
 
-    private val callback = object : Binder() {
-        init {
-            attachInterface(null, CALLBACK_DESCRIPTOR)
-        }
-
-        override fun onTransact(code: Int, data: Parcel, reply: Parcel?, flags: Int): Boolean {
-            if (code != TRANSACTION_UPDATE) return super.onTransact(code, data, reply, flags)
-            data.enforceInterface(CALLBACK_DESCRIPTOR)
-            val updateCode = data.readInt()
-            val ints = data.createIntArray()
-            FytSyuPlatform.signalFor(updateCode, ints)?.let { (signal, on) -> deliver(signal, on) }
-            return true
-        }
+    private val callback = FytModuleIpc.callback { updateCode, ints ->
+        FytSyuPlatform.signalFor(updateCode, ints)?.let { (signal, on) -> deliver(signal, on) }
     }
 
     private val accReceiver = object : BroadcastReceiver() {
@@ -161,8 +173,6 @@ internal class FytSyuSignals(private val context: Context) : HeadUnitSignalSourc
         const val TAG = "Tarmac-HeadUnit"
         const val ACTION_ACC = "com.syu.ms"
         const val EXTRA_ACC = "cmd.acc"
-        const val CALLBACK_DESCRIPTOR = "com.syu.ipc.IModuleCallback"
-        const val TRANSACTION_UPDATE = 1
         val CODES = intArrayOf(FytSyuPlatform.U_ACC_ON, FytSyuPlatform.U_BACKCAR, FytSyuPlatform.U_LAMPLET)
     }
 }
@@ -175,20 +185,25 @@ internal object FytModuleIpc {
     const val ACTION_TOOLKIT = "com.syu.ms.toolkit"
     private const val TOOLKIT_DESCRIPTOR = "com.syu.ipc.IRemoteToolkit"
     private const val MODULE_DESCRIPTOR = "com.syu.ipc.IRemoteModule"
+    private const val CALLBACK_DESCRIPTOR = "com.syu.ipc.IModuleCallback"
+    private const val TRANSACTION_UPDATE = 1
     private const val TRANSACTION_GET_REMOTE_MODULE = 1
     private const val TRANSACTION_CMD = 1
     private const val TRANSACTION_REGISTER = 3
     private const val TRANSACTION_UNREGISTER = 4
     const val MODULE_MAIN = 0
+    const val MODULE_CANBUS = 7
 
     fun toolkitIntent(): Intent = Intent(ACTION_TOOLKIT).setPackage(FytSyuPlatform.MODULE_SERVICE_PACKAGE)
 
-    fun mainModule(toolkit: IBinder): IBinder? {
+    fun mainModule(toolkit: IBinder): IBinder? = module(toolkit, MODULE_MAIN)
+
+    fun module(toolkit: IBinder, moduleCode: Int): IBinder? {
         val data = Parcel.obtain()
         val reply = Parcel.obtain()
         return try {
             data.writeInterfaceToken(TOOLKIT_DESCRIPTOR)
-            data.writeInt(MODULE_MAIN)
+            data.writeInt(moduleCode)
             toolkit.transact(TRANSACTION_GET_REMOTE_MODULE, data, reply, 0)
             reply.readException()
             reply.readStrongBinder()
@@ -198,12 +213,28 @@ internal object FytModuleIpc {
         }
     }
 
-    fun register(module: IBinder, callback: IBinder, code: Int) = transact(module, TRANSACTION_REGISTER) {
-        writeStrongBinder(callback)
-        writeInt(code)
-        // 1 asks for the current value straight away.
-        writeInt(1)
+    /** An `IModuleCallback` that hands each update's code and ints to [onUpdate], on a binder thread. */
+    fun callback(onUpdate: (Int, IntArray?) -> Unit): IBinder = object : Binder() {
+        init {
+            attachInterface(null, CALLBACK_DESCRIPTOR)
+        }
+
+        override fun onTransact(code: Int, data: Parcel, reply: Parcel?, flags: Int): Boolean {
+            if (code != TRANSACTION_UPDATE) return super.onTransact(code, data, reply, flags)
+            data.enforceInterface(CALLBACK_DESCRIPTOR)
+            val updateCode = data.readInt()
+            onUpdate(updateCode, data.createIntArray())
+            return true
+        }
     }
+
+    /** [sendCurrent] asks for the current value straight away. */
+    fun register(module: IBinder, callback: IBinder, code: Int, sendCurrent: Boolean = true) =
+        transact(module, TRANSACTION_REGISTER) {
+            writeStrongBinder(callback)
+            writeInt(code)
+            writeInt(if (sendCurrent) 1 else 0)
+        }
 
     fun unregister(module: IBinder, callback: IBinder, code: Int) = transact(module, TRANSACTION_UNREGISTER) {
         writeStrongBinder(callback)
@@ -242,4 +273,57 @@ internal object FytModuleIpc {
             data.recycle()
         }
     }
+}
+
+/**
+ * The CAN-box profile chosen in FYT's factory settings, from the canbus module (7). Its ID packs the protocol
+ * (low 16 bits) and the car variant (high 16 bits); FYT keeps no names for it that apps can read.
+ */
+internal object FytCanProfile {
+    private const val CONNECT_MILLIS = 3_000L
+    private const val ANSWER_MILLIS = 2_000L
+
+    /** The flags arrive just after the ID, since each is asked for in turn. */
+    private const val FLAGS_MILLIS = 300L
+
+    /** The canbus module's own "exists" flags for the chosen profile. */
+    private val FLAGS = linkedMapOf(
+        FytSyuPlatform.U_EXIST_DOOR to HeadUnitCanFeature.DOORS,
+        FytSyuPlatform.U_EXIST_AIR to HeadUnitCanFeature.CLIMATE,
+        FytSyuPlatform.U_EXIST_TEMP_OUT to HeadUnitCanFeature.OUTSIDE_TEMPERATURE,
+        FytSyuPlatform.U_EXIST_PANORAMA to HeadUnitCanFeature.SURROUND_CAMERA,
+    )
+    private val CODES = intArrayOf(FytSyuPlatform.U_CANBUS_ID) + FLAGS.keys
+
+    /** The profile from the canbus module's answers (code to first int), or null without an ID or for none. */
+    fun profile(values: Map<Int, Int>): HeadUnitCanProfile? {
+        val id = values[FytSyuPlatform.U_CANBUS_ID]?.takeIf { it != 0 } ?: return null
+        fun support(yes: Boolean) = if (yes) HeadUnitSupport.YES else HeadUnitSupport.NO
+        val features = linkedMapOf(
+            HeadUnitCanFeature.GUIDANCE to support(HeadUnitCanTables.fytGuidance(id)),
+            HeadUnitCanFeature.TRACK_TEXT to support(HeadUnitCanTables.fytTrackText(id)),
+        )
+        for ((code, feature) in FLAGS) values[code]?.let { features[feature] = support(it != 0) }
+        return HeadUnitCanProfile(id, protocol = id and 0xffff, variant = id ushr 16, features = features)
+    }
+
+    /** Registers for the profile's values, waits for FYT's first answers and unregisters. */
+    fun read(context: Context): HeadUnitCanProfile? =
+        HeadUnitBinding.use(context, FytModuleIpc.toolkitIntent(), CONNECT_MILLIS) { toolkit ->
+            val module = FytModuleIpc.module(toolkit, FytSyuPlatform.MODULE_CANBUS) ?: return@use null
+            val values = ConcurrentHashMap<Int, Int>()
+            val answered = CountDownLatch(1)
+            val callback = FytModuleIpc.callback { code, ints ->
+                val value = ints?.firstOrNull() ?: return@callback
+                values[code] = value
+                if (code == FytSyuPlatform.U_CANBUS_ID) answered.countDown()
+            }
+            try {
+                for (code in CODES) FytModuleIpc.register(module, callback, code)
+                if (answered.await(ANSWER_MILLIS, TimeUnit.MILLISECONDS)) Thread.sleep(FLAGS_MILLIS)
+            } finally {
+                for (code in CODES) runCatching { FytModuleIpc.unregister(module, callback, code) }
+            }
+            profile(values)
+        }
 }

@@ -15,18 +15,27 @@ import java.util.concurrent.atomic.AtomicBoolean
  * with a 32-byte header (size, 12-byte type such as "sync"/"rply", 4-byte command, 8-byte sequence
  * number) and a body. Each "sync" is answered with an empty "rply", as AirPlay data streams expect;
  * the bodies are not needed to play.
+ *
+ * The CarPlay Ultra experiment uses the same channel for data streams Tarmac does not know yet, with
+ * [logPackages] on, so each package the iPhone sends is logged ([CarPlayUltra.describePackage]), and for
+ * the vehicle-state streams, which hand each package body to [onMessage] and answer with [send].
  */
 class VideoSettingsChannel(
     private val readKey: ByteArray,
     private val writeKey: ByteArray,
     private val expectedPeer: InetAddress,
+    private val label: String = "video settings",
+    private val logPackages: Boolean = false,
+    private val onMessage: ((ByteArray) -> Unit)? = null,
     private val log: (String) -> Unit,
 ) : Closeable {
     private val closed = AtomicBoolean(false)
     private var server: ServerSocket? = null
-    private var socket: Socket? = null
+    @Volatile private var socket: Socket? = null
     private var readCounter = 0L
     private var writeCounter = 0L
+    private val writeLock = Any()
+    private var packagesSeen = 0
 
     fun listen(bindAddress: InetAddress): Int {
         val bound = ServerSocket().apply {
@@ -34,18 +43,18 @@ class VideoSettingsChannel(
             bind(InetSocketAddress(bindAddress, 0))
         }
         server = bound
-        Thread({ accept(bound) }, "diplay-video-settings").apply { isDaemon = true }.start()
+        Thread({ accept(bound) }, "diplay-data-stream").apply { isDaemon = true }.start()
         return bound.localPort
     }
 
     private fun accept(bound: ServerSocket) {
         try {
-            val accepted = bound.acceptFrom(expectedPeer) { log("video settings channel rejected sender outside the control session") }
+            val accepted = bound.acceptFrom(expectedPeer) { log("$label channel rejected sender outside the control session") }
             socket = accepted
-            log("video settings channel connected")
+            log("$label channel connected")
             run(accepted)
         } catch (error: Exception) {
-            if (!closed.get()) log("video settings channel ended: ${error.message}")
+            if (!closed.get()) log("$label channel ended: ${error.message}")
         } finally {
             close()
         }
@@ -83,10 +92,21 @@ class VideoSettingsChannel(
             val size = u32(buffer, offset)
             if (size < HEADER || size > MAX_PACKAGE) throw IllegalStateException("bad package size $size")
             if (buffer.size - offset < size) break
-            if (ascii(buffer, offset + 4, 12) == "sync") reply(output, buffer.copyOfRange(offset + 20, offset + 28))
+            val type = ascii(buffer, offset + 4, 12)
+            if (logPackages) logPackage(type, buffer, offset, size)
+            if (type == "sync") reply(output, buffer.copyOfRange(offset + 20, offset + 28))
+            if (type != "rply") onMessage?.invoke(buffer.copyOfRange(offset + HEADER, offset + size))
             offset += size
         }
         return buffer.copyOfRange(offset, buffer.size)
+    }
+
+    private fun logPackage(type: String, buffer: ByteArray, offset: Int, size: Int) {
+        val seen = ++packagesSeen
+        if (seen > CarPlayUltra.LOGGED_PACKAGES && seen % CarPlayUltra.LOG_EVERY != 0) return
+        val command = u32(buffer, offset + 16)
+        val sequence = (u32(buffer, offset + 20).toLong() shl 32) or (u32(buffer, offset + 24).toLong() and 0xffffffffL)
+        log("$label rx #$seen " + CarPlayUltra.describePackage(type, command, sequence, buffer.copyOfRange(offset + HEADER, offset + size)))
     }
 
     private fun reply(output: OutputStream, seq: ByteArray) {
@@ -94,9 +114,29 @@ class VideoSettingsChannel(
         header[3] = HEADER.toByte()
         "rply".toByteArray(Charsets.US_ASCII).copyInto(header, 4)
         seq.copyInto(header, 20)
-        val aad = byteArrayOf((header.size and 0xff).toByte(), (header.size shr 8).toByte())
-        val sealed = AirPlayCrypto.chachaSeal(writeKey, AirPlayCrypto.nonce64(writeCounter++), header, aad)
-        output.write(aad + sealed)
+        seal(output, header)
+    }
+
+    /** Sends [body] to the iPhone as an "asyn" package of type "cmnd"; dropped while nothing is connected. */
+    fun send(body: ByteArray) {
+        val output = socket?.takeIf { !closed.get() }?.getOutputStream() ?: return log("$label send dropped: not connected")
+        val size = HEADER + body.size
+        val header = ByteArray(HEADER)
+        for (i in 0 until 4) header[i] = (size ushr (24 - 8 * i)).toByte()
+        "asyn".toByteArray(Charsets.US_ASCII).copyInto(header, 4)
+        "cmnd".toByteArray(Charsets.US_ASCII).copyInto(header, 16)
+        runCatching { seal(output, header + body) }.onFailure { log("$label send failed: ${it.message}") }
+    }
+
+    // ChaCha20-Poly1305 frames of at most FRAME bytes, each with its 2-byte length as associated data.
+    private fun seal(output: OutputStream, plain: ByteArray) = synchronized(writeLock) {
+        var offset = 0
+        while (offset < plain.size) {
+            val chunk = plain.copyOfRange(offset, minOf(plain.size, offset + FRAME))
+            val aad = byteArrayOf((chunk.size and 0xff).toByte(), (chunk.size shr 8).toByte())
+            output.write(aad + AirPlayCrypto.chachaSeal(writeKey, AirPlayCrypto.nonce64(writeCounter++), chunk, aad))
+            offset += chunk.size
+        }
         output.flush()
     }
 
@@ -115,6 +155,7 @@ class VideoSettingsChannel(
 
     private companion object {
         const val HEADER = 32
+        const val FRAME = 1024
         const val TAG = 16
         const val MAX_PACKAGE = 8 * 1024 * 1024
     }

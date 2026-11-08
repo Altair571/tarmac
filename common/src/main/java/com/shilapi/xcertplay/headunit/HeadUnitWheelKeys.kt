@@ -39,6 +39,7 @@ internal object HeadUnitWheelKeys {
 internal object HeadUnitSettings {
     private const val PREFS = "diplay_head_unit"
     private const val KEY_WHEEL_KEYS = "wheel_keys"
+    private const val KEY_LINK_KEYS = "link_keys"
     private const val KEY_TRACK_TEST_RECORD = "track_test_record"
     private const val KEY_TRACK_TEST_ENTER_SOURCE = "track_test_enter_source"
 
@@ -46,6 +47,13 @@ internal object HeadUnitSettings {
 
     fun saveWheelKeys(context: Context, enabled: Boolean) {
         prefs(context).edit().putBoolean(KEY_WHEEL_KEYS, enabled).apply()
+    }
+
+    /** FYT's root key link; off until the driver turns it on, since it takes the keys from the unit. */
+    fun linkKeys(context: Context): Boolean = prefs(context).getBoolean(KEY_LINK_KEYS, false)
+
+    fun saveLinkKeys(context: Context, enabled: Boolean) {
+        prefs(context).edit().putBoolean(KEY_LINK_KEYS, enabled).apply()
     }
 
     fun trackTestRecord(context: Context): TeyesTrackTextTool.Record =

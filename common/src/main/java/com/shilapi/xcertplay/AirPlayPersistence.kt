@@ -78,6 +78,15 @@ object AirPlayPersistence {
     private const val KEY_MAIN_BUFFERED_AUDIO = "main_buffered_audio"
     private const val KEY_SPEECH_WITHOUT_8_16_KHZ = "speech_without_8_16_khz"
     private const val KEY_CALL_AT_CALL_RATE = "call_at_call_rate"
+    private const val KEY_CARPLAY_ULTRA = "carplay_ultra"
+    private const val KEY_CARPLAY_ULTRA_FEATURES = "carplay_ultra_features"
+    private const val KEY_CARPLAY_ULTRA_CAR_DATA = "carplay_ultra_car_data"
+    private const val KEY_CARPLAY_ULTRA_CAR_DATA_SEEN = "carplay_ultra_car_data_seen"
+    private const val KEY_CARPLAY_ULTRA_TEST_CAR_DATA = "carplay_ultra_test_car_data"
+    private const val KEY_CARPLAY_ULTRA_DEMO_CLIMATE = "carplay_ultra_demo_climate"
+    private const val KEY_CARPLAY_CLIMATE_WRITES = "carplay_climate_writes"
+    private const val KEY_CARPLAY_CLIMATE_SEEN = "carplay_climate_seen"
+    private const val KEY_CARPLAY_SEAT_HEATING_SEEN = "carplay_seat_heating_seen"
     private const val KEY_CAR_BLUETOOTH_AUDIO = "car_bluetooth_audio"
     private const val KEY_CALL_ECHO_CANCELLATION = "call_echo_cancellation"
     private const val KEY_CALL_VOICE_FILTER = "call_voice_filter"
@@ -739,6 +748,83 @@ object AirPlayPersistence {
 
     fun saveCallAtCallRate(context: Context, enabled: Boolean) {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(KEY_CALL_AT_CALL_RATE, enabled).apply()
+    }
+
+    /** The CarPlay Ultra experiment (docs/CARPLAY_ULTRA.md); off by default, reconnects CarPlay. */
+    fun loadCarPlayUltra(context: Context): Boolean =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(KEY_CARPLAY_ULTRA, false)
+
+    fun saveCarPlayUltra(context: Context, enabled: Boolean) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(KEY_CARPLAY_ULTRA, enabled).apply()
+    }
+
+    /**
+     * The session features the experiment enables: [CarPlayUltra.SESSION_FEATURES], or a comma-separated
+     * subset written to this preference over adb (no UI) to tell one feature's effect from another's.
+     * Empty while the experiment is off.
+     */
+    fun loadCarPlayUltraFeatures(context: Context): Set<String> {
+        if (!loadCarPlayUltra(context)) return emptySet()
+        val override = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString(KEY_CARPLAY_ULTRA_FEATURES, null)
+        return com.shilapi.xcertplay.airplay.CarPlayUltra.features(override)
+    }
+
+    /** With the experiment on: describe the car's read-only data to the Vehicle app; on by default, applies at reconnect. */
+    fun loadCarPlayUltraCarData(context: Context): Boolean =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(KEY_CARPLAY_ULTRA_CAR_DATA, true)
+
+    fun saveCarPlayUltraCarData(context: Context, enabled: Boolean) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(KEY_CARPLAY_ULTRA_CAR_DATA, enabled).apply()
+    }
+
+    /** The car data a source on this head unit has given at least once ([CarPlayCarData]). */
+    fun loadCarPlayUltraCarDataSeen(context: Context): Set<String> =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getStringSet(KEY_CARPLAY_ULTRA_CAR_DATA_SEEN, null).orEmpty()
+
+    fun saveCarPlayUltraCarDataSeen(context: Context, seen: Set<String>) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putStringSet(KEY_CARPLAY_ULTRA_CAR_DATA_SEEN, seen.toSet()).apply()
+    }
+
+    /**
+     * Research only: fixed sample car data instead of the car's, to see what iOS draws on a phone without a car.
+     * Read only on a debuggable build and written only over adb (`run-as`); Settings never shows or sets it.
+     */
+    fun loadCarPlayUltraTestCarData(context: Context): Boolean =
+        context.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE != 0 &&
+            context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(KEY_CARPLAY_ULTRA_TEST_CAR_DATA, false)
+
+    /**
+     * For research without a car (adb only, like [loadCarPlayUltraFeatures]): describe climate, seats and a radio
+     * anyway. Tarmac keeps the iPhone's climate values itself, as before head units were connected, and plays the radio
+     * with two sample stations.
+     */
+    fun loadCarPlayUltraDemoClimate(context: Context): Boolean =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(KEY_CARPLAY_ULTRA_DEMO_CLIMATE, false)
+
+    /** Send the iPhone's allow-listed climate changes to the car (docs/CARPLAY_ULTRA.md); off by default, applies at once. */
+    fun loadCarPlayClimateWrites(context: Context): Boolean =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(KEY_CARPLAY_CLIMATE_WRITES, false)
+
+    fun saveCarPlayClimateWrites(context: Context, enabled: Boolean) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(KEY_CARPLAY_CLIMATE_WRITES, enabled).apply()
+    }
+
+    /** Whether this car has reported its climate (and a heated seat) on a drive, for describing it before it reports again. */
+    fun loadCarPlayClimateSeen(context: Context): Boolean =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(KEY_CARPLAY_CLIMATE_SEEN, false)
+
+    fun loadCarPlaySeatHeatingSeen(context: Context): Boolean =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(KEY_CARPLAY_SEAT_HEATING_SEEN, false)
+
+    fun markCarPlayClimateSeen(context: Context, seatHeating: Boolean) {
+        val edit = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(KEY_CARPLAY_CLIMATE_SEEN, true)
+        if (seatHeating) edit.putBoolean(KEY_CARPLAY_SEAT_HEATING_SEEN, true)
+        edit.apply()
+    }
+
+    fun forgetCarPlayClimate(context: Context) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
+            .putBoolean(KEY_CARPLAY_CLIMATE_SEEN, false).putBoolean(KEY_CARPLAY_SEAT_HEATING_SEEN, false).apply()
     }
 
     /** Offer no CarPlay audio, so the iPhone keeps audio on its Bluetooth link with the car; applies at reconnect. */

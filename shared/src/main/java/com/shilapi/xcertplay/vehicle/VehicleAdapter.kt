@@ -389,6 +389,7 @@ class BydVehicleDataSource(private val context: Context) : VehicleDataSource {
     override val name = "BYD autoservice"
 
     override fun latest(): VehicleReading? = BydNavigationOutputs.batteryStatus(context).snapshot()?.let {
-        VehicleReading(stateOfChargePercent = it.batteryPercent, rangeKm = it.rangeKm, charging = it.charging)
+        VehicleReading(stateOfChargePercent = it.batteryPercent, rangeKm = it.rangeKm, charging = it.charging,
+            batteryEnergyKwh = it.currentChargeWh?.let { wh -> wh / 1000.0 })
     }
 }

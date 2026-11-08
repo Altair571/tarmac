@@ -23,8 +23,8 @@ android {
         applicationId = "com.altair571.tarmac"
         minSdk = 24
         targetSdk = 37
-        versionCode = 42
-        versionName = "0.3.0"
+        versionCode = 43
+        versionName = "0.4.0"
 
     }
 

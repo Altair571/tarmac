@@ -152,9 +152,16 @@ object BplistCodec {
                 else -> throw IllegalArgumentException("bplist: unsupported primitive 0x0$nibble")
             }
             0x1 -> {
-                require(nibble <= 3) { "bplist: integer wider than 8 bytes" }
+                require(nibble <= 4) { "bplist: integer wider than 16 bytes" }
                 val size = 1 shl nibble
-                readBigEndianLong(bytes, position.toLong(), size)
+                if (size == 16) {
+                    // iOS 27 writes some small numbers (stopSessionReasons in /info) as 16-byte integers.
+                    require(position + 16 <= bytes.size) { "bplist: value runs past the data" }
+                    val wide = java.math.BigInteger(bytes.copyOfRange(position, position + 16))
+                    if (wide.bitLength() < 64) wide.toLong() else wide
+                } else {
+                    readBigEndianLong(bytes, position.toLong(), size)
+                }
             }
             0x2 -> {
                 val size = 1 shl nibble

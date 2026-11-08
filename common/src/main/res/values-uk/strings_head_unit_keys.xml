@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FYT's wheel keys for CarPlay on rooted units (docs/HEADUNIT_FYT_DUDU.md). -->
+<resources>
+    <string name="settings_head_unit_link_keys">Кнопки голосу й виклику через root (експериментально)</string>
+    <string name="settings_head_unit_link_keys_description">Поки працює CarPlay, %1$s передає кнопки керма в Tarmac через root: кнопка голосу відкриває Siri, а кнопки виклику приймають і завершують дзвінки CarPlay. Кнопки медіа, «Додому» й «Назад» працюють як раніше. Коли CarPlay зупиняється, кнопки повертаються до %1$s.</string>
+    <string name="settings_head_unit_link_keys_refused">У доступі root відмовлено, кнопки залишаються за %1$s.</string>
+</resources>

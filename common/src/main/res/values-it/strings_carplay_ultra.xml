@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_carplay_ultra">CarPlay Ultra (sperimentale)</string>
+    <string name="settings_carplay_ultra_try">Prova CarPlay Ultra</string>
+    <!-- Car data for the Vehicle app (CarPlayCarData). -->
+    <string name="settings_carplay_ultra_car_data">Dati dell’auto nell’app Veicolo</string>
+    <string name="settings_carplay_ultra_car_data_description">Mostra nell’app Veicolo di CarPlay i dati dell’auto che Tarmac legge già, come carica o carburante, autonomia, contachilometri, pneumatici e temperatura esterna. Solo lettura: nulla viene inviato all’auto. Ogni valore compare quando una fonte di questa unità principale lo ha fornito: ADB BYD, l’adattatore dati auto o un’unità TEYES. Si applica alla prossima connessione.</string>
+    <string name="settings_carplay_ultra_car_data_next">Prossima connessione: %1$s</string>
+    <string name="settings_carplay_ultra_car_data_none">Ancora niente. Un valore compare dalla connessione successiva a quella in cui una fonte di questa unità principale lo ha fornito: ADB BYD, l’adattatore dati auto o un’unità TEYES.</string>
+    <string name="settings_carplay_ultra_car_data_fuel">carburante o carica</string>
+    <string name="settings_carplay_ultra_car_data_range">autonomia</string>
+    <string name="settings_carplay_ultra_car_data_odometer">contachilometri</string>
+    <string name="settings_carplay_ultra_car_data_tyres">pressione degli pneumatici</string>
+    <string name="settings_carplay_ultra_car_data_charging">stato di ricarica</string>
+    <string name="settings_carplay_ultra_car_data_energy">energia della batteria</string>
+    <string name="settings_carplay_ultra_car_data_outside">temperatura esterna</string>
+    <!-- Labels of the read-only lines iOS's Vehicle app shows on the car's screen (CarPlayCarData.settingLines). -->
+    <string name="carplay_vehicle_version">Versione</string>
+    <string name="carplay_vehicle_fuel">Carburante</string>
+    <string name="carplay_vehicle_charge">Carica</string>
+    <string name="carplay_vehicle_range">Autonomia</string>
+    <string name="carplay_vehicle_odometer">Contachilometri</string>
+    <string name="carplay_vehicle_charging">In carica</string>
+    <string name="carplay_vehicle_yes">Sì</string>
+    <string name="carplay_vehicle_no">No</string>
+    <string name="carplay_vehicle_energy">Energia residua</string>
+    <string name="carplay_vehicle_outside">Temperatura esterna</string>
+    <string name="carplay_vehicle_source">Dati auto da</string>
+    <string name="carplay_vehicle_source_test">Valori di esempio (test)</string>
+    <string name="carplay_vehicle_section_battery">Batteria</string>
+    <string name="carplay_vehicle_section_fuel">Carburante</string>
+    <string name="carplay_vehicle_section_tyres">Pneumatici</string>
+    <string name="carplay_vehicle_section_car">Auto</string>
+    <string name="carplay_vehicle_front_left">Anteriore sinistro</string>
+    <string name="carplay_vehicle_front_right">Anteriore destro</string>
+    <string name="carplay_vehicle_rear_left">Posteriore sinistro</string>
+    <string name="carplay_vehicle_rear_right">Posteriore destro</string>
+    <string name="settings_carplay_ultra_try_description">Risponde al protocollo di stato del veicolo di CarPlay. Sulle unità principali con una fonte del clima, l’iPhone mostra allora il clima dell’auto nel dock e, con CarPlay Ultra scelto sull’iPhone, nella sua app Clima; sulle unità TEYES e FYT la sua app Radio riproduce il sintonizzatore FM dell’unità. Registra anche ciò che l’iPhone invia nel rapporto diagnostico. Ricollega CarPlay.</string>
+    <string name="settings_carplay_climate_source">Il clima arriva dalla centralina CAN di %1$s. CarPlay lo mostra quando l’auto ha comunicato il suo clima.</string>
+    <string name="settings_carplay_climate_none">Questa unità principale non ha una fonte del clima che Tarmac possa leggere, quindi CarPlay non mostra comandi del clima.</string>
+    <string name="settings_carplay_climate_writes">Modifiche al clima dall’iPhone</string>
+    <string name="settings_carplay_climate_writes_description">Invia all’auto le modifiche dell’iPhone a temperatura, ventola, A/C, ricircolo, sbrinamento e riscaldamento dei sedili tramite il servizio della centralina CAN di %1$s, un passo alla volta. Tarmac controlla la risposta dell’auto dopo ogni passo e smette di inviare al primo che l’auto non accetta. Solo funzioni di comfort; i comandi dell’auto continuano a funzionare. Si applica subito.</string>
+    <!-- LIVI's NOTICE (GPL-3.0 section 7(b)) requires this attribution in the About screen; keep the name and URL. -->
+    <string name="about_livi_attribution">Based on LIVI by Lasse Heitgres (https://github.com/f-io/LIVI)</string>
+</resources>

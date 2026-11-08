@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FYT's wheel keys for CarPlay on rooted units (docs/HEADUNIT_FYT_DUDU.md). -->
+<resources>
+    <string name="settings_head_unit_link_keys">Root ile ses ve arama tuşları (deneysel)</string>
+    <string name="settings_head_unit_link_keys_description">CarPlay çalışırken %1$s direksiyon tuşlarını root üzerinden Tarmac’a verir: ses tuşu Siri’yi açar, arama tuşları CarPlay aramalarını yanıtlar ve bitirir. Medya, ana ekran ve geri tuşları çalışmaya devam eder. CarPlay durunca tuşlar %1$s’ye geri döner.</string>
+    <string name="settings_head_unit_link_keys_refused">Root reddedildi, tuşlar %1$s’de kalıyor.</string>
+</resources>

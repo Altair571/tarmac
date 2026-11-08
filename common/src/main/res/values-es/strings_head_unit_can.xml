@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The head unit's CAN-box profile (docs/HEADUNIT_SPD_TEYES.md, docs/HEADUNIT_FYT_DUDU.md). -->
+<resources>
+    <string name="settings_head_unit_can_title">Caja CAN de %1$s</string>
+    <string name="settings_head_unit_can_description">El perfil de caja CAN elegido en los ajustes de %1$s decide qué llega a las pantallas del coche. Tarmac lo lee y nunca lo cambia.</string>
+    <string name="settings_head_unit_can_reading">Leyendo el perfil de la caja CAN…</string>
+    <string name="settings_head_unit_can_none">%1$s no indica ningún perfil de caja CAN. Elige tu coche en los ajustes de %1$s.</string>
+    <string name="settings_head_unit_can_profile">Perfil: %1$s (ID %2$s)</string>
+    <string name="settings_head_unit_can_number">protocolo %1$d, variante %2$d</string>
+    <string name="settings_head_unit_can_feature">%1$s: %2$s</string>
+    <string name="settings_head_unit_can_guidance">Guía paso a paso en el cuadro o el HUD</string>
+    <string name="settings_head_unit_can_track">Título de la canción en el cuadro</string>
+    <string name="settings_head_unit_can_doors">Estado de las puertas</string>
+    <string name="settings_head_unit_can_climate">Climatización</string>
+    <string name="settings_head_unit_can_outside">Temperatura exterior</string>
+    <string name="settings_head_unit_can_camera">Cámara 360°</string>
+    <string name="settings_head_unit_can_yes">compatible</string>
+    <string name="settings_head_unit_can_no">no compatible</string>
+    <string name="settings_head_unit_can_root">solo con root</string>
+    <string name="settings_head_unit_can_hint">Compruébalo en el coche con las pruebas del cuadro y el HUD en Avanzado.</string>
+</resources>

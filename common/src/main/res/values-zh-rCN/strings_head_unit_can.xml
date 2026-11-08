@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The head unit's CAN-box profile (docs/HEADUNIT_SPD_TEYES.md, docs/HEADUNIT_FYT_DUDU.md). -->
+<resources>
+    <string name="settings_head_unit_can_title">%1$s CAN 盒</string>
+    <string name="settings_head_unit_can_description">在 %1$s 设置中选择的 CAN 盒协议决定了哪些内容能显示在车辆自身的屏幕上。Tarmac 只读取它，从不更改。</string>
+    <string name="settings_head_unit_can_reading">正在读取 CAN 盒协议…</string>
+    <string name="settings_head_unit_can_none">%1$s 没有报告 CAN 盒协议。请在 %1$s 设置中选择你的车型。</string>
+    <string name="settings_head_unit_can_profile">协议：%1$s（ID %2$s）</string>
+    <string name="settings_head_unit_can_number">协议 %1$d，车型变体 %2$d</string>
+    <string name="settings_head_unit_can_feature">%1$s：%2$s</string>
+    <string name="settings_head_unit_can_guidance">仪表盘或 HUD 上的逐向导航</string>
+    <string name="settings_head_unit_can_track">仪表盘上的曲目名</string>
+    <string name="settings_head_unit_can_doors">车门状态</string>
+    <string name="settings_head_unit_can_climate">空调</string>
+    <string name="settings_head_unit_can_outside">车外温度</string>
+    <string name="settings_head_unit_can_camera">360° 摄像头</string>
+    <string name="settings_head_unit_can_yes">支持</string>
+    <string name="settings_head_unit_can_no">不支持</string>
+    <string name="settings_head_unit_can_root">仅限 root</string>
+    <string name="settings_head_unit_can_hint">请在车上用高级中的仪表盘和 HUD 测试确认。</string>
+</resources>

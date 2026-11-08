@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.shilapi.xcertplay.host.R
+import com.shilapi.xcertplay.transport.RootShell
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -40,6 +42,9 @@ class HeadUnitSettingsTest {
         assertFalse(signals in connection)
         assertFalse(title in advanced || signals in advanced)
         assertTrue(screen.getString(R.string.settings_head_unit_starting_app_off, "TEYES") in connection)
+        val canBox = screen.getString(R.string.settings_head_unit_can_title, "TEYES")
+        assertTrue(canBox in vehicle)
+        assertFalse(canBox in connection || canBox in advanced)
     }
 
     @Test fun fytGetsBothCardsWithoutAKeySwitch() {
@@ -51,6 +56,9 @@ class HeadUnitSettingsTest {
         assertTrue(screen.getString(R.string.settings_head_unit_title, "FYT") in connection)
         assertTrue(screen.getString(R.string.settings_head_unit_signals_title, "FYT") in vehicle)
         assertFalse(screen.getString(R.string.settings_head_unit_wheel_keys) in vehicle)
+        assertTrue(screen.getString(R.string.settings_head_unit_can_title, "FYT") in vehicle)
+        // The root key link shows exactly where su exists.
+        assertEquals(RootShell.suPath() != null, screen.getString(R.string.settings_head_unit_link_keys) in vehicle)
         // FYT opens no app of its own at car start, so there is nothing to explain.
         assertFalse(screen.getString(R.string.settings_head_unit_starting_app_off, "FYT") in connection)
     }
@@ -61,6 +69,7 @@ class HeadUnitSettingsTest {
         val vehicle = visibleIn(screen, R.string.settings_vehicle)
         assertFalse(connection.any { it.startsWith("TEYES") })
         assertFalse(screen.getString(R.string.settings_head_unit_wheel_keys) in vehicle)
+        assertFalse(vehicle.any { it.endsWith("CAN box") })
     }
 
     private fun installSystemPackages(vararg names: String) {

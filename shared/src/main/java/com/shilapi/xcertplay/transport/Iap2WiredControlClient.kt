@@ -111,6 +111,7 @@ class Iap2WiredControlClient(
                     CARPLAY_AVAILABILITY -> {
                         onProgress("iap2 rx=0x4300 carplay-availability")
                         onProgress(carPlayAvailabilitySummary(incoming.payload))
+                        onProgress("iap2 4300 extras=${Iap2CarPlayMessages.availabilityExtras(incoming.payload)}")
                         // LIVI sends its wired answer on every availability notification; do not gate it on
                         // the phone's advertised availability boolean.
                         send(carPlayStartSession(endpoint), deadlineNanos)

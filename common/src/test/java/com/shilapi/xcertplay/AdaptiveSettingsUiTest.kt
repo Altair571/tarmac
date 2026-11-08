@@ -795,6 +795,14 @@ class AdaptiveSettingsUiTest {
         assertTrue(advanced.any { it.startsWith(text(R.string.settings_android_auto_picture)) })
         assertTrue(advanced.any { it.startsWith(text(R.string.settings_android_auto_gps)) })
         assertFalse(text(R.string.settings_android_auto) in connection)
+        // So is the CarPlay Ultra experiment.
+        assertTrue(text(R.string.settings_carplay_ultra) in advanced)
+        assertTrue(text(R.string.settings_carplay_ultra_try) in advanced)
+        assertFalse(text(R.string.settings_carplay_ultra) in display)
+        assertFalse(text(R.string.settings_carplay_ultra) in vehicle)
+        // Without a head unit there is no climate source, so nothing offers to change the car's climate.
+        assertTrue(text(R.string.settings_carplay_climate_none) in advanced)
+        assertFalse(text(R.string.settings_carplay_climate_writes) in advanced)
         assertTrue(display.any { it.startsWith(text(R.string.settings_app_appearance)) })
         assertFalse(audio.any { it.startsWith(text(R.string.settings_app_appearance)) })
         assertFalse(vehicle.any { it.startsWith(text(R.string.settings_app_appearance)) })

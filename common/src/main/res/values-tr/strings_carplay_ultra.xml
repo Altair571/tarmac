@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_carplay_ultra">CarPlay Ultra (deneysel)</string>
+    <string name="settings_carplay_ultra_try">CarPlay Ultra\'yı dene</string>
+    <!-- Car data for the Vehicle app (CarPlayCarData). -->
+    <string name="settings_carplay_ultra_car_data">Araç uygulamasında araç verileri</string>
+    <string name="settings_carplay_ultra_car_data_description">Tarmac’in araçtan zaten okuduğu şarj veya yakıt, menzil, kilometre sayacı, lastikler ve dış sıcaklık gibi verileri CarPlay’in Araç uygulamasında gösterir. Yalnızca okuma: araca hiçbir şey gönderilmez. Her değer, bu ana ünitedeki bir kaynak onu bir kez verdikten sonra görünür: BYD ADB, araç verisi adaptörü veya bir TEYES ünitesi. Sonraki bağlantıda uygulanır.</string>
+    <string name="settings_carplay_ultra_car_data_next">Sonraki bağlantı: %1$s</string>
+    <string name="settings_carplay_ultra_car_data_none">Henüz bir şey yok. Bir değer, bu ana ünitedeki bir kaynak onu verdikten sonraki bağlantıdan itibaren görünür: BYD ADB, araç verisi adaptörü veya bir TEYES ünitesi.</string>
+    <string name="settings_carplay_ultra_car_data_fuel">yakıt veya şarj</string>
+    <string name="settings_carplay_ultra_car_data_range">menzil</string>
+    <string name="settings_carplay_ultra_car_data_odometer">kilometre sayacı</string>
+    <string name="settings_carplay_ultra_car_data_tyres">lastik basınçları</string>
+    <string name="settings_carplay_ultra_car_data_charging">şarj durumu</string>
+    <string name="settings_carplay_ultra_car_data_energy">batarya enerjisi</string>
+    <string name="settings_carplay_ultra_car_data_outside">dış sıcaklık</string>
+    <!-- Labels of the read-only lines iOS's Vehicle app shows on the car's screen (CarPlayCarData.settingLines). -->
+    <string name="carplay_vehicle_version">Sürüm</string>
+    <string name="carplay_vehicle_fuel">Yakıt</string>
+    <string name="carplay_vehicle_charge">Şarj</string>
+    <string name="carplay_vehicle_range">Menzil</string>
+    <string name="carplay_vehicle_odometer">Kilometre sayacı</string>
+    <string name="carplay_vehicle_charging">Şarj oluyor</string>
+    <string name="carplay_vehicle_yes">Evet</string>
+    <string name="carplay_vehicle_no">Hayır</string>
+    <string name="carplay_vehicle_energy">Kalan enerji</string>
+    <string name="carplay_vehicle_outside">Dış sıcaklık</string>
+    <string name="carplay_vehicle_source">Araç verisi kaynağı</string>
+    <string name="carplay_vehicle_source_test">Örnek değerler (test)</string>
+    <string name="carplay_vehicle_section_battery">Batarya</string>
+    <string name="carplay_vehicle_section_fuel">Yakıt</string>
+    <string name="carplay_vehicle_section_tyres">Lastikler</string>
+    <string name="carplay_vehicle_section_car">Araç</string>
+    <string name="carplay_vehicle_front_left">Sol ön</string>
+    <string name="carplay_vehicle_front_right">Sağ ön</string>
+    <string name="carplay_vehicle_rear_left">Sol arka</string>
+    <string name="carplay_vehicle_rear_right">Sağ arka</string>
+    <string name="settings_carplay_ultra_try_description">CarPlay’in araç durumu protokolüne yanıt verir. Klima kaynağı olan ana ünitelerde iPhone, aracın klimasını Dock’ta ve iPhone’da CarPlay Ultra seçiliyse Klima uygulamasında gösterir; TEYES ve FYT ünitelerinde Radyo uygulaması ünitenin FM alıcısını çalar. iPhone’un gönderdiklerini de tanılama raporuna kaydeder. CarPlay’i yeniden bağlar.</string>
+    <string name="settings_carplay_climate_source">Klima bilgisi %1$s CAN kutusundan gelir. Araç klimasını bildirdiğinde CarPlay onu gösterir.</string>
+    <string name="settings_carplay_climate_none">Bu ana ünitede Tarmac’in okuyabileceği bir klima kaynağı yok, bu yüzden CarPlay klima denetimi göstermez.</string>
+    <string name="settings_carplay_climate_writes">iPhone’dan klima değişiklikleri</string>
+    <string name="settings_carplay_climate_writes_description">iPhone’daki sıcaklık, fan, A/C, iç hava, buğu çözme ve koltuk ısıtma değişikliklerini %1$s CAN kutusu hizmetiyle araca adım adım gönderir. Tarmac her adımdan sonra aracın yanıtını denetler ve aracın almadığı ilk adımda göndermeyi durdurur. Yalnızca konfor işlevleri; aracın kendi denetimleri çalışmaya devam eder. Hemen uygulanır.</string>
+    <!-- LIVI's NOTICE (GPL-3.0 section 7(b)) requires this attribution in the About screen; keep the name and URL. -->
+    <string name="about_livi_attribution">Based on LIVI by Lasse Heitgres (https://github.com/f-io/LIVI)</string>
+</resources>

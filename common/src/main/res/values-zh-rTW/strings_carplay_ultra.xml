@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_carplay_ultra">CarPlay Ultra（實驗性）</string>
+    <string name="settings_carplay_ultra_try">試用 CarPlay Ultra</string>
+    <!-- Car data for the Vehicle app (CarPlayCarData). -->
+    <string name="settings_carplay_ultra_car_data">車輛 App 中的車輛資料</string>
+    <string name="settings_carplay_ultra_car_data_description">在 CarPlay 的車輛 App 中顯示 Tarmac 已從車輛讀取的資料，例如電量或燃油、續航里程、總里程、輪胎和車外溫度。唯讀：不會傳送任何內容到車輛。每項數值在此車機上的資料來源（BYD ADB、車輛資料轉接器或 TEYES 車機）提供過一次後才會顯示。下次連線時生效。</string>
+    <string name="settings_carplay_ultra_car_data_next">下次連線：%1$s</string>
+    <string name="settings_carplay_ultra_car_data_none">尚無資料。此車機上的資料來源（BYD ADB、車輛資料轉接器或 TEYES 車機）提供某項數值後，從下一次連線起顯示。</string>
+    <string name="settings_carplay_ultra_car_data_fuel">燃油或電量</string>
+    <string name="settings_carplay_ultra_car_data_range">續航里程</string>
+    <string name="settings_carplay_ultra_car_data_odometer">總里程</string>
+    <string name="settings_carplay_ultra_car_data_tyres">胎壓</string>
+    <string name="settings_carplay_ultra_car_data_charging">充電狀態</string>
+    <string name="settings_carplay_ultra_car_data_energy">電池電能</string>
+    <string name="settings_carplay_ultra_car_data_outside">車外溫度</string>
+    <!-- Labels of the read-only lines iOS's Vehicle app shows on the car's screen (CarPlayCarData.settingLines). -->
+    <string name="carplay_vehicle_version">版本</string>
+    <string name="carplay_vehicle_fuel">燃油</string>
+    <string name="carplay_vehicle_charge">電量</string>
+    <string name="carplay_vehicle_range">續航里程</string>
+    <string name="carplay_vehicle_odometer">總里程</string>
+    <string name="carplay_vehicle_charging">正在充電</string>
+    <string name="carplay_vehicle_yes">是</string>
+    <string name="carplay_vehicle_no">否</string>
+    <string name="carplay_vehicle_energy">剩餘電能</string>
+    <string name="carplay_vehicle_outside">車外溫度</string>
+    <string name="carplay_vehicle_source">車輛資料來源</string>
+    <string name="carplay_vehicle_source_test">範例數值（測試）</string>
+    <string name="carplay_vehicle_section_battery">電池</string>
+    <string name="carplay_vehicle_section_fuel">燃油</string>
+    <string name="carplay_vehicle_section_tyres">輪胎</string>
+    <string name="carplay_vehicle_section_car">車輛</string>
+    <string name="carplay_vehicle_front_left">左前</string>
+    <string name="carplay_vehicle_front_right">右前</string>
+    <string name="carplay_vehicle_rear_left">左後</string>
+    <string name="carplay_vehicle_rear_right">右後</string>
+    <string name="settings_carplay_ultra_try_description">回應 CarPlay 的車輛狀態協定。在有空調資料來源的主機上，iPhone 會在 Dock 中顯示車輛的空調狀態；在 iPhone 上選擇 CarPlay Ultra 後，也會在空調 App 中顯示；在 TEYES 和 FYT 主機上，收音機 App 會播放主機的 FM 收音機。同時會將 iPhone 傳送的內容記錄到診斷報告中。會重新連線 CarPlay。</string>
+    <string name="settings_carplay_climate_source">空調資料來自 %1$s 的 CAN 盒。車輛回報空調狀態後，CarPlay 就會顯示。</string>
+    <string name="settings_carplay_climate_none">這台主機沒有 Tarmac 能讀取的空調資料來源，因此 CarPlay 不顯示空調控制。</string>
+    <string name="settings_carplay_climate_writes">來自 iPhone 的空調變更</string>
+    <string name="settings_carplay_climate_writes_description">透過 %1$s 的 CAN 盒服務，將 iPhone 上對溫度、風量、A/C、內循環、除霧和座椅加熱的變更逐步傳送到車輛。Tarmac 每一步都會檢查車輛的回應，並在車輛第一次沒有接受時停止傳送。僅限舒適功能，車輛本身的控制照常可用。立即生效。</string>
+    <!-- LIVI's NOTICE (GPL-3.0 section 7(b)) requires this attribution in the About screen; keep the name and URL. -->
+    <string name="about_livi_attribution">Based on LIVI by Lasse Heitgres (https://github.com/f-io/LIVI)</string>
+</resources>

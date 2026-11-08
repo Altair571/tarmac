@@ -17,6 +17,8 @@ repository, and nothing was run from it.
   `com.spd.dvr` overlay window that covers every app on its own.
 - **Vehicle data:** the exported, unprotected `com.spd.carinfo` service answers read-only getters for the CAN box's
   values (speed, gear, outside temperature, range, state of charge…).
+- **CAN-box profile:** the same service names the chosen box, make and model. Tarmac shows them, with whether the
+  model's protocol forwards guidance (7 of 4,434 models, or any model with the add-on navigation box).
 - **Apple authentication chip:** TEYES's built-in CarPlay uses the chip on `/dev/i2c-2`. The node is mode `0777`, but
   SELinux labels it `device`, and an ordinary app (`untrusted_app`) may not open that label. On a stock unit with
   SELinux enforcing, Tarmac cannot use the chip.
@@ -151,6 +153,139 @@ TEYES writes `Settings.System carletter_night_mode` and sets property `rw.out.da
 Units and the "unknown" value depend on the CAN-box decoder (`/spd/config/CarModel.xml` lists Raise, Hiworld,
 Luzheng, XBS and others). Tarmac treats negative values as unknown and shows the raw numbers so they can be checked
 on a car.
+
+## CAN-box profile
+
+The box, make and model chosen in TEYES's car settings come from the same service, under `CarInfo$Vehicles` (group 17).
+Tarmac reads them without root (Settings › Vehicle › TEYES CAN box).
+
+| Key | Call | Answer |
+|---|---|---|
+| `CURRENT_MODEL` 170004 | `getInt(170004, 0)` | the model ID: box in the top byte, make in the next byte, model in the low 16 bits (`CarModel.getCanBox` / `getCarMake` / `getCarModel`). 0 is "None". |
+| `ALL_CANBOX` 170001 | `getBundle(170001, 0)` | `names` (String[]) and `values` (int[]) of every box |
+| `ALL_MAKE` 170002 | `getBundle(170002, box)` | the makes of that box |
+| `ALL_MODEL` 170003 | `getBundle(170003, make)` | the models of that make, within the box of the last `ALL_MAKE` call |
+| `CARINFO_SETTINGS_ENABLED` 170005 | | whether the car-settings page is on |
+
+- `getBundle` is transaction 12, `(int what, int arg)`, and answers a typed `Bundle`.
+- The lists come from `/spd/config/CarModel.xml` (4,434 models under 37 boxes, with Chinese and English names), parsed
+  by `CarModelManage`. The box values match `CarModel.CANBOX_*` (Raise 1, Hiworld 2, Simple 3, Dogen 5, …).
+- `ALL_MODEL` answers for the box chosen by the last `ALL_MAKE` call. Tarmac asks for them in that order.
+
+**Which models forward guidance and track text.** `CarInfoManage.updateCarModel(int)` opens the protocol for a model ID.
+Tarmac's table (`HeadUnitCanTables`) comes from running that method, read-only, for every model in `CarModel.xml`:
+- **guidance**: 7 models open `HiworldVWComp`, the only protocol that takes AMap's guidance. They are on Hiworld
+  (Volkswagen PQ, 13–19 Rapid, and four Benz entries) and one Oudi Audi Q5. The add-on navigation box
+  (`Settings.System SETTING_THIRD_UART_BOX` = 1) takes guidance for any model, except on an XCarBus box or when the
+  unit has an external protocol box.
+- **track text**: 3,591 models open a protocol that overrides `updateSourceInfo`, so they send TEYES's own sources' track
+  text to the car. Tarmac's track can reach that path only through the root test, so Settings says "with root only".
+
+## Climate
+
+CarPlay's climate (the CarPlay Ultra experiment, [CARPLAY_ULTRA.md](CARPLAY_ULTRA.md#climate-from-the-head-unit)) reads
+and presses the CAN box's climate through the same `com.spd.carinfo` service. Everything below was read from the
+firmware's constants, method names and call sites. None of it has run on a car.
+
+**Keys** (`CarInfo$AirCondition`, group 3, and `CarInfo$Seats`, group 4):
+
+| Key | Value | Read as |
+|---|---|---|
+| `POWER` | 30000 | `getInt`, >0 on |
+| `AC` | 30001 | `getInt`: `CarInfo.FLAG_AC_OFF` 0, `FLAG_AC_ON` 1, `FALG_AC_AUTO` 2 (sic); 1 and 2 count as on |
+| `AUTO` | 30002 | `getInt`, >0 on |
+| `WIND_LEVEL` | 30004 | `getInt`, zone 0 |
+| `RECIRCULATION` | 30005 | `getInt`: `FLAG_RECIRCULATION_OUTER` 0, `INNER` 1, `AUTO` 2; only 1 counts as recirculation |
+| `TEMPERATURE` | 30006 | `getBundle`, zone 0 driver, 1 passenger (2, 3 rear) |
+| `AC_MAX` | 30007 | `getInt`, >0 on |
+| `SYNC` | 30009 | `getInt`, >0 synced |
+| `FRONT_DEFROST` | 30010 | `getInt`, >0 on |
+| `INNER_TEMPERATURE` | 30028 | `getBundle` (cabin) |
+| `WIND_LEVEL_MAX` | 30051 | `getInt`, the fan's top level where a profile reports it; otherwise Tarmac assumes 7 |
+| `Seats.HEATED` | 40001 | `getInt`, zone `CarInfo.SEAT_DRIVER` 0, `SEAT_PASSENGER` 1 |
+
+**Value forms.** The service's getters cast what the active profile's `getAirCondition(what, zone)` returns:
+
+- `getInt` casts to `Integer`, and returns 0 when the profile models no such key;
+- `getBundle` casts to `Bundle`, and returns an empty Bundle for an unmodelled key;
+- a key read with the wrong getter fails its cast inside the service, and the client sees the exception.
+
+For a temperature, profiles such as Raise RAV4 return `value` (float), `unit` (0 °C, 1 °F), `min`, `max` and
+`step`. The range stays 0 until the car's first climate frame. Tarmac therefore takes a filled driver range as
+"this car has climate". TEYES's own climate app shows `value` 0 as LO, 254 as HI and 255 as OFF.
+
+The cabin and outside temperatures come as `{unit, value}` bundles too. Tarmac's existing outside-temperature read
+uses `getInt` (`SpdCarInfoKeys`), so on such profiles it reads as unknown. That is not fixed here.
+
+**Commands.** `setInt(what, value, zone)` (transaction 5) posts the call to the service's handler, which hands it
+to the active profile's `setAirCondition`. The values are button actions, not settings.
+
+TEYES's climate app (`com.spd.aircondition`, one view per CAN-box profile) uses `CarInfo`'s flags:
+
+- touch down `FLAG_BUTTON_DOWN` 0x20000 and touch up `FLAG_BUTTON_UP` 0x10000;
+- `FLAG_SWITCH` 0x1000, `FLAG_INCREASE` 0x2000, `FLAG_DECREASE` 0x4000, plus `FLAG_UP` 16 / `FLAG_MIDDLE` 32 /
+  `FLAG_DOWN` 64 for vent modes.
+
+The shared widgets turn each touch into that flag: `ToggleImageView`, `TemperatureControlLayout` and the
+`WindLevel*ControlLayout`s, through `actionFormat`, where `ACTION_DOWN` gives 0x20000 and `ACTION_UP` gives 0x10000.
+A scan of the app's 5,005 setter call sites found this form across hundreds of views:
+
+- A/C, recirculation, power, defrost and seat heating pass the touch flag alone: about 190 sites for A/C;
+- temperature passes `flag | FLAG_INCREASE` or `flag | FLAG_DECREASE`: about 570 sites;
+- the fan is the same: about 280 sites.
+
+Some views send other forms for other keys; for example KeYiChuang Toyota sends vent mode as `FLAG_SWITCH`.
+
+On the profile side, Raise RAV4's `setAirCondition` acts on `FLAG_BUTTON_UP` (value 0x10000) for its switches. For
+temperature it reads the action bits (`& 0xF000`) and `CarInfo.getButtonFlag`. After each button frame it queues a
+second message 100 ms later (`sendMsg`).
+
+**What Tarmac sends.** For an allow-listed change, Tarmac presses the way the widgets do:
+
+1. `setInt(key, 0x20000 | action, zone)`.
+2. 120 ms later, `setInt(key, 0x10000 | action, zone)`. This is always sent, even after a failure.
+3. Wait up to 2.1 s for the profile's reading to move toward the target.
+
+It stops sending for the session at the first press the car does not answer that way. This covers any profile
+whose view uses another form for that key. Only these keys are ever set: 30001, 30004, 30005, 30006, 30007, 30010
+and 40001. No other set or source call is made.
+
+## Radio
+
+CarPlay's Radio app (the CarPlay Ultra experiment, [CARPLAY_ULTRA.md](CARPLAY_ULTRA.md#radio-from-the-head-unit))
+plays TEYES's own tuner through `com.spd.radio` (`/spd_inner/app/RadioService`, system uid). Its
+`.service.RadioService` is exported without a permission, action `com.spd.radio.service`, interface
+`com.spd.radio.IRadioAidlInterface`. The tuner chips (Si475x, Si4702, TEF66xx, Si47925) are AM/FM only.
+
+| Transaction | Use |
+|---|---|
+| 3 `enterSource(String)` | makes the radio TEYES's source; TEYES's music widget passes `"com.spd.spdradio\|com.spd.radio.START"` |
+| 5 `getFreqInfo()` | `RadioFreqInfo`: `band` String, `freq` (kHz on both bands), `min`, `max`, `step`, `pi`, `signal`, `ps` String |
+| 11 / 12 | RDS PS (station name) / radiotext |
+| 13 `getRadioStatus()` | `RadioStatus`: signal, six flags, local, PTY, then `playState` (1 while the radio holds TEYES's audio) |
+| 18 `getList(String)` | a band's station list ("FM") |
+| 20 `setCommand(cmd, arg1, arg2, Bundle)` | the commands below |
+
+`registerCallback` (1) pushes nothing at once, so Tarmac polls the getters once a second, and the list every five
+seconds.
+
+| `setCommand` | Tarmac sends it for |
+|---|---|
+| 8193 `CMD_SET_FREQ`, arg1 = kHz | tuning to a station or frequency; after 8192 when the band is not FM |
+| 8192 `CMD_SET_BAND`, Bundle `"string"` = `"FM"` | the FM source |
+| 4102 / 4101 `CMD_PRESET_UP` / `DOWN`, Bundle = band | next / previous station |
+| 8199 `CMD_PLAY_STATE` `{1, 0}` / `{0, 0}` | play (after `enterSource`) / pause, which releases TEYES's audio focus |
+
+Notes:
+
+- **Bundle:** several commands read the Bundle without a null check inside the system service, so every
+  `setCommand` from Tarmac carries one.
+- **Audio:** tuning commands take TEYES's audio to the radio.
+- **Never sent:** search, scan, save, remove, region, reset, PTY, and `CMD_ENTER` / `CMD_EXIT` (an unknown system
+  command).
+- **DAB+:** comes from a USB dongle through `com.spd.home`'s `TeyesDabRadioService`, which is not used here.
+- **Band names:** these come from `/spd/config/RadioConfig.xml`, which was not in the extract. Clients use "FM" and
+  "AM".
 
 ## Navigation to the instrument cluster or HUD
 
@@ -302,7 +437,9 @@ What this means for Tarmac:
 
 ## What must never be touched
 
-- `/dev/ttyHS2` (MCU), `spd.Hal`, and the `CarInfoService` set and source calls.
+- `/dev/ttyHS2` (MCU), `spd.Hal`, the `CarInfoService` source calls, `setFloat`/`setString`/`setBundle`, and `setInt`
+  for any key outside the climate allow-list above. `setInt` is called only for those climate keys, and only with
+  **Climate changes from the iPhone** on.
 - `SpdExternalService.sendMessageToSpdDevice`.
 - Any `Settings.System` key. Tarmac only reads them.
 

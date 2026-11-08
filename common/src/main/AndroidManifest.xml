@@ -28,6 +28,8 @@
         <package android:name="com.spd.setting" />
         <package android:name="com.spd.spdsettings" />
         <package android:name="com.alink.carplay" />
+        <!-- TEYES's own tuner, for CarPlay's Radio app (docs/HEADUNIT_SPD_TEYES.md § Radio). -->
+        <package android:name="com.spd.radio" />
         <!-- FYT head units: detection, the module service's updates and the unit's settings
              (docs/HEADUNIT_FYT_DUDU.md). -->
         <package android:name="com.syu.ms" />

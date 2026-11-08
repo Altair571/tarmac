@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FYT's wheel keys for CarPlay on rooted units (docs/HEADUNIT_FYT_DUDU.md). -->
+<resources>
+    <string name="settings_head_unit_link_keys">通过 root 使用语音和通话键（实验性）</string>
+    <string name="settings_head_unit_link_keys_description">CarPlay 运行时，%1$s 通过 root 把方向盘按键交给 Tarmac：语音键打开 Siri，通话键接听和挂断 CarPlay 来电。媒体、主页和返回键照常可用。CarPlay 停止后，按键交还给 %1$s。</string>
+    <string name="settings_head_unit_link_keys_refused">root 被拒绝，按键仍由 %1$s 处理。</string>
+</resources>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_carplay_ultra">CarPlay Ultra (експериментально)</string>
+    <string name="settings_carplay_ultra_try">Спробувати CarPlay Ultra</string>
+    <!-- Car data for the Vehicle app (CarPlayCarData). -->
+    <string name="settings_carplay_ultra_car_data">Дані автомобіля в програмі «Автомобіль»</string>
+    <string name="settings_carplay_ultra_car_data_description">Показує в програмі «Автомобіль» CarPlay дані, які Tarmac уже читає з автомобіля: заряд або пальне, запас ходу, одометр, шини, температуру зовні. Лише читання: до автомобіля нічого не надсилається. Кожне значення з’являється, коли його хоча б раз передало джерело на цьому головному пристрої: ADB BYD, адаптер даних автомобіля або пристрій TEYES. Застосовується під час наступного підключення.</string>
+    <string name="settings_carplay_ultra_car_data_next">Наступне підключення: %1$s</string>
+    <string name="settings_carplay_ultra_car_data_none">Поки нічого. Значення з’явиться з підключення після того, як його передасть джерело на цьому головному пристрої: ADB BYD, адаптер даних автомобіля або пристрій TEYES.</string>
+    <string name="settings_carplay_ultra_car_data_fuel">пальне або заряд</string>
+    <string name="settings_carplay_ultra_car_data_range">запас ходу</string>
+    <string name="settings_carplay_ultra_car_data_odometer">одометр</string>
+    <string name="settings_carplay_ultra_car_data_tyres">тиск у шинах</string>
+    <string name="settings_carplay_ultra_car_data_charging">стан заряджання</string>
+    <string name="settings_carplay_ultra_car_data_energy">енергія батареї</string>
+    <string name="settings_carplay_ultra_car_data_outside">температура зовні</string>
+    <!-- Labels of the read-only lines iOS's Vehicle app shows on the car's screen (CarPlayCarData.settingLines). -->
+    <string name="carplay_vehicle_version">Версія</string>
+    <string name="carplay_vehicle_fuel">Пальне</string>
+    <string name="carplay_vehicle_charge">Заряд</string>
+    <string name="carplay_vehicle_range">Запас ходу</string>
+    <string name="carplay_vehicle_odometer">Одометр</string>
+    <string name="carplay_vehicle_charging">Заряджання</string>
+    <string name="carplay_vehicle_yes">Так</string>
+    <string name="carplay_vehicle_no">Ні</string>
+    <string name="carplay_vehicle_energy">Залишок енергії</string>
+    <string name="carplay_vehicle_outside">Температура зовні</string>
+    <string name="carplay_vehicle_source">Дані автомобіля з</string>
+    <string name="carplay_vehicle_source_test">Приклад значень (тест)</string>
+    <string name="carplay_vehicle_section_battery">Батарея</string>
+    <string name="carplay_vehicle_section_fuel">Пальне</string>
+    <string name="carplay_vehicle_section_tyres">Шини</string>
+    <string name="carplay_vehicle_section_car">Автомобіль</string>
+    <string name="carplay_vehicle_front_left">Передня ліва</string>
+    <string name="carplay_vehicle_front_right">Передня права</string>
+    <string name="carplay_vehicle_rear_left">Задня ліва</string>
+    <string name="carplay_vehicle_rear_right">Задня права</string>
+    <string name="settings_carplay_ultra_try_description">Відповідає на протокол стану автомобіля CarPlay. На головних пристроях із джерелом клімату iPhone показує клімат автомобіля в Dock, а якщо на iPhone вибрано CarPlay Ultra, — і в програмі «Клімат»; на пристроях TEYES і FYT програма «Радіо» грає FM-тюнер пристрою. Також записує в діагностичний звіт те, що надсилає iPhone. Перепідключає CarPlay.</string>
+    <string name="settings_carplay_climate_source">Клімат надходить від CAN-адаптера %1$s. CarPlay показує його, коли автомобіль повідомить про свій клімат.</string>
+    <string name="settings_carplay_climate_none">Цей головний пристрій не має джерела клімату, яке може читати Tarmac, тому CarPlay не показує керування кліматом.</string>
+    <string name="settings_carplay_climate_writes">Зміни клімату з iPhone</string>
+    <string name="settings_carplay_climate_writes_description">Надсилає в автомобіль зміни температури, вентилятора, кондиціонера, рециркуляції, обдуву скла й підігріву сидінь з iPhone через службу CAN-адаптера %1$s, по одному кроку. Після кожного кроку Tarmac перевіряє відповідь автомобіля й припиняє надсилання на першому кроці, який автомобіль не прийняв. Лише функції комфорту; власні органи керування автомобіля працюють і далі. Застосовується одразу.</string>
+    <!-- LIVI's NOTICE (GPL-3.0 section 7(b)) requires this attribution in the About screen; keep the name and URL. -->
+    <string name="about_livi_attribution">Based on LIVI by Lasse Heitgres (https://github.com/f-io/LIVI)</string>
+</resources>

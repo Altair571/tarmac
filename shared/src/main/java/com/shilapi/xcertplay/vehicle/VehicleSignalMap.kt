@@ -11,6 +11,8 @@ enum class VehicleSignal(val key: String) {
     CHARGING("charging"),
     GEAR("gear"),
     SPEED("speed_kmh"),
+    FUEL("fuel_pct"),
+    ODOMETER("odometer_km"),
     ;
 
     /** Gear and speed change by the second; the rest is polled less often over OBD-II. */
@@ -39,6 +41,8 @@ data class SignalDecoding(
             VehicleSignal.CHARGING -> into.copy(charging = if (chargingValues.isEmpty()) raw != 0L else raw in chargingValues)
             VehicleSignal.GEAR -> gears[raw]?.let { into.copy(gear = it) } ?: into
             VehicleSignal.SPEED -> into.copy(speedKmh = value.takeIf { it in 0.0..400.0 })
+            VehicleSignal.FUEL -> into.copy(fuelPercent = value.takeIf { it in 0.0..100.0 })
+            VehicleSignal.ODOMETER -> into.copy(odometerKm = value.takeIf { it in 0.0..2_000_000.0 })
         }
     }
 }

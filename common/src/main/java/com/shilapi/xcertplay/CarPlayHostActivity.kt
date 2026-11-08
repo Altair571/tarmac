@@ -91,8 +91,10 @@ import com.shilapi.xcertplay.airplay.CarPlayClusterDisplay
 import com.shilapi.xcertplay.airplay.AirPlaySafeArea
 import com.shilapi.xcertplay.airplay.AirPlaySession
 import com.shilapi.xcertplay.airplay.AirPlaySessionListener
+import com.shilapi.xcertplay.airplay.CarRadioCommand
 import com.shilapi.xcertplay.airplay.CarPlayMediaEngine
 import com.shilapi.xcertplay.airplay.SafeAreaRect
+import com.shilapi.xcertplay.headunit.FytKeyLink
 import com.shilapi.xcertplay.host.R
 import com.shilapi.xcertplay.location.AndroidCarPlayLocationProvider
 import com.shilapi.xcertplay.media.AndroidMediaSink
@@ -158,6 +160,7 @@ open class CarPlayHostActivity : ComponentActivity() {
     )
 
     private var connectionPanel: View? = null
+    private var connectingDashboard: ConnectingDashboardView? = null
     private var connectionInstructionsView: TextView? = null
     private var connectionHelpView: TextView? = null
     private var wifiRecoveryButton: View? = null
@@ -656,6 +659,9 @@ open class CarPlayHostActivity : ComponentActivity() {
     private var requestedSmallWindowForStream: Boolean? = null
     @Volatile private var adbNaviMode: com.shilapi.xcertplay.hud.BydClusterNaviMode? = null
     private var sessionLog: SessionLogFile? = null
+    // CarPlay Ultra experiment: the car's climate for CarPlay (docs/CARPLAY_ULTRA.md).
+    private val climateLink by lazy { CarPlayClimateLink(this) { AsyncDiagnosticLog.append(sessionLog, it) } }
+    private val radioLink by lazy { CarPlayRadioLink(this) { AsyncDiagnosticLog.append(sessionLog, it) } }
     private var gestureFingerCount = 3
     private var settingsGestureHint: TextView? = null
     private var gestureSequenceActive = false
@@ -745,6 +751,7 @@ open class CarPlayHostActivity : ComponentActivity() {
         }
     }
     private var sidePanelShown = false
+    private var carDataFeed: CarPlayCarData.Feed? = null
     private val sidePanelTick = object : Runnable {
         override fun run() {
             refreshSidePanel()
@@ -1602,7 +1609,8 @@ open class CarPlayHostActivity : ComponentActivity() {
         adbClusterConfigured = false
         clusterStreamOnDisplay = false
         requestedSmallWindowForStream = null
-        if (!AirPlayPersistence.loadClusterMapEnabled(this)) return null
+        // CarPlay Ultra centres on the cluster, so the experiment declares one (the virtual stream below when no screen is found).
+        if (!AirPlayPersistence.loadClusterMapEnabled(this) && !AirPlayPersistence.loadCarPlayUltra(this)) return null
         // 已选择的 ADB 路由使用固定尺寸，无需启动仪表 Activity 才能准备流参数。
         if (AdbClusterRouter.enabled(this)) {
             adbClusterConfigured = true
@@ -1982,8 +1990,6 @@ open class CarPlayHostActivity : ComponentActivity() {
         super.onConfigurationChanged(newConfig)
         refreshConfiguration(newConfig, ThemeModeDiagnostics.Source.CALLBACK)
         applyFullscreenMode()
-        stageStatusView?.maxWidth = (resources.displayMetrics.widthPixels * 0.78f).toInt()
-        connectionHelpView?.maxWidth = (resources.displayMetrics.widthPixels * 0.78f).toInt()
         scrollLogsToBottom()
         videoView?.post {
             val view = videoView ?: return@post
@@ -2008,11 +2014,14 @@ open class CarPlayHostActivity : ComponentActivity() {
             return
         }
         CarPlayScreen.destroyed(this)
+        climateLink.close()
+        radioLink.close()
         runCatching { unregisterReceiver(bluetoothOnReceiver) }
         mainHandler.removeCallbacks(hideTemporarySystemBars)
         dropHeldTouch()
         discardLastPicture()
         if (pictureCopyThreadStarted) pictureCopyThread.quitSafely()
+        stopCarData()
         resetSidePanel()
         releaseSidePanelEffects()
         hostAppearanceResumed = false
@@ -2076,9 +2085,12 @@ open class CarPlayHostActivity : ComponentActivity() {
             root.addView(overlay, FrameLayout.LayoutParams(-1, -1))
         }
         root.addView(gestureLayer, FrameLayout.LayoutParams(-1, -1))
-        // Measure the preparation content naturally, then fit it inside the safe viewport.
+        // Arrange the preparation content for the safe viewport, then fit it inside without scrolling.
+        var arrangePreparation: (Int, Int) -> Unit = { _, _ -> }
         val viewport = object : FrameLayout(this) {
             override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+                arrangePreparation(View.MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight,
+                    View.MeasureSpec.getSize(heightMeasureSpec) - paddingTop - paddingBottom)
                 super.onMeasure(widthMeasureSpec, heightMeasureSpec)
                 getChildAt(0)?.measure(
                     View.MeasureSpec.makeMeasureSpec((measuredWidth - paddingLeft - paddingRight).coerceAtLeast(0), View.MeasureSpec.EXACTLY),
@@ -2089,44 +2101,49 @@ open class CarPlayHostActivity : ComponentActivity() {
             isClickable = true
         }
         val panel = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
+            orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER
         }
-        // The CarPlay icon with the connecting ripple, as on Home.
-        val icon = ConnectionPulseView(this, getDrawable(R.drawable.ic_carplay)).apply {
+        // A car's cabin with the CarPlay icon rippling on its centre screen.
+        val dashboard = ConnectingDashboardView(this, getDrawable(R.drawable.ic_carplay)).apply {
+            rightHandDrive = AirPlayPersistence.loadRightHandDrive(this@CarPlayHostActivity)
+        }
+        connectingDashboard = dashboard
+        dashboard.pulse.apply {
             state = PulseState.CONNECTING
             contentDescription = getString(R.string.carplay)
         }
-        panel.addView(icon, LinearLayout.LayoutParams(dp(120), dp(120)))
-        val title = TextView(this).apply {
+        val details = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        fun text(weight: AppType.Weight) = TextView(this).apply { typeface = AppType.of(this@CarPlayHostActivity, weight) }
+        // Tarmac's own icon and name above the status, as an iOS app signs its screens.
+        val title = text(AppType.Weight.SEMIBOLD).apply {
             text = getString(R.string.diplay)
-            gravity = Gravity.CENTER
-            typeface = AppType.of(this@CarPlayHostActivity, AppType.Weight.BOLD)
+            gravity = Gravity.CENTER_VERTICAL
+        }
+        details.addView(title, LinearLayout.LayoutParams(-2, -2))
+        val stage = text(AppType.Weight.BOLD).apply {
+            text = getString(R.string.getting_carplay_ready)
             letterSpacing = -.01f
         }
-        panel.addView(title)
-        val stage = TextView(this).apply {
-            text = getString(R.string.getting_carplay_ready)
-            gravity = Gravity.CENTER
-        }
-        panel.addView(stage)
-        val instructions = TextView(this).apply {
+        details.addView(stage, LinearLayout.LayoutParams(-1, -2))
+        val instructions = text(AppType.Weight.REGULAR).apply {
             text = connectionInstructions(null)
-            gravity = Gravity.CENTER
+            setLineSpacing(0f, 1.12f)
         }
-        panel.addView(instructions)
-        val help = TextView(this).apply {
-            gravity = Gravity.CENTER
+        details.addView(instructions, LinearLayout.LayoutParams(-1, -2))
+        val help = text(AppType.Weight.REGULAR).apply {
             visibility = View.GONE
+            setLineSpacing(0f, 1.12f)
         }
-        panel.addView(help)
+        details.addView(help, LinearLayout.LayoutParams(-1, -2))
+        val actions = ConnectingActions(this)
         val recovery = DiPlayButton(this).apply {
             text = getString(R.string.reset_carplay_wi_fi)
             visibility = View.GONE
             setOnClickListener { showDiPlayHome("wireless-recovery") }
             wifiRecoveryButton = this
         }
-        panel.addView(recovery, LinearLayout.LayoutParams(dp(300), dp(64)).apply { bottomMargin = dp(12) })
+        actions.addView(recovery)
         val retry = DiPlayButton(this).apply {
             text = getString(R.string.retry_carplay_connection)
             visibility = View.GONE
@@ -2141,43 +2158,45 @@ open class CarPlayHostActivity : ComponentActivity() {
             }
             startupRetryButton = this
         }
-        panel.addView(retry, LinearLayout.LayoutParams(dp(300), dp(64)).apply { bottomMargin = dp(12) })
+        actions.addView(retry)
         val back = DiPlayButton(this).apply {
             text = getString(R.string.back_to_diplay)
             setOnClickListener { showDiPlayHome() }
         }
-        panel.addView(back, LinearLayout.LayoutParams(dp(300), dp(64)))
-        val gestureHint = TextView(this).apply {
+        actions.addView(back)
+        details.addView(actions, LinearLayout.LayoutParams(-1, -2))
+        val gestureHint = text(AppType.Weight.REGULAR).apply {
             text = settingsGestureHintText()
-            gravity = Gravity.CENTER
         }
-        panel.addView(gestureHint)
+        details.addView(gestureHint, LinearLayout.LayoutParams(-1, -2))
+        panel.addView(details)
+        panel.addView(dashboard)
         paintWaitingScreen = {
             // The connection screen is DiPlay chrome: follow the app theme, not the day/night mode sent to CarPlay.
             val colors = WaitingScreenColors.of(appNight)
-            // A deep base lit by CarPlay's blue from above and green from below, as an iOS wallpaper glows.
+            // A deep base lit blue from above and indigo from below, as an iOS wallpaper glows, behind the cabin picture.
             val reach = maxOf(resources.displayMetrics.widthPixels, resources.displayMetrics.heightPixels) * .75f
             fun glow(color: Int, x: Float, y: Float) = android.graphics.drawable.GradientDrawable().apply {
                 gradientType = android.graphics.drawable.GradientDrawable.RADIAL_GRADIENT
                 gradientRadius = reach
                 setGradientCenter(x, y)
-                this.colors = intArrayOf((color and 0x00FFFFFF) or ((if (appNight) 0x66 else 0x40) shl 24), color and 0x00FFFFFF)
+                this.colors = intArrayOf((color and 0x00FFFFFF) or ((if (appNight) 0x4D else 0x33) shl 24), color and 0x00FFFFFF)
             }
             viewport.background = android.graphics.drawable.LayerDrawable(arrayOf(
                 android.graphics.drawable.ColorDrawable(colors.background),
                 glow(IosColors.blue(appNight), .15f, 0f),
-                glow(IosColors.green(appNight), .9f, 1f),
+                glow(IosColors.indigo(appNight), .9f, 1f),
             ))
-            icon.color = IosColors.blue(appNight)
-            icon.surface = colors.background
+            dashboard.night = appNight
             title.setTextColor(colors.text)
             stage.setTextColor(colors.text)
             instructions.setTextColor(colors.secondary)
             help.setTextColor(colors.secondary)
             gestureHint.setTextColor(colors.secondary)
             val buttonPalette = DiPlayPalette.of(appNight)
-            back.style(DiPlayButtonKind.PRIMARY, buttonPalette, overlay = false)
-            retry.style(DiPlayButtonKind.SECONDARY, buttonPalette, overlay = false)
+            // Leaving is always there; retrying is the step to take once it shows.
+            back.style(DiPlayButtonKind.SECONDARY, buttonPalette, overlay = false)
+            retry.style(DiPlayButtonKind.PRIMARY, buttonPalette, overlay = false)
             recovery.style(DiPlayButtonKind.SECONDARY, buttonPalette, overlay = false)
         }
         paintWaitingScreen()
@@ -2190,57 +2209,108 @@ open class CarPlayHostActivity : ComponentActivity() {
         }.also { root.addView(it, FrameLayout.LayoutParams(0, 0)) }
         sidePanel = buildSidePanel().also { root.addView(it, FrameLayout.LayoutParams(0, 0)) }
         sidePanelTab = buildSidePanelTab().also { root.addView(it, FrameLayout.LayoutParams(0, 0)) }
-        var preparationHeight = -1
-        fun updatePreparationLayout() {
-            val height = viewport.height - viewport.paddingTop - viewport.paddingBottom
-            if (height <= 0) return
-            // Interpolate within the short viewport range; keep regular screens at their existing size.
-            val fraction = ((height.toFloat() / resources.displayMetrics.density - 240f) / 240f).coerceIn(0f, 1f)
+        var arrangedSize = -1L
+        // Landscape head units put the cabin beside the text, with the text on the reading side; portrait screens
+        // stack it above. Sizes interpolate within the short viewport range, and buttons never drop below 56 dp.
+        arrangePreparation = arrange@{ width, height ->
+            if (width <= 0 || height <= 0) return@arrange
+            val fraction = ((height / resources.displayMetrics.density - 240f) / 240f).coerceIn(0f, 1f)
             fun size(short: Float, regular: Float) = short + (regular - short) * fraction
-            fun spacing(short: Float, regular: Float) = dp(size(short, regular).toInt())
-            val availableWidth = viewport.width - viewport.paddingLeft - viewport.paddingRight - dp(48)
-            val buttonWidth = minOf(dp(300), availableWidth.coerceAtLeast(dp(48)))
-            for (button in listOf(back, recovery, retry)) {
-                if (button.layoutParams.width != buttonWidth) {
-                    button.layoutParams = button.layoutParams.apply { width = buttonWidth }
+            fun spacing(short: Float, regular: Float) = dp(size(short, regular).roundToInt())
+            val side = width >= dp(PREPARATION_SIDE_BY_SIDE_MIN_WIDTH_DP) && width >= height * 1.25f &&
+                height >= dp(174)
+            val sizeKey = (width.toLong() shl 32) or height.toLong()
+            if (sizeKey != arrangedSize) {
+                arrangedSize = sizeKey
+                title.textSize = size(15f, 18f)
+                val iconSize = spacing(22f, 30f)
+                title.setCompoundDrawablesRelative(tarmacIcon(iconSize), null, null, null)
+                title.compoundDrawablePadding = spacing(8f, 12f)
+                stage.textSize = size(22f, 30f)
+                instructions.textSize = size(16f, 19f)
+                help.textSize = size(16f, 19f)
+                gestureHint.textSize = size(13f, 15f)
+                for (button in listOf(back, recovery, retry)) button.textSize = size(17f, 19f)
+                actions.buttonHeight = spacing(56f, 64f)
+                actions.gap = dp(PREPARATION_BUTTON_GAP_DP)
+                actions.minButtonWidth = dp(200)
+                actions.maxButtonWidth = dp(340)
+                (title.layoutParams as LinearLayout.LayoutParams).bottomMargin = spacing(8f, 12f)
+                (stage.layoutParams as LinearLayout.LayoutParams).bottomMargin = spacing(6f, 10f)
+                for (view in listOf(instructions, help)) {
+                    (view.layoutParams as LinearLayout.LayoutParams).bottomMargin = spacing(14f, 24f)
                 }
+                (gestureHint.layoutParams as LinearLayout.LayoutParams).topMargin = spacing(12f, 18f)
             }
-            if (preparationHeight == height) return
-            preparationHeight = height
-            panel.setPadding(dp(24), spacing(16f, 32f), dp(24), spacing(16f, 32f))
-            val iconSize = spacing(54f, 88f)
-            icon.layoutParams = LinearLayout.LayoutParams(iconSize * 4 / 3, iconSize * 4 / 3)
-            title.textSize = size(26f, 34f)
-            title.setPadding(0, spacing(8f, 18f), 0, spacing(6f, 14f))
-            stage.textSize = size(19f, 22f)
-            instructions.textSize = size(15f, 17f)
-            instructions.setPadding(0, spacing(8f, 14f), 0, spacing(12f, 24f))
-            help.textSize = size(15f, 17f)
-            help.setPadding(0, spacing(8f, 14f), 0, spacing(12f, 24f))
-            for (button in listOf(back, recovery, retry)) {
-                button.textSize = size(17f, 18f)
-                button.layoutParams = button.layoutParams.apply { this.height = spacing(50f, 64f) }
+            val horizontalPadding = dp(if (side) 32 else 24)
+            val verticalPadding = spacing(12f, 24f)
+            if (panel.paddingTop != verticalPadding || panel.paddingStart != horizontalPadding) {
+                panel.setPaddingRelative(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding)
             }
-            gestureHint.textSize = size(12.5f, 13f)
-            gestureHint.setPadding(0, spacing(10f, 20f), 0, 0)
+            val contentWidth = width - horizontalPadding * 2
+            val contentHeight = height - verticalPadding * 2
+            val dashboardParams = dashboard.layoutParams as LinearLayout.LayoutParams
+            val detailsParams = details.layoutParams as LinearLayout.LayoutParams
+            val first = if (side) details else dashboard
+            if (panel.getChildAt(0) !== first) {
+                panel.removeView(first)
+                panel.addView(first, 0)
+            }
+            fun columnHeight(columnWidth: Int): Int {
+                details.measure(View.MeasureSpec.makeMeasureSpec(columnWidth, View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+                return details.measuredHeight
+            }
+            if (side) {
+                panel.orientation = LinearLayout.HORIZONTAL
+                val gap = spacing(24f, 48f)
+                // When the text is too tall beside the picture, give it width from the picture first, then the
+                // whole screen; shrinking everything is the last resort.
+                val preferred = (contentWidth * .46f).toInt().coerceIn(dp(300), dp(560))
+                val widest = maxOf(preferred, contentWidth - gap - dp(PREPARATION_MIN_PICTURE_WIDTH_DP))
+                val columnWidth = listOf(preferred, (preferred + widest) / 2, widest)
+                    .firstOrNull { columnHeight(it) <= contentHeight }
+                dashboard.visibility = if (columnWidth != null) View.VISIBLE else View.GONE
+                detailsParams.width = columnWidth ?: minOf(contentWidth, dp(820))
+                detailsParams.height = LinearLayout.LayoutParams.WRAP_CONTENT
+                dashboardParams.width = contentWidth - gap - (columnWidth ?: 0)
+                dashboardParams.height = contentHeight
+                // Set the side margin directly: a start margin changed after the first pass is not resolved again.
+                val rtl = resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
+                dashboardParams.setMargins(if (rtl) 0 else gap, 0, if (rtl) gap else 0, 0)
+            } else {
+                panel.orientation = LinearLayout.VERTICAL
+                val columnWidth = minOf(contentWidth, dp(560))
+                detailsParams.width = columnWidth
+                val gap = spacing(16f, 28f)
+                val dashboardWidth = minOf(contentWidth, dp(640))
+                val dashboardHeight = minOf(dashboardWidth / 1.3f, (contentHeight - columnHeight(columnWidth) - gap).toFloat()).toInt()
+                dashboard.visibility = if (dashboardHeight >= dp(140)) View.VISIBLE else View.GONE
+                dashboardParams.width = dashboardWidth
+                dashboardParams.height = dashboardHeight.coerceAtLeast(0)
+                dashboardParams.setMargins(0, 0, 0, gap)
+            }
+            // Alone, the text centres; beside the picture, it starts at the reading edge.
+            val alignment = if (side && dashboard.visibility == View.VISIBLE) Gravity.START else Gravity.CENTER_HORIZONTAL
+            if (details.gravity and Gravity.RELATIVE_HORIZONTAL_GRAVITY_MASK != alignment) {
+                details.gravity = alignment
+                for (view in listOf(stage, instructions, help, gestureHint)) view.gravity = alignment
+                title.gravity = alignment or Gravity.CENTER_VERTICAL
+            }
+            actions.centred = alignment != Gravity.START
         }
         fun fitPreparationContent() {
             val availableHeight = viewport.height - viewport.paddingTop - viewport.paddingBottom
             if (panel.height <= 0 || availableHeight <= 0) return
-            val landscape = viewport.width - viewport.paddingLeft - viewport.paddingRight > availableHeight
-            val scale = if (landscape) minOf(1f, availableHeight.toFloat() / panel.height) else 1f
+            val scale = minOf(1f, availableHeight.toFloat() / panel.height)
             panel.scaleX = scale
             panel.scaleY = scale
         }
         panel.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ -> fitPreparationContent() }
-        viewport.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-            updatePreparationLayout()
-            fitPreparationContent()
-        }
+        viewport.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ -> fitPreparationContent() }
         ViewCompat.setOnApplyWindowInsetsListener(viewport) { _, insets ->
             val safe = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
             viewport.setPadding(safe.left, safe.top, safe.right, safe.bottom)
-            viewport.post { updatePreparationLayout() }
             insets
         }
         ViewCompat.requestApplyInsets(viewport)
@@ -2808,6 +2878,19 @@ open class CarPlayHostActivity : ComponentActivity() {
         videoView?.let { placeSidePanelTab(it.width, it.height) }
     }
 
+    // CarPlay Ultra experiment: the car's read-only data for the Vehicle app, while the vehicle-state protocol runs.
+    private fun startCarData(session: AirPlaySession) {
+        stopCarData()
+        val state = session.vehicleState ?: return
+        if (!CarPlayCarData.enabled(this)) return
+        carDataFeed = CarPlayCarData.Feed(this, state) { appendLog(it) }
+    }
+
+    private fun stopCarData() {
+        carDataFeed?.close()
+        carDataFeed = null
+    }
+
     // Tyres through the head unit's adb shell; the reader stops by itself where there is no BYD autoservice.
     private fun startSidePanelTyres() {
         com.shilapi.xcertplay.hud.BydTyreStatus.start(this)
@@ -2930,6 +3013,13 @@ open class CarPlayHostActivity : ComponentActivity() {
         if (root is ViewGroup) {
             for (index in 0 until root.childCount) yieldAll(findDescendants(root.getChildAt(index)))
         }
+    }
+
+    /** Tarmac's launcher icon as a small rounded square, for the connecting screen's title. */
+    private fun tarmacIcon(size: Int): Drawable {
+        val background = GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
+            intArrayOf(Color.rgb(72, 72, 74), Color.rgb(17, 17, 19))).apply { cornerRadius = size * .225f }
+        return LayerDrawable(arrayOf(background, getDrawable(R.drawable.ic_tarmac_foreground))).apply { setBounds(0, 0, size, size) }
     }
 
     private fun settingsGestureHintText(): String =
@@ -3610,6 +3700,7 @@ open class CarPlayHostActivity : ComponentActivity() {
         AirPlayPersistence.saveOemLabel(this, oemLabel)
         AirPlayPersistence.saveDebugLogsEnabled(this, debugLogsEnabled)
         AirPlayPersistence.saveRightHandDrive(this, rightHandDrive)
+        connectingDashboard?.rightHandDrive = rightHandDrive
         CarPlayDock.save(this, carPlayDock)
         AirPlayPersistence.saveHideTopBar(this, hideTopBar)
         AirPlayPersistence.saveHideBottomBar(this, hideBottomBar)
@@ -5148,6 +5239,7 @@ open class CarPlayHostActivity : ComponentActivity() {
         appendLog(effectiveSummary)
         val carBluetoothAudio = AirPlayPersistence.loadCarBluetoothAudio(this)
         if (carBluetoothAudio) logCarBluetoothAudio()
+        val carData = CarPlayCarData.forConnection(this)
         return AirPlayConfig(
             deviceName = "Tarmac",
             deviceId = DiPlayBootstrap.deviceId(airPlayIdentity),
@@ -5168,6 +5260,13 @@ open class CarPlayHostActivity : ComponentActivity() {
             speechWithout8And16Khz = AirPlayPersistence.loadSpeechWithout8And16Khz(this),
             callAtCallRate = AirPlayPersistence.loadCallAtCallRate(this),
             disableAudioOutput = carBluetoothAudio,
+            ultraFeatures = AirPlayPersistence.loadCarPlayUltraFeatures(this).also {
+                if (it.isNotEmpty()) appendLog("CarPlay Ultra experiment: enabling $it when proposed")
+                climateLink.start()
+                radioLink.start()
+            },
+            carData = carData,
+            vehicleSettings = CarPlayCarData.settingLines(this, carData),
         )
     }
 
@@ -5423,6 +5522,8 @@ open class CarPlayHostActivity : ComponentActivity() {
                         return@runOnUiThread
                     }
                     activeAirPlaySession = session
+                    climateLink.attach(session)
+                    radioLink.attach(session)
                     if (!session.hasRenderedMainFrame) clusterSurface?.let { sink?.clearSurface(SCREEN_TYPE_ALT, it) }
                     val pending = pendingIphoneCornerMask
                     if (pending?.first === session) {
@@ -5430,6 +5531,7 @@ open class CarPlayHostActivity : ComponentActivity() {
                     } else clearIphoneCornerMask()
                     CarPlayBackgroundSession.active = true
                     ReverseCameraSwitch.ensure(this@CarPlayHostActivity)
+                    FytKeyLink.sessionActive(this@CarPlayHostActivity)
                     LastConnectionProblem.clear(this@CarPlayHostActivity)
                     showConnectionHelp(null)
                     callPopupSessionReady = true
@@ -5439,6 +5541,7 @@ open class CarPlayHostActivity : ComponentActivity() {
                     syncAirPlayDarkMode(ThemeModeDiagnostics.Source.SESSION_ACTIVE)
                     ensureClusterPresentation()
                     applyClusterTurnOverlay()
+                    startCarData(session)
                     if (AirPlayPersistence.loadClusterSmallWindowMode(this@CarPlayHostActivity) == CLUSTER_SMALL_WINDOW_AUTO &&
                         requestedSmallWindowForStream != null &&
                         requestedSmallWindowForStream != smallWindowActive()) {
@@ -5477,9 +5580,13 @@ open class CarPlayHostActivity : ComponentActivity() {
                     if (controllerGeneration != restartGeneration || startupRetryStopped) return@runOnUiThread
                     startupRetryBudget.disconnected()
                     activeAirPlaySession = null
+                    stopCarData()
+                    climateLink.detach(session)
+                    radioLink.detach(session)
                     clusterSurface?.let { sink?.clearSurface(SCREEN_TYPE_ALT, it) }
                     clearIphoneCornerMask()
                     CarPlayBackgroundSession.active = false
+                    FytKeyLink.stop()
                     callPopupSessionReady = false
                     updateCallPopupGuard()
                     if (menuOpen) {
@@ -5513,6 +5620,12 @@ open class CarPlayHostActivity : ComponentActivity() {
                     reconnectAfterLoss("CarPlay transport error: $message")
                 }
             }
+
+            override fun vehicleProfile() = climateLink.profile().copy(radio = radioLink.available())
+
+            override fun onRadioCommand(command: CarRadioCommand) = radioLink.onRadioCommand(command)
+
+            override fun onVehicleWrite(name: String, value: Any?) = climateLink.onPhoneWrite(name, value)
 
             override val wantsTrace: Boolean get() = false
 
@@ -6814,8 +6927,19 @@ open class CarPlayHostActivity : ComponentActivity() {
     /** [englishMessage] is [message] in English, which [friendlyStage] reads for its keywords. */
     private fun setConnectionStage(message: String, englishMessage: String = message) {
         latestStage = message
-        stageStatusView?.text = friendlyStage(message, englishMessage)
+        stageStatusView?.text = stageText(friendlyStage(message, englishMessage))
         updateDebugOverlays()
+    }
+
+    /** The stage's first line is its headline; the lines after it explain, smaller and lighter. */
+    private fun stageText(stage: String): CharSequence {
+        val details = stage.indexOf('\n') + 1
+        if (details <= 0 || details >= stage.length) return stage
+        return android.text.SpannableString(stage).apply {
+            setSpan(android.text.style.RelativeSizeSpan(.62f), details, length, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(AppTypefaceSpan(AppType.of(this@CarPlayHostActivity, AppType.Weight.MEDIUM)), details, length,
+                android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
     }
 
     private fun updateDebugOverlays() {
@@ -7035,6 +7159,11 @@ open class CarPlayHostActivity : ComponentActivity() {
         /** A Galaxy Note20 reported the third finger of a swipe 42 ms after the first. */
         const val SETTINGS_SWIPE_HOLD_MILLIS = 80L
         const val MAX_SETTINGS_MENU_WIDTH_DP = 720
+        /** The connecting screen puts its cabin beside the text from this width, on a landscape window. */
+        const val PREPARATION_SIDE_BY_SIDE_MIN_WIDTH_DP = 660
+        const val PREPARATION_BUTTON_GAP_DP = 12
+        /** Below this width the connecting screen's picture gives way to the text. */
+        const val PREPARATION_MIN_PICTURE_WIDTH_DP = 280
         const val SWIPE_PANEL_MARGIN_DP = 16
         const val SWIPE_PANEL_RADIUS_DP = 28
         const val SWIPE_PANEL_ELEVATION_DP = 24

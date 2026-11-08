@@ -164,6 +164,7 @@ class Iap2WirelessControlClient(
                     CARPLAY_AVAILABILITY -> {
                         onProgress("iap2 rx=0x4300 carplay-availability")
                         onProgress(carPlayAvailabilityDiagnostic(incoming))
+                        onProgress("iap2 4300 extras=${Iap2CarPlayMessages.availabilityExtras(incoming.payload)}")
                         beforeStartSession()
                         sendStartSession(endpoint, ::sendControl, onStartSessionSent)
                         stage = later(stage, Iap2WirelessControlStage.CARPLAY_START_SENT)

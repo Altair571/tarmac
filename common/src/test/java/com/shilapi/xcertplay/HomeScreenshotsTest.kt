@@ -32,7 +32,8 @@ import java.time.Duration
 @Config(sdk = [29])
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class HomeScreenshotsTest {
-    private data class Screen(val name: String, val qualifiers: String, val fontScale: Float = 1f)
+    /** With [route] the Navigation widget shows, as it does while a route runs. */
+    private data class Screen(val name: String, val qualifiers: String, val fontScale: Float = 1f, val route: Boolean = false)
 
     @After fun tearDown() {
         RuntimeEnvironment.setFontScale(1f)
@@ -46,11 +47,21 @@ class HomeScreenshotsTest {
         val screens = listOf(
             Screen("head-unit-1920x720", "en-w1280dp-h480dp-land-hdpi"),
             Screen("head-unit-1920x720-font-1.3", "en-w1280dp-h480dp-land-hdpi", 1.3f),
+            Screen("head-unit-1920x720-arabic", "ar-ldrtl-w1280dp-h480dp-land-hdpi"),
             Screen("head-unit-1024x600", "en-w1024dp-h600dp-land-mdpi"),
+            Screen("head-unit-1024x600-font-1.3", "en-w1024dp-h600dp-land-mdpi", 1.3f),
+            Screen("head-unit-1024x600-route", "en-w1024dp-h600dp-land-mdpi", route = true),
+            Screen("head-unit-1920x720-route", "en-w1280dp-h480dp-land-hdpi", route = true),
             Screen("head-unit-1920x1080", "en-w1280dp-h720dp-land-hdpi"),
+            Screen("head-unit-1920x1080-font-1.3", "en-w1280dp-h720dp-land-hdpi", 1.3f),
+            // 1280 × 720 at 240 dpi and 800 × 480 at 160 dpi: short panels whose row of three is narrow too.
+            Screen("head-unit-1280x720-hdpi", "en-w853dp-h480dp-land-hdpi"),
+            Screen("head-unit-800x480", "en-w800dp-h480dp-land-mdpi"),
             Screen("head-unit-1920x1080-arabic", "ar-ldrtl-w1280dp-h720dp-land-hdpi"),
             Screen("tablet-portrait", "en-w800dp-h1280dp-port-mdpi"),
             Screen("phone-landscape", "en-w900dp-h400dp-land-xhdpi"),
+            Screen("phone-landscape-font-1.3", "en-w900dp-h400dp-land-xhdpi", 1.3f),
+            Screen("phone-landscape-420dpi", "en-w868dp-h411dp-land-420dpi"),
             Screen("phone-portrait", "en-w400dp-h900dp-port-xhdpi"),
             Screen("phone-portrait-font-1.3", "en-w400dp-h900dp-port-xhdpi", 1.3f),
             Screen("head-unit-1920x720-light", "en-w1280dp-h480dp-land-notnight-hdpi"),
@@ -172,8 +183,18 @@ class HomeScreenshotsTest {
         val controller = Robolectric.buildActivity(DiPlayActivity::class.java).setup()
         try {
             val activity = controller.get()
+            // A unit-test build has no CarPlay authentication; an installed build shows no setup error under Home.
+            org.robolectric.util.ReflectionHelpers.setField(activity, "setupError", null)
+            org.robolectric.util.ReflectionHelpers.callInstanceMethod<Unit>(activity, "render")
             // Let the cards finish rising into place; the rings keep rippling.
             shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1_200))
+            if (screen.route) {
+                // What a turn shows: distance, road and arrival.
+                org.robolectric.util.ReflectionHelpers.getField<View>(activity, "homeNavWidget").visibility = View.VISIBLE
+                org.robolectric.util.ReflectionHelpers.getField<TextView>(activity, "homeNavDistance").text = "300 m"
+                org.robolectric.util.ReflectionHelpers.getField<TextView>(activity, "homeNavRoad").apply { text = "Queen Street"; visibility = View.VISIBLE }
+                org.robolectric.util.ReflectionHelpers.getField<TextView>(activity, "homeNavEta").apply { text = "Arrive 11:42 · 12 min"; visibility = View.VISIBLE }
+            }
             val root = activity.window.decorView
             val metrics = activity.resources.displayMetrics
             val config = activity.resources.configuration

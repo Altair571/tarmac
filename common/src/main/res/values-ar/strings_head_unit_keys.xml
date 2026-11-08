@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FYT's wheel keys for CarPlay on rooted units (docs/HEADUNIT_FYT_DUDU.md). -->
+<resources>
+    <string name="settings_head_unit_link_keys">أزرار الصوت والمكالمات عبر root (تجريبي)</string>
+    <string name="settings_head_unit_link_keys_description">أثناء عمل CarPlay يسلّم %1$s أزرار المقود إلى Tarmac عبر root: زر الصوت يفتح Siri، وأزرار المكالمات تجيب على مكالمات CarPlay وتنهيها. تبقى أزرار الوسائط والرئيسية والرجوع تعمل كما هي. تعود الأزرار إلى %1$s عند توقف CarPlay.</string>
+    <string name="settings_head_unit_link_keys_refused">رُفض الوصول إلى root، لذا تبقى الأزرار مع %1$s.</string>
+</resources>

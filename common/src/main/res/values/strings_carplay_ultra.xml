@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The CarPlay Ultra experiment (docs/CARPLAY_ULTRA.md). -->
+    <string name="settings_carplay_ultra">CarPlay Ultra (experimental)</string>
+    <string name="settings_carplay_ultra_try">Try CarPlay Ultra</string>
+    <!-- Car data for the Vehicle app (CarPlayCarData). -->
+    <string name="settings_carplay_ultra_car_data">Car data in the Vehicle app</string>
+    <string name="settings_carplay_ultra_car_data_description">Shows the car data Tarmac already reads, such as charge or fuel, range, odometer, tyres and outside temperature, in CarPlay’s Vehicle app. Read only: nothing goes to the car. Each value appears once a source on this head unit has given it: BYD ADB, the car data adapter or a TEYES head unit. Applies at the next connection.</string>
+    <string name="settings_carplay_ultra_car_data_next">Next connection: %1$s</string>
+    <string name="settings_carplay_ultra_car_data_none">Nothing yet. A value appears from the connection after a source on this head unit has given it: BYD ADB, the car data adapter or a TEYES head unit.</string>
+    <string name="settings_carplay_ultra_car_data_fuel">fuel or charge</string>
+    <string name="settings_carplay_ultra_car_data_range">range</string>
+    <string name="settings_carplay_ultra_car_data_odometer">odometer</string>
+    <string name="settings_carplay_ultra_car_data_tyres">tyre pressures</string>
+    <string name="settings_carplay_ultra_car_data_charging">charging state</string>
+    <string name="settings_carplay_ultra_car_data_energy">battery energy</string>
+    <string name="settings_carplay_ultra_car_data_outside">outside temperature</string>
+    <!-- Labels of the read-only lines iOS's Vehicle app shows on the car's screen (CarPlayCarData.settingLines). -->
+    <string name="carplay_vehicle_version">Version</string>
+    <string name="carplay_vehicle_fuel">Fuel</string>
+    <string name="carplay_vehicle_charge">Charge</string>
+    <string name="carplay_vehicle_range">Range</string>
+    <string name="carplay_vehicle_odometer">Odometer</string>
+    <string name="carplay_vehicle_charging">Charging</string>
+    <string name="carplay_vehicle_yes">Yes</string>
+    <string name="carplay_vehicle_no">No</string>
+    <string name="carplay_vehicle_energy">Energy left</string>
+    <string name="carplay_vehicle_outside">Outside temperature</string>
+    <string name="carplay_vehicle_source">Car data from</string>
+    <string name="carplay_vehicle_source_test">Sample values (test)</string>
+    <string name="carplay_vehicle_section_battery">Battery</string>
+    <string name="carplay_vehicle_section_fuel">Fuel</string>
+    <string name="carplay_vehicle_section_tyres">Tyres</string>
+    <string name="carplay_vehicle_section_car">Car</string>
+    <string name="carplay_vehicle_front_left">Front left</string>
+    <string name="carplay_vehicle_front_right">Front right</string>
+    <string name="carplay_vehicle_rear_left">Rear left</string>
+    <string name="carplay_vehicle_rear_right">Rear right</string>
+    <string name="settings_carplay_ultra_try_description">Answers CarPlay’s vehicle-state protocol. On head units with a climate source, the iPhone then shows the car’s climate in the dock and, with CarPlay Ultra chosen on the iPhone, in its Climate app; on TEYES and FYT units its Radio app plays the unit’s FM tuner. Also records what the iPhone sends in the diagnostic report. Reconnects CarPlay.</string>
+    <string name="settings_carplay_climate_source">Climate comes from the %1$s CAN box. CarPlay shows it once the car has reported its climate.</string>
+    <string name="settings_carplay_climate_none">This head unit has no climate source Tarmac can read, so CarPlay shows no climate controls.</string>
+    <string name="settings_carplay_climate_writes">Climate changes from the iPhone</string>
+    <string name="settings_carplay_climate_writes_description">Sends the iPhone’s temperature, fan, A/C, recirculation, defrost and seat-heating changes to the car through the %1$s CAN-box service, one step at a time. Tarmac checks the car’s answer after each step and stops sending at the first one the car does not take. Comfort functions only; the car’s own controls keep working. Applies at once.</string>
+    <!-- LIVI's NOTICE (GPL-3.0 section 7(b)) requires this attribution in the About screen; keep the name and URL. -->
+    <string name="about_livi_attribution">Based on LIVI by Lasse Heitgres (https://github.com/f-io/LIVI)</string>
+</resources>

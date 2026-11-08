@@ -105,6 +105,18 @@ data class AirPlayConfig(
      * restricted the same way, because the iPhone picks one format for both directions.
      */
     val callAtCallRate: Boolean = false,
+    /**
+     * Experimental CarPlay Ultra ([CarPlayUltra]): the session features enabled when the iPhone proposes
+     * them, and unknown data streams accepted and logged. Empty, the default, is ordinary CarPlay.
+     */
+    val ultraFeatures: Set<String> = emptySet(),
+    /**
+     * CarPlay Ultra experiment: the read-only car data the vehicle-state protocol describes for iOS's Vehicle app,
+     * only what a source on this head unit gives ([CarPlayVehicleState.CarData]).
+     */
+    val carData: Set<CarPlayVehicleState.CarData> = emptySet(),
+    /** CarPlay Ultra experiment: the read-only lines of iOS's Vehicle app ([CarPlayVehicleState.SettingLine]). */
+    val vehicleSettings: List<CarPlayVehicleState.SettingLine> = emptyList(),
 )
 
 /** The offer, SETUP and controls must all honor the user's audio-output setting. */

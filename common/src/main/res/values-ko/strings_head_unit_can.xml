@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The head unit's CAN-box profile (docs/HEADUNIT_SPD_TEYES.md, docs/HEADUNIT_FYT_DUDU.md). -->
+<resources>
+    <string name="settings_head_unit_can_title">%1$s CAN 박스</string>
+    <string name="settings_head_unit_can_description">%1$s 설정에서 선택한 CAN 박스 프로필에 따라 차량 자체 화면에 표시되는 내용이 정해집니다. Tarmac은 읽기만 하고 절대 바꾸지 않습니다.</string>
+    <string name="settings_head_unit_can_reading">CAN 박스 프로필을 읽는 중…</string>
+    <string name="settings_head_unit_can_none">%1$s가 CAN 박스 프로필을 알려주지 않습니다. %1$s 설정에서 차량을 선택하세요.</string>
+    <string name="settings_head_unit_can_profile">프로필: %1$s (ID %2$s)</string>
+    <string name="settings_head_unit_can_number">프로토콜 %1$d, 변형 %2$d</string>
+    <string name="settings_head_unit_can_feature">%1$s: %2$s</string>
+    <string name="settings_head_unit_can_guidance">계기판 또는 HUD의 턴바이턴 안내</string>
+    <string name="settings_head_unit_can_track">계기판의 곡 제목</string>
+    <string name="settings_head_unit_can_doors">도어 상태</string>
+    <string name="settings_head_unit_can_climate">공조</string>
+    <string name="settings_head_unit_can_outside">외부 온도</string>
+    <string name="settings_head_unit_can_camera">360° 카메라</string>
+    <string name="settings_head_unit_can_yes">지원</string>
+    <string name="settings_head_unit_can_no">지원 안 함</string>
+    <string name="settings_head_unit_can_root">root에서만</string>
+    <string name="settings_head_unit_can_hint">고급의 계기판 및 HUD 테스트로 차량에서 확인하세요.</string>
+</resources>

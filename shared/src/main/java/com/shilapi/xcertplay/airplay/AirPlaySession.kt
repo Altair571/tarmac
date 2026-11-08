@@ -40,6 +40,15 @@ interface AirPlaySessionListener {
     fun onRemoteControlMessage(session: AirPlaySession, streamId: Long, message: Map<String, Any?>) {}
     /** Video in car: requestUI "videoplayback:", the iPhone asks the car to show its video player. */
     fun onVideoPlaybackUiRequested(session: AirPlaySession) {}
+    /**
+     * CarPlay Ultra experiment: the iPhone changed a vehicle-state characteristic (climate, seats), by name. True
+     * accepts the value; false refuses it and gives the iPhone the car's value back.
+     */
+    fun onVehicleWrite(name: String, value: Any?): Boolean = true
+    /** CarPlay Ultra experiment: the accessories to describe, asked once per session at SETUP. */
+    fun vehicleProfile(): CarPlayVehicleProfile = CarPlayVehicleProfile.ALL
+    /** CarPlay Ultra experiment: the iPhone's Radio app asked the head unit's tuner to play, tune or change source. */
+    fun onRadioCommand(command: CarRadioCommand) {}
     /** False when this listener drops "TRACE " lines: the session then skips building their hex dumps. */
     val wantsTrace: Boolean get() = true
     fun onDebugLog(message: String) {}
@@ -123,6 +132,12 @@ class AirPlaySession(
     val controllerId: String? get() = pairVerify.verifiedControllerId
     val sharedSecret: ByteArray? get() = pairVerify.shared?.copyOf()
     val videoInCar: Boolean get() = config.videoInCar
+    /** The CarPlay Ultra experiment: accept and log data streams Tarmac does not know. */
+    val ultraProbe: Boolean get() = config.ultraFeatures.isNotEmpty()
+
+    /** CarPlay's vehicle-state protocol, once SETUP enabled `vehicleStateProtocol` (CarPlay Ultra experiment). */
+    @Volatile var vehicleState: CarPlayVehicleState? = null
+        private set
     private val videoPlaybackAvailability = VideoPlaybackAvailability { allowed ->
         sendCommand(
             linkedMapOf(
@@ -583,12 +598,19 @@ class AirPlaySession(
                 else RtspMessage.Response(headers = mapOf("Content-Type" to OCTET_CONTENT_TYPE), body = body)
             }
             path.endsWith("/info") -> {
-                val info = AirPlayInfoPlist.build(config)
+                val info = AirPlayInfoPlist.build(config).toMutableMap()
+                vehicleState?.let { state ->
+                    // Without these two entries the iPhone ends a session that enabled vehicleStateProtocol.
+                    info["displayPanels"] = AirPlayInfoPlist.displayPanels(info)
+                    state.infoEntry().let { (key, value) -> info[key] = value }
+                }
                 if (request.body.isNotEmpty()) {
                     val requestInfo = try {
                         BplistCodec.decode(request.body).toString()
                     } catch (_: Exception) {
-                        "<unparseable ${request.body.size} bytes>"
+                        // Kept whole (bounded) so a newer request format can be read off a log.
+                        "<unparseable ${request.body.size} bytes type=${request.headers["content-type"]} " +
+                            "hex=${request.body.copyOf(minOf(request.body.size, INFO_REQUEST_HEX_BYTES)).toHex()}>"
                     }
                     debugLog("airplay /info request=$requestInfo")
                 }
@@ -688,6 +710,14 @@ class AirPlaySession(
             response["keepAlivePort"] = openKeepAlive()
         }
         val features = setupEnabledFeatures(config, dict["features"] as? List<*>)
+        debugLog("airplay SETUP features proposed=${dict["features"]} enabled=$features")
+        vehicleState = if (CarPlayVehicleState.FEATURE in features) {
+            val profile = listener.vehicleProfile()
+            debugLog("vehicle-state: describing climate=${profile.climate} seat heating=${profile.seatHeating} radio=${profile.radio}")
+            CarPlayVehicleState(log = { debugLog(it) }, profile = profile, onPhoneWrite = listener::onVehicleWrite,
+                onRadio = listener::onRadioCommand, carData = config.carData, settings = config.vehicleSettings)
+                .also { debugLog("vehicle-state: car data described ${it.describedCarData}") }
+        } else null
         val videoPlaybackEnabled = VideoInCar.FEATURE in features
         val videoDelivery = videoPlaybackAvailability.setFeatureEnabled(videoPlaybackEnabled)
         debugLog("airplay video playback negotiated=$videoPlaybackEnabled availability=$videoDelivery")
@@ -767,6 +797,11 @@ class AirPlaySession(
         debugLog("airplay command type=$type keys=${params.keys.sorted()}")
         val streamId = request.headers["x-apple-streamid"]?.toLongOrNull()
         val data = params["data"] as? ByteArray
+        if (ultraProbe) {
+            val shown = data?.let { runCatching { BplistCodec.decode(it) }.getOrNull() } ?: params
+            debugLog("airplay ultra command type=$type stream=${streamId ?: "none"} " +
+                shown.toString().take(ULTRA_PARAMS_LOG_CHARS))
+        }
         if (streamId != null && data != null) {
             runCatching { asMap(BplistCodec.decode(data)) }.getOrNull()
                 ?.let { listener.onRemoteControlMessage(this, streamId, it) }
@@ -991,6 +1026,8 @@ class AirPlaySession(
         const val ZOOM_DIRECTION_IN = 0
         const val ZOOM_DIRECTION_OUT = 1
         const val EVENT_READY_POLL_MILLIS = 25L
+        const val ULTRA_PARAMS_LOG_CHARS = 800
+        const val INFO_REQUEST_HEX_BYTES = 2048
         const val NANOS_PER_MILLISECOND = 1_000_000L
     }
 }
@@ -1026,6 +1063,7 @@ internal fun setupEnabledFeatures(config: AirPlayConfig, proposed: List<*>?): Li
     if (config.main.useIphoneCornerMask && proposed.orEmpty().contains("cornerMasks")) features.add("cornerMasks")
     if (config.videoInCar && proposed.orEmpty().contains(VideoInCar.FEATURE)) features.add(VideoInCar.FEATURE)
     if (config.bufferedAudioOutputEnabled && proposed.orEmpty().contains(MAIN_BUFFERED_FEATURE)) features.add(MAIN_BUFFERED_FEATURE)
+    config.ultraFeatures.filterTo(features) { proposed.orEmpty().contains(it) }
     return features
 }
 

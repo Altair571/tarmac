@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The head unit's CAN-box profile (docs/HEADUNIT_SPD_TEYES.md, docs/HEADUNIT_FYT_DUDU.md). -->
+<resources>
+    <string name="settings_head_unit_can_title">%1$s CAN box</string>
+    <string name="settings_head_unit_can_description">The CAN-box profile chosen in %1$s settings decides what reaches the car’s own displays. Tarmac reads it and never changes it.</string>
+    <string name="settings_head_unit_can_reading">Reading the CAN-box profile…</string>
+    <string name="settings_head_unit_can_none">%1$s reports no CAN-box profile. Choose your car in %1$s settings.</string>
+    <string name="settings_head_unit_can_profile">Profile: %1$s (ID %2$s)</string>
+    <string name="settings_head_unit_can_number">protocol %1$d, variant %2$d</string>
+    <string name="settings_head_unit_can_feature">%1$s: %2$s</string>
+    <string name="settings_head_unit_can_guidance">Turn-by-turn on the cluster or HUD</string>
+    <string name="settings_head_unit_can_track">Track title on the cluster</string>
+    <string name="settings_head_unit_can_doors">Door status</string>
+    <string name="settings_head_unit_can_climate">Climate</string>
+    <string name="settings_head_unit_can_outside">Outside temperature</string>
+    <string name="settings_head_unit_can_camera">360° camera</string>
+    <string name="settings_head_unit_can_yes">supported</string>
+    <string name="settings_head_unit_can_no">not supported</string>
+    <string name="settings_head_unit_can_root">with root only</string>
+    <string name="settings_head_unit_can_hint">Check on the car with the cluster and HUD tests in Advanced.</string>
+</resources>

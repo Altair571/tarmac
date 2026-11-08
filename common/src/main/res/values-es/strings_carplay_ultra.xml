@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_carplay_ultra">CarPlay Ultra (experimental)</string>
+    <string name="settings_carplay_ultra_try">Probar CarPlay Ultra</string>
+    <!-- Car data for the Vehicle app (CarPlayCarData). -->
+    <string name="settings_carplay_ultra_car_data">Datos del coche en la app Vehículo</string>
+    <string name="settings_carplay_ultra_car_data_description">Muestra en la app Vehículo de CarPlay los datos del coche que Tarmac ya lee, como la carga o el combustible, la autonomía, el cuentakilómetros, los neumáticos y la temperatura exterior. Solo lectura: no se envía nada al coche. Cada valor aparece cuando una fuente de esta unidad principal lo ha dado: ADB de BYD, el adaptador de datos del coche o una unidad TEYES. Se aplica en la próxima conexión.</string>
+    <string name="settings_carplay_ultra_car_data_next">Próxima conexión: %1$s</string>
+    <string name="settings_carplay_ultra_car_data_none">Nada todavía. Un valor aparece a partir de la conexión siguiente a que una fuente de esta unidad principal lo haya dado: ADB de BYD, el adaptador de datos del coche o una unidad TEYES.</string>
+    <string name="settings_carplay_ultra_car_data_fuel">combustible o carga</string>
+    <string name="settings_carplay_ultra_car_data_range">autonomía</string>
+    <string name="settings_carplay_ultra_car_data_odometer">cuentakilómetros</string>
+    <string name="settings_carplay_ultra_car_data_tyres">presión de los neumáticos</string>
+    <string name="settings_carplay_ultra_car_data_charging">estado de carga</string>
+    <string name="settings_carplay_ultra_car_data_energy">energía de la batería</string>
+    <string name="settings_carplay_ultra_car_data_outside">temperatura exterior</string>
+    <!-- Labels of the read-only lines iOS's Vehicle app shows on the car's screen (CarPlayCarData.settingLines). -->
+    <string name="carplay_vehicle_version">Versión</string>
+    <string name="carplay_vehicle_fuel">Combustible</string>
+    <string name="carplay_vehicle_charge">Carga</string>
+    <string name="carplay_vehicle_range">Autonomía</string>
+    <string name="carplay_vehicle_odometer">Cuentakilómetros</string>
+    <string name="carplay_vehicle_charging">Cargando</string>
+    <string name="carplay_vehicle_yes">Sí</string>
+    <string name="carplay_vehicle_no">No</string>
+    <string name="carplay_vehicle_energy">Energía restante</string>
+    <string name="carplay_vehicle_outside">Temperatura exterior</string>
+    <string name="carplay_vehicle_source">Datos del coche de</string>
+    <string name="carplay_vehicle_source_test">Valores de ejemplo (prueba)</string>
+    <string name="carplay_vehicle_section_battery">Batería</string>
+    <string name="carplay_vehicle_section_fuel">Combustible</string>
+    <string name="carplay_vehicle_section_tyres">Neumáticos</string>
+    <string name="carplay_vehicle_section_car">Coche</string>
+    <string name="carplay_vehicle_front_left">Delantero izquierdo</string>
+    <string name="carplay_vehicle_front_right">Delantero derecho</string>
+    <string name="carplay_vehicle_rear_left">Trasero izquierdo</string>
+    <string name="carplay_vehicle_rear_right">Trasero derecho</string>
+    <string name="settings_carplay_ultra_try_description">Responde al protocolo de estado del vehículo de CarPlay. En unidades principales con una fuente de climatización, el iPhone muestra entonces la climatización del coche en el dock y, con CarPlay Ultra elegido en el iPhone, en su app Climatización; en unidades TEYES y FYT su app Radio reproduce el sintonizador FM de la unidad. También registra lo que envía el iPhone en el informe de diagnóstico. Vuelve a conectar CarPlay.</string>
+    <string name="settings_carplay_climate_source">La climatización llega de la caja CAN de %1$s. CarPlay la muestra cuando el coche ha informado de su climatización.</string>
+    <string name="settings_carplay_climate_none">Esta unidad principal no tiene una fuente de climatización que Tarmac pueda leer, así que CarPlay no muestra controles de climatización.</string>
+    <string name="settings_carplay_climate_writes">Cambios de climatización desde el iPhone</string>
+    <string name="settings_carplay_climate_writes_description">Envía al coche los cambios del iPhone en temperatura, ventilador, A/C, recirculación, desempañado y calefacción de asientos mediante el servicio de la caja CAN de %1$s, paso a paso. Tarmac comprueba la respuesta del coche después de cada paso y deja de enviar en el primero que el coche no acepta. Solo funciones de confort; los mandos del propio coche siguen funcionando. Se aplica al instante.</string>
+    <!-- LIVI's NOTICE (GPL-3.0 section 7(b)) requires this attribution in the About screen; keep the name and URL. -->
+    <string name="about_livi_attribution">Based on LIVI by Lasse Heitgres (https://github.com/f-io/LIVI)</string>
+</resources>

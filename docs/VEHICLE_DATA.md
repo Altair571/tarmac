@@ -79,7 +79,9 @@ The ids, PIDs and bit positions above are **placeholders that show the format**,
 car. Take real ones from the car's DBC file (for example [opendbc](https://github.com/commaai/opendbc)) or a
 community PID list for the model.
 
-- `signal`: `soc` (%), `range_km`, `charging`, `gear`, `speed_kmh`.
+- `signal`: `soc` (%), `range_km`, `charging`, `gear`, `speed_kmh`, `fuel_pct` (fuel tank, %), `odometer_km`.
+  `fuel_pct` and `odometer_km` go only to CarPlay Ultra's Vehicle app ([CARPLAY_ULTRA.md](CARPLAY_ULTRA.md#car-data-in-the-vehicle-app));
+  the standard OBD-II PIDs are `012F` (A × 100 / 255) and `01A6` (four bytes, ÷ 10), where the car supports them.
 - Value = raw × `scale` + `offset`. `gear` needs `values` (raw → `P`, `R`, `N`, `D`). `charging` is true for
   any raw value except 0, or only for the raw values in `charging_values`.
 - OBD entries: `header` is the 11-bit CAN id the request goes to (omit it for the broadcast `7DF`),

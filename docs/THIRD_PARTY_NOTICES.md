@@ -10,6 +10,12 @@ Upstream credits [LIVI](https://github.com/f-io/LIVI) and [Showcase](https://git
 
 `common/src/main/java/com/shilapi/xcertplay/DiPlayActivity.kt` adapts the palette, visual arrangement and interface copy of the [DiAuto project](https://github.com/shihabal3amri/DiAuto). DiAuto's source is licensed under AGPL version 3. The UI file is marked AGPL-3.0-only; its license text is included in `docs/licenses/DiAuto-AGPL-3.0.txt`.
 
+## CarPlay vehicle state (LIVI)
+
+Based on LIVI by Lasse Heitgres (https://github.com/f-io/LIVI).
+
+`shared/src/main/java/com/shilapi/xcertplay/airplay/CarPlayVehicleState.kt`, `Opack.kt` and `AirPlayInfoPlist.displayPanels` port CarPlay's vehicle-state protocol from LIVI's `livi-cp` crate (`vehicle_state.rs` and `vehicle_state/`, `opack.rs`, `info.rs`): the `/info` entries, the OPACK message format, and the climate, seat and vehicle-resource accessories. LIVI is licensed under GPL version 3 or later, with an additional attribution term under section 7(b). Its licence text is in `docs/licenses/LIVI-GPL-3.0.txt` and its notice, with that term, in `docs/licenses/LIVI-NOTICE.txt`. These files are marked `GPL-3.0-or-later`, and Tarmac's About screen and README carry the attribution. See `docs/CARPLAY_ULTRA.md`.
+
 ## Android Auto receiver
 
 The `androidauto/` module ports protocol handling (the USB accessory switch, AAP framing, the TLS handshake order, the head-unit services and the wireless Bluetooth setup exchange) from [Headunit for Android Auto](https://github.com/mikereidis/headunit) by Michael A. Reid, [anod/headunit](https://github.com/anod/headunit) and [open-headunit](https://github.com/andreknieriem/open-headunit). Those projects are licensed under AGPL version 3 or later; the module's files are marked `AGPL-3.0-or-later`, and the original notice and licence text are in `docs/licenses/OpenHeadunit-AGPL-3.0.txt`. Message field numbers were cross-checked against [aasdk](https://github.com/opencardev/aasdk) (GPL-3.0-or-later). No certificate or key from any of these projects is included. See `docs/ANDROID_AUTO.md`.

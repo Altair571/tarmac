@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_carplay_ultra">CarPlay Ultra (تجريبي)</string>
+    <string name="settings_carplay_ultra_try">تجربة CarPlay Ultra</string>
+    <!-- Car data for the Vehicle app (CarPlayCarData). -->
+    <string name="settings_carplay_ultra_car_data">بيانات السيارة في تطبيق المركبة</string>
+    <string name="settings_carplay_ultra_car_data_description">يعرض في تطبيق المركبة في CarPlay بيانات السيارة التي يقرؤها Tarmac أصلًا، مثل الشحن أو الوقود والمدى وعدّاد المسافات والإطارات ودرجة الحرارة الخارجية. للقراءة فقط: لا يُرسل شيء إلى السيارة. تظهر كل قيمة بعد أن يقدّمها مصدر على هذه الوحدة الرئيسية: ADB في BYD أو محوّل بيانات السيارة أو وحدة TEYES. يُطبَّق عند الاتصال التالي.</string>
+    <string name="settings_carplay_ultra_car_data_next">الاتصال التالي: %1$s</string>
+    <string name="settings_carplay_ultra_car_data_none">لا شيء بعد. تظهر القيمة من الاتصال الذي يلي تقديم مصدر على هذه الوحدة الرئيسية لها: ADB في BYD أو محوّل بيانات السيارة أو وحدة TEYES.</string>
+    <string name="settings_carplay_ultra_car_data_fuel">الوقود أو الشحن</string>
+    <string name="settings_carplay_ultra_car_data_range">المدى</string>
+    <string name="settings_carplay_ultra_car_data_odometer">عدّاد المسافات</string>
+    <string name="settings_carplay_ultra_car_data_tyres">ضغط الإطارات</string>
+    <string name="settings_carplay_ultra_car_data_charging">حالة الشحن</string>
+    <string name="settings_carplay_ultra_car_data_energy">طاقة البطارية</string>
+    <string name="settings_carplay_ultra_car_data_outside">درجة الحرارة الخارجية</string>
+    <!-- Labels of the read-only lines iOS's Vehicle app shows on the car's screen (CarPlayCarData.settingLines). -->
+    <string name="carplay_vehicle_version">الإصدار</string>
+    <string name="carplay_vehicle_fuel">الوقود</string>
+    <string name="carplay_vehicle_charge">الشحن</string>
+    <string name="carplay_vehicle_range">المدى</string>
+    <string name="carplay_vehicle_odometer">عدّاد المسافات</string>
+    <string name="carplay_vehicle_charging">قيد الشحن</string>
+    <string name="carplay_vehicle_yes">نعم</string>
+    <string name="carplay_vehicle_no">لا</string>
+    <string name="carplay_vehicle_energy">الطاقة المتبقية</string>
+    <string name="carplay_vehicle_outside">درجة الحرارة الخارجية</string>
+    <string name="carplay_vehicle_source">مصدر بيانات السيارة</string>
+    <string name="carplay_vehicle_source_test">قيم تجريبية (اختبار)</string>
+    <string name="carplay_vehicle_section_battery">البطارية</string>
+    <string name="carplay_vehicle_section_fuel">الوقود</string>
+    <string name="carplay_vehicle_section_tyres">الإطارات</string>
+    <string name="carplay_vehicle_section_car">السيارة</string>
+    <string name="carplay_vehicle_front_left">الأمامي الأيسر</string>
+    <string name="carplay_vehicle_front_right">الأمامي الأيمن</string>
+    <string name="carplay_vehicle_rear_left">الخلفي الأيسر</string>
+    <string name="carplay_vehicle_rear_right">الخلفي الأيمن</string>
+    <string name="settings_carplay_ultra_try_description">يجيب عن بروتوكول حالة السيارة في CarPlay. في وحدات القيادة التي لها مصدر للمناخ يعرض iPhone مناخ السيارة في شريط الإرساء، ومع اختيار CarPlay Ultra على iPhone يعرضه أيضًا في تطبيق المناخ، وفي وحدات TEYES وFYT يشغّل تطبيق الراديو موالف FM في الوحدة. ويسجّل أيضًا ما يرسله iPhone في التقرير التشخيصي. يعيد توصيل CarPlay.</string>
+    <string name="settings_carplay_climate_source">يأتي المناخ من صندوق CAN في %1$s. يعرضه CarPlay بعد أن تُبلغ السيارة عن مناخها.</string>
+    <string name="settings_carplay_climate_none">ليس لوحدة القيادة هذه مصدر مناخ يستطيع Tarmac قراءته، لذلك لا يعرض CarPlay عناصر التحكم في المناخ.</string>
+    <string name="settings_carplay_climate_writes">تغييرات المناخ من iPhone</string>
+    <string name="settings_carplay_climate_writes_description">يرسل تغييرات iPhone في درجة الحرارة والمروحة والتكييف وتدوير الهواء وإزالة الضباب وتدفئة المقاعد إلى السيارة عبر خدمة صندوق CAN في %1$s، خطوة بخطوة. يتحقق Tarmac من رد السيارة بعد كل خطوة ويتوقف عن الإرسال عند أول خطوة لا تقبلها السيارة. وظائف الراحة فقط، وتبقى عناصر التحكم في السيارة نفسها تعمل. يُطبَّق فورًا.</string>
+    <!-- LIVI's NOTICE (GPL-3.0 section 7(b)) requires this attribution in the About screen; keep the name and URL. -->
+    <string name="about_livi_attribution">Based on LIVI by Lasse Heitgres (https://github.com/f-io/LIVI)</string>
+</resources>

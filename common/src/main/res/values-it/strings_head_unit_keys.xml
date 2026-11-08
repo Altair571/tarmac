@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FYT's wheel keys for CarPlay on rooted units (docs/HEADUNIT_FYT_DUDU.md). -->
+<resources>
+    <string name="settings_head_unit_link_keys">Tasti voce e chiamata con root (sperimentale)</string>
+    <string name="settings_head_unit_link_keys_description">Mentre CarPlay è attivo, %1$s passa i tasti del volante a Tarmac tramite root: il tasto voce apre Siri e i tasti di chiamata rispondono e chiudono le chiamate CarPlay. I tasti multimediali, home e indietro continuano a funzionare. I tasti tornano a %1$s quando CarPlay si ferma.</string>
+    <string name="settings_head_unit_link_keys_refused">Root negato: i tasti restano a %1$s.</string>
+</resources>

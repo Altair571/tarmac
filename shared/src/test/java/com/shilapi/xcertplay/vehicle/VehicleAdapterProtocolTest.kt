@@ -67,6 +67,19 @@ class VehicleAdapterProtocolTest {
         assertTrue(map.can[1].bigEndian)
     }
 
+    @Test fun fuelAndOdometerComeFromTheirStandardPids() {
+        val map = VehicleSignalMap.parse("""
+            { "obd": [ { "signal": "fuel_pct", "request": "012F", "byte": 0, "scale": 0.39215686 },
+                       { "signal": "odometer_km", "request": "01A6", "byte": 0, "length": 4, "scale": 0.1 } ] }
+        """.trimIndent())
+        val (fuel, odometer) = map.obd
+        val reading = odometer.decoding.apply(123_456L, fuel.decoding.apply(0x80L, VehicleReading()))
+        assertEquals(50.2, reading.fuelPercent!!, 0.01)
+        assertEquals(12_345.6, reading.odometerKm!!, 0.001)
+        assertEquals(null, fuel.decoding.apply(300L, VehicleReading()).fuelPercent) // over 100 % is no reading
+        assertEquals(reading, VehicleReading().updatedBy(reading))
+    }
+
     @Test fun aMapThatWouldWriteToTheCarIsRefused() {
         // Write data, clear codes, session control, reset, routine control, I/O control, security access.
         for (request in listOf("2E010501", "04", "14FFFFFF", "1003", "1101", "31010203", "2F010203", "2701")) {

@@ -92,6 +92,7 @@ class CarPlayMediaEngine(
     private val audioCaptures = ConcurrentHashMap<StreamKey, AudioPacketCapture>()
     private val pendingIapTunnels = ConcurrentHashMap<AirPlaySession, PendingIapTunnel>()
     private val videoSettingsChannels = ConcurrentHashMap<AirPlaySession, VideoSettingsChannel>()
+    private val ultraChannels = ConcurrentHashMap<AirPlaySession, MutableList<VideoSettingsChannel>>()
     private val bufferedStreams = ConcurrentHashMap<AirPlaySession, BufferedStream>()
     private val microphoneScheduler by lazy {
         ScheduledThreadPoolExecutor(1) { task -> Thread(task, "carplay-mic-start").apply { isDaemon = true } }.apply {
@@ -379,7 +380,8 @@ class CarPlayMediaEngine(
     override fun onDataStream(session: AirPlaySession, stream: Map<String, Any?>): Map<String, Any?>? {
         val uuid = (stream["clientTypeUUID"] as? String)?.uppercase() ?: return null
         if (session.videoInCar) videoDataStream(session, uuid, stream)?.let { return it }
-        if (uuid != IAP_DATASTREAM_UUID) return null
+        vehicleStateStream(session, uuid, stream)?.let { return it }
+        if (uuid != IAP_DATASTREAM_UUID) return if (session.ultraProbe) ultraDataStream(session, uuid, stream) else null
         val shared = session.sharedSecret ?: return null
         val seed = unsignedPlistDecimal(stream["seed"]) ?: return null
         val peer = session.remoteAddress ?: return null
@@ -435,6 +437,69 @@ class CarPlayMediaEngine(
         }
         streams[StreamKey(session, STREAM_TYPE_DATA)] = if (handler != null) bridge else tunnel
         return linkedMapOf<String, Any?>("type" to STREAM_TYPE_DATA, "streamID" to 1L, "dataPort" to port)
+            .apply {
+                stream["streamConnectionID"]?.let { connectionId ->
+                    this["streamConnectionID"] = unsignedPlistInteger(connectionId)
+                }
+            }
+    }
+
+    /** The vehicle-state protocol's two data streams (normal and high priority), answered by [AirPlaySession.vehicleState]. */
+    private fun vehicleStateStream(session: AirPlaySession, uuid: String, stream: Map<String, Any?>): Map<String, Any?>? {
+        val state = session.vehicleState ?: return null
+        val lane = when (uuid) {
+            CarPlayVehicleState.DATASTREAM_UUID -> CarPlayVehicleState.Lane.NORMAL
+            CarPlayVehicleState.HIGH_PRIORITY_DATASTREAM_UUID -> CarPlayVehicleState.Lane.HIGH
+            else -> return null
+        }
+        val shared = session.sharedSecret ?: return null
+        val seed = unsignedPlistDecimal(stream["seed"]) ?: return null
+        val peer = session.remoteAddress ?: return null
+        fun key(label: String) = AirPlayCrypto.hkdfSha512(
+            shared, "DataStream-Salt$seed".toByteArray(Charsets.US_ASCII), label.toByteArray(Charsets.US_ASCII), 32,
+        )
+        val channel = VideoSettingsChannel(
+            key(DATASTREAM_OUTPUT_KEY), key(DATASTREAM_INPUT_KEY), peer, label = "vehicle-state $lane",
+            onMessage = { state.receive(lane, it) },
+        ) { session.logDebug(it) }
+        state.attach(lane, channel::send)
+        val port = channel.listen(session.localAddress ?: InetAddress.getByName("::"))
+        ultraChannels.computeIfAbsent(session) { java.util.concurrent.CopyOnWriteArrayList() }.add(channel)
+        val streamId = nextRemoteControlStreamId++
+        session.logDebug("vehicle-state $lane stream accepted streamID=$streamId port=$port")
+        return linkedMapOf<String, Any?>("type" to STREAM_TYPE_DATA, "streamID" to streamId, "dataPort" to port)
+            .apply {
+                stream["streamConnectionID"]?.let { connectionId ->
+                    this["streamConnectionID"] = unsignedPlistInteger(connectionId)
+                }
+            }
+    }
+
+    /**
+     * CarPlay Ultra experiment: a data stream Tarmac does not know is accepted and its packages logged, to
+     * learn what the iPhone sends once `vehicleStateProtocol` or `uiSync` is enabled. Remote-control streams
+     * (controlType 1) have no socket; their messages arrive as commands with X-Apple-StreamID.
+     */
+    private fun ultraDataStream(session: AirPlaySession, uuid: String, stream: Map<String, Any?>): Map<String, Any?>? {
+        if ((stream["controlType"] as? Number)?.toInt() == 1) {
+            val streamId = nextRemoteControlStreamId++
+            session.logDebug("ultra remote-control stream accepted uuid=$uuid streamID=$streamId")
+            return linkedMapOf("type" to STREAM_TYPE_DATA, "streamID" to streamId)
+        }
+        val shared = session.sharedSecret ?: return null
+        val seed = unsignedPlistDecimal(stream["seed"]) ?: return null
+        val peer = session.remoteAddress ?: return null
+        fun key(label: String) = AirPlayCrypto.hkdfSha512(
+            shared, "DataStream-Salt$seed".toByteArray(Charsets.US_ASCII), label.toByteArray(Charsets.US_ASCII), 32,
+        )
+        val channel = VideoSettingsChannel(
+            key(DATASTREAM_OUTPUT_KEY), key(DATASTREAM_INPUT_KEY), peer, label = "ultra $uuid", logPackages = true,
+        ) { session.logDebug(it) }
+        val port = channel.listen(session.localAddress ?: InetAddress.getByName("::"))
+        ultraChannels.computeIfAbsent(session) { java.util.concurrent.CopyOnWriteArrayList() }.add(channel)
+        val streamId = nextRemoteControlStreamId++
+        session.logDebug("ultra data stream accepted uuid=$uuid streamID=$streamId port=$port")
+        return linkedMapOf<String, Any?>("type" to STREAM_TYPE_DATA, "streamID" to streamId, "dataPort" to port)
             .apply {
                 stream["streamConnectionID"]?.let { connectionId ->
                     this["streamConnectionID"] = unsignedPlistInteger(connectionId)
@@ -554,6 +619,7 @@ class CarPlayMediaEngine(
         clearPendingIapTunnel(session)
         retireBuffered(session)
         videoSettingsChannels.remove(session)?.close()
+        ultraChannels.remove(session)?.forEach { it.close() }
         val sessionStreams = streams.keys.filter {
             it.session === session && it.type != BufferedAudioStream.STREAM_TYPE
         }

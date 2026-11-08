@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_carplay_ultra">CarPlay Ultra（実験的機能）</string>
+    <string name="settings_carplay_ultra_try">CarPlay Ultraを試す</string>
+    <!-- Car data for the Vehicle app (CarPlayCarData). -->
+    <string name="settings_carplay_ultra_car_data">車両アプリに車のデータを表示</string>
+    <string name="settings_carplay_ultra_car_data_description">Tarmacが車からすでに読み取っている充電量または燃料、航続距離、走行距離、タイヤ、外気温などのデータをCarPlayの車両アプリに表示します。読み取り専用で、車には何も送りません。各値は、このヘッドユニットの情報源（BYDのADB、車両データアダプター、TEYESのユニット）が一度提供すると表示されます。次回の接続時に適用されます。</string>
+    <string name="settings_carplay_ultra_car_data_next">次回の接続：%1$s</string>
+    <string name="settings_carplay_ultra_car_data_none">まだありません。このヘッドユニットの情報源（BYDのADB、車両データアダプター、TEYESのユニット）が値を一度提供すると、その次の接続から表示されます。</string>
+    <string name="settings_carplay_ultra_car_data_fuel">燃料または充電量</string>
+    <string name="settings_carplay_ultra_car_data_range">航続距離</string>
+    <string name="settings_carplay_ultra_car_data_odometer">走行距離</string>
+    <string name="settings_carplay_ultra_car_data_tyres">タイヤ空気圧</string>
+    <string name="settings_carplay_ultra_car_data_charging">充電状態</string>
+    <string name="settings_carplay_ultra_car_data_energy">バッテリーの残りエネルギー</string>
+    <string name="settings_carplay_ultra_car_data_outside">外気温</string>
+    <!-- Labels of the read-only lines iOS's Vehicle app shows on the car's screen (CarPlayCarData.settingLines). -->
+    <string name="carplay_vehicle_version">バージョン</string>
+    <string name="carplay_vehicle_fuel">燃料</string>
+    <string name="carplay_vehicle_charge">充電量</string>
+    <string name="carplay_vehicle_range">航続距離</string>
+    <string name="carplay_vehicle_odometer">走行距離</string>
+    <string name="carplay_vehicle_charging">充電中</string>
+    <string name="carplay_vehicle_yes">はい</string>
+    <string name="carplay_vehicle_no">いいえ</string>
+    <string name="carplay_vehicle_energy">残りエネルギー</string>
+    <string name="carplay_vehicle_outside">外気温</string>
+    <string name="carplay_vehicle_source">車両データの取得元</string>
+    <string name="carplay_vehicle_source_test">サンプル値（テスト）</string>
+    <string name="carplay_vehicle_section_battery">バッテリー</string>
+    <string name="carplay_vehicle_section_fuel">燃料</string>
+    <string name="carplay_vehicle_section_tyres">タイヤ</string>
+    <string name="carplay_vehicle_section_car">車両</string>
+    <string name="carplay_vehicle_front_left">左前</string>
+    <string name="carplay_vehicle_front_right">右前</string>
+    <string name="carplay_vehicle_rear_left">左後</string>
+    <string name="carplay_vehicle_rear_right">右後</string>
+    <string name="settings_carplay_ultra_try_description">CarPlayの車両状態プロトコルに応答します。エアコンの情報源があるヘッドユニットでは、iPhoneがドックに車のエアコンを表示し、iPhoneでCarPlay Ultraを選ぶとエアコンアプリにも表示します。TEYESとFYTのユニットでは、ラジオアプリでユニットのFMチューナーを再生します。iPhoneが送る内容も診断レポートに記録します。CarPlayを再接続します。</string>
+    <string name="settings_carplay_climate_source">エアコンの情報は%1$sのCANボックスから取得します。車がエアコンの状態を送ると、CarPlayに表示されます。</string>
+    <string name="settings_carplay_climate_none">このヘッドユニットにはTarmacが読めるエアコンの情報源がないため、CarPlayにエアコン操作は表示されません。</string>
+    <string name="settings_carplay_climate_writes">iPhoneからのエアコン変更</string>
+    <string name="settings_carplay_climate_writes_description">iPhoneでの温度、風量、A/C、内気循環、デフロスター、シートヒーターの変更を、%1$sのCANボックスのサービスを通じて1段階ずつ車に送ります。Tarmacは段階ごとに車の応答を確認し、車が受け付けなかった最初の段階で送信を止めます。快適装備のみが対象で、車の操作部はそのまま使えます。すぐに反映されます。</string>
+    <!-- LIVI's NOTICE (GPL-3.0 section 7(b)) requires this attribution in the About screen; keep the name and URL. -->
+    <string name="about_livi_attribution">Based on LIVI by Lasse Heitgres (https://github.com/f-io/LIVI)</string>
+</resources>

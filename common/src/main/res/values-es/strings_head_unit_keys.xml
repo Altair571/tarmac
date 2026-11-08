@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FYT's wheel keys for CarPlay on rooted units (docs/HEADUNIT_FYT_DUDU.md). -->
+<resources>
+    <string name="settings_head_unit_link_keys">Teclas de voz y llamada con root (experimental)</string>
+    <string name="settings_head_unit_link_keys_description">Mientras CarPlay funciona, %1$s pasa las teclas del volante a Tarmac mediante root: la tecla de voz abre Siri y las de llamada contestan y cuelgan las llamadas de CarPlay. Las teclas multimedia, de inicio y de volver siguen funcionando. Las teclas vuelven a %1$s cuando CarPlay se detiene.</string>
+    <string name="settings_head_unit_link_keys_refused">Se denegó el acceso root, así que las teclas siguen en %1$s.</string>
+</resources>

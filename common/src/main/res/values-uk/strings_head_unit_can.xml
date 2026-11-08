@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The head unit's CAN-box profile (docs/HEADUNIT_SPD_TEYES.md, docs/HEADUNIT_FYT_DUDU.md). -->
+<resources>
+    <string name="settings_head_unit_can_title">CAN-адаптер %1$s</string>
+    <string name="settings_head_unit_can_description">Профіль CAN-адаптера, вибраний у налаштуваннях %1$s, визначає, що потрапляє на екрани автомобіля. Tarmac лише читає його й ніколи не змінює.</string>
+    <string name="settings_head_unit_can_reading">Читання профілю CAN-адаптера…</string>
+    <string name="settings_head_unit_can_none">%1$s не повідомляє профіль CAN-адаптера. Виберіть автомобіль у налаштуваннях %1$s.</string>
+    <string name="settings_head_unit_can_profile">Профіль: %1$s (ID %2$s)</string>
+    <string name="settings_head_unit_can_number">протокол %1$d, варіант %2$d</string>
+    <string name="settings_head_unit_can_feature">%1$s: %2$s</string>
+    <string name="settings_head_unit_can_guidance">Покрокове ведення на панелі приладів або HUD</string>
+    <string name="settings_head_unit_can_track">Назва треку на панелі приладів</string>
+    <string name="settings_head_unit_can_doors">Стан дверей</string>
+    <string name="settings_head_unit_can_climate">Клімат</string>
+    <string name="settings_head_unit_can_outside">Температура зовні</string>
+    <string name="settings_head_unit_can_camera">Камера 360°</string>
+    <string name="settings_head_unit_can_yes">підтримується</string>
+    <string name="settings_head_unit_can_no">не підтримується</string>
+    <string name="settings_head_unit_can_root">лише з root</string>
+    <string name="settings_head_unit_can_hint">Перевірте в автомобілі за допомогою перевірки панелі приладів і HUD у розділі «Додатково».</string>
+</resources>

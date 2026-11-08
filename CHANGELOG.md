@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0
+
+- **CarPlay Ultra (experimental, off by default; Settings → Advanced).** Ported from LIVI. The iPhone shows climate in the CarPlay dock, and with CarPlay Ultra chosen on the iPhone, its Climate, Radio and Vehicle apps.
+  - TEYES and FYT units give CarPlay the car's climate and the unit's FM radio. With **Climate changes from the iPhone** on, allow-listed changes go back to the car.
+  - The Vehicle app shows the car data Tarmac reads (charge or fuel, range, odometer, tyres, outside temperature), read only.
+  - None of this has run on a head unit in a car yet.
+- New connecting screen: a car's cabin with the CarPlay icon on its centre screen, laid out for head units.
+- Landscape Home fits one screen, with a large album cover above the song.
+- CAN-box card for TEYES and FYT units (Settings → Vehicle), and, on rooted FYT units, an experimental switch that sends the voice and call keys to CarPlay.
+
 ## 0.3.0: first Tarmac test release
 
 - New name, icon and package (`com.altair571.tarmac`). It installs alongside DiPlay.

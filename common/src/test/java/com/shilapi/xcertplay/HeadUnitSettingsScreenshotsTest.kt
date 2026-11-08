@@ -9,6 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.shilapi.xcertplay.headunit.HeadUnitCanFeature
+import com.shilapi.xcertplay.headunit.HeadUnitCanProfile
+import com.shilapi.xcertplay.headunit.HeadUnitPlatform
+import com.shilapi.xcertplay.headunit.HeadUnitSupport
+import com.shilapi.xcertplay.headunit.SpdTeyesPlatform
 import com.shilapi.xcertplay.host.R
 import java.io.File
 import java.io.FileOutputStream
@@ -53,12 +58,21 @@ class HeadUnitSettingsScreenshotsTest {
                 @Suppress("DEPRECATION")
                 activity.resources.updateConfiguration(config, activity.resources.displayMetrics)
                 val column = LinearLayout(activity).apply { orientation = LinearLayout.VERTICAL }
-                for (builder in listOf("headUnitSettings", "headUnitSignalSettings")) {
+                for (builder in listOf("headUnitSettings", "headUnitSignalSettings", "headUnitCanProfileSettings")) {
                     DiPlayActivity::class.java.getDeclaredMethod(builder, LinearLayout::class.java)
                         .apply { isAccessible = true }.invoke(activity, column)
                 }
                 assertTrue(allViews(column).filterIsInstance<TextView>().any {
                     it.text.toString() == activity.getString(R.string.settings_head_unit_wheel_keys)
+                })
+                // The card reads the unit in the background; show it as it looks once a Hiworld VW profile answered.
+                val reading = allViews(column).filterIsInstance<TextView>()
+                    .first { it.text.toString() == activity.getString(R.string.settings_head_unit_can_reading) }
+                DiPlayActivity::class.java.getDeclaredMethod("renderHeadUnitCanProfile", LinearLayout::class.java,
+                    HeadUnitPlatform::class.java, HeadUnitCanProfile::class.java).apply { isAccessible = true }
+                    .invoke(activity, reading.parent, SpdTeyesPlatform, SAMPLE_PROFILE)
+                assertTrue(allViews(column).filterIsInstance<TextView>().any {
+                    it.text.toString().startsWith(activity.getString(R.string.settings_head_unit_can_guidance))
                 })
                 val width = (widthDp * activity.resources.displayMetrics.density).toInt()
                 column.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
@@ -78,6 +92,17 @@ class HeadUnitSettingsScreenshotsTest {
         } finally {
             activity.finish()
         }
+    }
+
+    private companion object {
+        val SAMPLE_PROFILE = HeadUnitCanProfile(
+            id = 0x02010001,
+            names = listOf("Hiworld", "Volkswagen", "Volkswagen PQ"),
+            features = linkedMapOf(
+                HeadUnitCanFeature.GUIDANCE to HeadUnitSupport.YES,
+                HeadUnitCanFeature.TRACK_TEXT to HeadUnitSupport.ROOT,
+            ),
+        )
     }
 
     private fun allViews(view: View): Sequence<View> = sequence {

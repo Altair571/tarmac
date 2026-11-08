@@ -6,6 +6,7 @@ import android.Manifest
 import android.app.AlertDialog
 import android.app.Dialog
 import android.app.TimePickerDialog
+import android.text.BidiFormatter
 import android.view.Window
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
@@ -50,6 +51,7 @@ import com.shilapi.xcertplay.adb.LocalAdb
 import com.shilapi.xcertplay.airplay.AirPlayDisplaySettings
 import com.shilapi.xcertplay.airplay.CarPlayClusterDisplay
 import com.shilapi.xcertplay.airplay.CarPlayDisplayScale
+import com.shilapi.xcertplay.airplay.CarPlayVehicleState
 import com.shilapi.xcertplay.airplay.ClusterSpeedometerOverlay
 import com.shilapi.xcertplay.airplay.ClusterTurnCardOverlay
 import com.shilapi.xcertplay.androidauto.AndroidAuto
@@ -62,13 +64,18 @@ import com.shilapi.xcertplay.backup.SettingsBackupEndpoint
 import com.shilapi.xcertplay.backup.SettingsBackupServer
 import com.shilapi.xcertplay.backup.SettingsQrCode
 import com.shilapi.xcertplay.compat.closeCompat
+import com.shilapi.xcertplay.headunit.FytKeyLink
+import com.shilapi.xcertplay.headunit.HeadUnitCanFeature
+import com.shilapi.xcertplay.headunit.HeadUnitCanProfile
 import com.shilapi.xcertplay.headunit.HeadUnitMfiChip
 import com.shilapi.xcertplay.transport.RootI2cTransport
+import com.shilapi.xcertplay.transport.RootShell
 import com.shilapi.xcertplay.headunit.HeadUnitPlatform
 import com.shilapi.xcertplay.headunit.HeadUnitPlatforms
 import com.shilapi.xcertplay.headunit.HeadUnitSettings
 import com.shilapi.xcertplay.headunit.HeadUnitSignal
 import com.shilapi.xcertplay.headunit.HeadUnitSignalMonitor
+import com.shilapi.xcertplay.headunit.HeadUnitSupport
 import com.shilapi.xcertplay.headunit.HeadUnitVehicleReading
 import com.shilapi.xcertplay.headunit.TeyesTrackTextTool
 import com.shilapi.xcertplay.headunit.AmapGuidanceTest
@@ -147,6 +154,7 @@ internal enum class SettingsSection {
     AMBIENT_LIGHTING,
     CAR_BUTTON,
     HEAD_UNIT_SIGNALS,
+    HEAD_UNIT_CAN_PROFILE,
     HEAD_UNIT_TRACK_TEST,
     AUDIO_ROUTING,
     NAVIGATION_WHEEL,
@@ -160,6 +168,7 @@ internal enum class SettingsSection {
     REVERSE_CAMERA,
     CAR_GUIDANCE,
     ANDROID_AUTO,
+    CARPLAY_ULTRA,
 }
 
 internal object SettingsInformationArchitecture {
@@ -184,6 +193,7 @@ internal object SettingsInformationArchitecture {
             SettingsSection.CAR_BUTTON,
             SettingsSection.REVERSE_CAMERA,
             SettingsSection.HEAD_UNIT_SIGNALS,
+            SettingsSection.HEAD_UNIT_CAN_PROFILE,
         ),
         SettingsCategory.DIAGNOSTICS to setOf(SettingsSection.DIAGNOSTICS),
         SettingsCategory.ADVANCED to setOf(
@@ -197,6 +207,8 @@ internal object SettingsInformationArchitecture {
             SettingsSection.HEAD_UNIT_TRACK_TEST,
             // Experimental until it has run against real phones; see docs/ANDROID_AUTO.md.
             SettingsSection.ANDROID_AUTO,
+            // Experimental: what iOS accepts is still being learnt; see docs/CARPLAY_ULTRA.md.
+            SettingsSection.CARPLAY_ULTRA,
         ),
     )
 }
@@ -1030,38 +1042,64 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         val handheld = DeviceProfile.handheld(this)
         fun homeButton(title: String, primary: Boolean, click: () -> Unit) = button(title, primary, click).apply { pressFeedback() }
         val landscape = config.orientation == Configuration.ORIENTATION_LANDSCAPE
-        // A wide panel only about 480 dp tall, such as 1920 × 720 at 240 dpi, needs the dense widget too.
-        val short = !compact && config.screenHeightDp < 600
+        // A head unit or a phone on its side shows every widget in one row of three that fills the screen,
+        // so nothing is below the fold.
+        val oneRow = landscape && config.screenWidthDp >= 800
+        // A wide panel only about 480 dp tall, such as 1920 × 720 at 240 dpi, needs the dense widget too,
+        // and so does one row under 720 dp, where the widget has the screen's height less the clock.
+        val short = !compact && (config.screenHeightDp < 600 || oneRow && config.screenHeightDp < 720)
         val dense = compact || short
+        // A hotspot problem keeps its own button from 600 dp up; a one-row card makes room by shrinking its icon.
+        val problemActions = !compact && config.screenHeightDp >= 600
         val sideBySide = short || (compact && landscape)
         val gap = if (compact) CONTROL_GAP_DP + 4 else 20
 
         // CarPlay: the large widget, as the first app on a car's home screen.
         val card = homeWidget(compact)
-        card.addView(row().apply {
-            gravity = Gravity.CENTER_VERTICAL
-            val pulseSize = dp(when { compact -> 62; short -> 72; else -> 88 })
-            homePulse = ConnectionPulseView(this@DiPlayActivity, getDrawable(R.drawable.ic_carplay)).apply {
-                color = ACCENT
-                surface = SURFACE
-                contentDescription = getString(R.string.carplay_icon)
-            }
-            addView(homePulse, LinearLayout.LayoutParams(pulseSize, pulseSize))
-            addView(column().apply {
-                setPaddingRelative(dp(if (compact) 12 else 16), 0, dp(12), 0)
-                // iOS writes a group's name as a small grey caption above it.
-                homeCardTitle = label(getString(R.string.wireless_carplay), 13, MUTED)
-                addView(homeCardTitle)
-                status = label(getString(R.string.ready_when_you_are), when { compact -> 20; short -> 24; else -> 28 }, TEXT).apply {
-                    typeface = AppType.of(this@DiPlayActivity, AppType.Weight.BOLD)
-                    letterSpacing = -.01f
-                    setPadding(0, dp(2), 0, 0)
-                }
-                addView(status)
-            }, LinearLayout.LayoutParams(0, -2, 1f))
-        })
-        // When the widget is stretched beside taller ones, its buttons settle at the bottom edge.
-        card.addView(View(this), LinearLayout.LayoutParams(1, dp(if (dense) 12 else 20), 1f))
+        val pulse = ConnectionPulseView(this, getDrawable(R.drawable.ic_carplay)).apply {
+            color = ACCENT
+            surface = SURFACE
+            contentDescription = getString(R.string.carplay_icon)
+        }
+        // iOS writes a group's name as a small grey caption above it.
+        val cardTitle = label(getString(R.string.wireless_carplay), 13, MUTED)
+        val cardStatus = label(getString(R.string.ready_when_you_are), when { compact -> 20; short -> 24; else -> 28 }, TEXT).apply {
+            typeface = AppType.of(this@DiPlayActivity, AppType.Weight.BOLD)
+            letterSpacing = -.01f
+            setPadding(0, dp(2), 0, 0)
+        }
+        homePulse = pulse
+        homeCardTitle = cardTitle
+        status = cardStatus
+        val buttonsGap = dp(if (dense) 12 else 20)
+        if (oneRow) {
+            // The card is as tall as the row: the icon stands above the status and grows into that height,
+            // as the cover does in Now Playing, and the buttons stay at the bottom edge.
+            card.addView(column().apply {
+                gravity = Gravity.CENTER
+                addView(HomeHeroFrame(this@DiPlayActivity, pulse, dp(HomeHero.ICON_MIN_DP), dp(HomeHero.ICON_MAX_DP)),
+                    LinearLayout.LayoutParams(-2, 0, 1f))
+                listOf(cardTitle, cardStatus).forEach { it.gravity = Gravity.CENTER }
+                addView(cardTitle, LinearLayout.LayoutParams(-1, -2).apply {
+                    topMargin = dp(if (dense) HomeHero.COMPACT_TEXT_GAP_DP else HomeHero.TEXT_GAP_DP)
+                })
+                addView(cardStatus, LinearLayout.LayoutParams(-1, -2))
+            }, LinearLayout.LayoutParams(-1, 0, 1f))
+            card.addView(View(this), LinearLayout.LayoutParams(1, buttonsGap))
+        } else {
+            card.addView(row().apply {
+                gravity = Gravity.CENTER_VERTICAL
+                val pulseSize = dp(when { compact -> 62; short -> 72; else -> 88 })
+                addView(pulse, LinearLayout.LayoutParams(pulseSize, pulseSize))
+                addView(column().apply {
+                    setPaddingRelative(dp(if (compact) 12 else 16), 0, dp(12), 0)
+                    addView(cardTitle)
+                    addView(cardStatus)
+                }, LinearLayout.LayoutParams(0, -2, 1f))
+            })
+            // When the widget is stretched beside taller ones, its buttons settle at the bottom edge.
+            card.addView(View(this), LinearLayout.LayoutParams(1, buttonsGap, 1f))
+        }
         connectButton = homeButton(getString(R.string.connect_phone), true) {
             if (CarPlayBackgroundSession.hasSession()) openProjection()
             else connect(true)
@@ -1070,8 +1108,17 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         if (sideBySide) {
             // Short screens: one row of Connect and Choose iPhone keeps the widget on screen.
             if (compact) listOf(connectButton, chooseIphone).forEach { it?.textSize = 16f }
+            // A card a third of the row wide gives the two the same width, a narrower inset, and a long label
+            // a smaller size before it would wrap.
+            if (oneRow) listOfNotNull(connectButton, chooseIphone).forEach {
+                it.setPadding(dp(NARROW_BUTTON_INSET_DP), 0, dp(NARROW_BUTTON_INSET_DP), 0)
+                it.maxLines = 1
+                it.ellipsize = android.text.TextUtils.TruncateAt.END
+                androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+                    it, 12, if (compact) 16 else 17, 1, android.util.TypedValue.COMPLEX_UNIT_SP)
+            }
             card.addView(row().apply {
-                addView(connectButton, LinearLayout.LayoutParams(0, -1, if (compact) 1f else 1.5f))
+                addView(connectButton, LinearLayout.LayoutParams(0, -1, if (compact || oneRow) 1f else 1.5f))
                 addView(chooseIphone, LinearLayout.LayoutParams(0, -1, 1f).apply { marginStart = dp(CONTROL_GAP_DP) })
             }, matchButton(height = if (compact) 50 else 54))
         } else card.addView(connectButton, matchButton(height = 56))
@@ -1094,7 +1141,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
                 !CarHotspotSetup.isBydHeadUnit(this) && CarHotspotTethering.appStartSupported()
             card.addView(label(if (allowOnSystemScreen) getString(R.string.settings_write_settings_missing)
                 else hotspotResultText(startupProblem), 15, WARNING).apply { setPadding(0, dp(12), 0, 0) })
-            if (!dense) card.addView(
+            if (problemActions) card.addView(
                 if (allowOnSystemScreen) homeButton(getString(R.string.settings_write_settings_allow), false) { openWriteSettingsAccess() }
                 else homeButton(getString(R.string.open_car_hotspot_settings), false) { openCarWifiSettings() },
                 matchButton(CONTROL_GAP_DP, 50))
@@ -1103,7 +1150,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
             val name = AirPlayPersistence.loadManualHotspotSsid(this)
             val off = if (name.isBlank()) getString(R.string.hotspot_details_off) else getString(R.string.msg_car_hotspot_off, name)
             card.addView(label(off, 15, WARNING).apply { setPadding(0, dp(12), 0, 0) })
-            if (!dense) card.addView(homeButton(getString(R.string.open_car_hotspot_settings), false) { openCarWifiSettings() }, matchButton(CONTROL_GAP_DP, 50))
+            if (problemActions) card.addView(homeButton(getString(R.string.open_car_hotspot_settings), false) { openCarWifiSettings() }, matchButton(CONTROL_GAP_DP, 50))
         } else {
             homeLastProblem = label("", 15, MUTED).apply { setPadding(0, dp(12), 0, 0) }.also(card::addView)
         }
@@ -1118,23 +1165,31 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
             addView(disconnectButton, LinearLayout.LayoutParams(0, -1, 1f).apply { marginStart = dp(CONTROL_GAP_DP) })
         }, matchButton(CONTROL_GAP_DP, if (compact) 46 else 50))
 
-        val media = homeMediaWidget(compact = compact, short = short)
+        // In landscape the cover stands above the song; in one row it grows into the row's height.
+        // One short row sizes its widgets as a compact Home does, so they fit under the clock.
+        val widgetCompact = if (oneRow) dense else compact
+        val media = homeMediaWidget(compact = widgetCompact, short = short, stackedCoverDp = if (!landscape) null
+            else HomeHero.coverPreferredDp(config.screenHeightDp, widgetCompact, fillsRow = oneRow))
         val usbUnavailable = handheld && !DeviceProfile.hasUsbHost(this)
         val usbHint = when {
             usbUnavailable -> getString(R.string.home_usb_unavailable)
+            // One row on a short screen keeps its height for the widgets; portrait keeps the advice.
+            oneRow && dense -> null
             // A phone has to be the USB host that powers the iPhone; Android often hands that role away.
             handheld -> getString(R.string.home_usb_phone_hint)
             compact -> null
             else -> getString(R.string.plug_your_iphone_into_a_usb_data_port_allow_carplay_when_y)
         }
         val shortcuts = column().apply {
-            addView(homeList(
+            // Given the column's height, the list takes it and its rows share it; otherwise each row keeps its own.
+            // A short row lists at iOS's own row height, so Navigation fits under it while a route runs.
+            addView(homeList(if (oneRow && dense) HOME_SHORT_ROW_HEIGHT_DP else HOME_ROW_HEIGHT_DP,
                 Triple(R.drawable.ic_dp_usb, getString(R.string.connect_with_usb)) { connect(false) } to IosColors.orange(appNight),
                 Triple(com.shilapi.xcertplay.androidauto.R.drawable.ic_android_auto, getString(R.string.home_android_auto)) {
                     startActivity(AndroidAuto.projectionIntent(this@DiPlayActivity))
                 } to IosColors.green(appNight),
                 Triple(R.drawable.ic_dp_settings, getString(R.string.settings)) { page = "settings"; render() } to IosColors.gray(appNight),
-            ))
+            ), LinearLayout.LayoutParams(-1, 0, 1f))
             usbHint?.let {
                 addView(label(it, 13, if (usbUnavailable) WARNING else MUTED).apply {
                     setPaddingRelative(dp(16), dp(8), dp(16), 0)
@@ -1142,7 +1197,8 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
             }
         }
 
-        fun stack(vararg views: View) = column().apply {
+        // With fillLast the last widget shown takes the height the column has left; see HomeFillLastColumn.
+        fun stack(vararg views: View, fillLast: Boolean = false) = (if (fillLast) HomeFillLastColumn(this) else column()).apply {
             views.forEachIndexed { index, view ->
                 addView(view, LinearLayout.LayoutParams(-1, -2).apply { if (index > 0) topMargin = dp(gap) })
             }
@@ -1155,17 +1211,17 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         }
         // The list keeps its own height in a row; only widgets stretch.
         fun top(view: View) = column().apply { addView(view) }
-        val navigation = homeNavigationWidget(compact)
+        val navigation = homeNavigationWidget(widgetCompact)
         val body = when {
-            // Wide, short screens, a 1920 × 720 head unit or a phone on its side: one row of three.
-            landscape && config.screenWidthDp >= 800 && config.screenWidthDp >= config.screenHeightDp * 2 ->
-                columns(card to 1.4f, media to 1f, stack(shortcuts, navigation) to 1f)
+            oneRow -> columns(card to 1.4f, media to 1f, stack(shortcuts, navigation, fillLast = true) to 1f)
             compact && landscape -> columns(card to 1.5f, stack(shortcuts, navigation, media) to 1f)
             compact -> stack(card, navigation, media, shortcuts)
             config.screenWidthDp >= 850 -> columns(stack(card, navigation) to 1.5f, stack(media, shortcuts) to 1f)
             else -> stack(card, navigation, media, shortcuts)
         }
-        content.addView(body)
+        // The page fills the screen, so one row takes the height the clock and footer leave. When the widgets
+        // need more, as with a very large font, the page scrolls instead.
+        content.addView(body, LinearLayout.LayoutParams(-1, if (oneRow) 0 else -2, if (oneRow) 1f else 0f))
         content.addView(homeFooter(compact), LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(gap) })
         setupError?.let { content.addView(label(it, 15, WARNING).apply { setPadding(0, dp(16), 0, 0) }) }
         showHomeMedia(homeMediaSnapshot)
@@ -1225,7 +1281,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
     }
 
     /** An iOS inset grouped list: rows with coloured icon squares, a chevron, and hairlines between them. */
-    private fun homeList(vararg rows: Pair<Triple<Int, String, () -> Unit>, Int>): LinearLayout = column().apply {
+    private fun homeList(rowHeightDp: Int, vararg rows: Pair<Triple<Int, String, () -> Unit>, Int>): LinearLayout = column().apply {
         background = GradientDrawable().apply { setColor(SURFACE); cornerRadius = dp(16).toFloat() }
         if (!appNight) elevation = dp(1).toFloat()
         clipToOutline = true
@@ -1235,8 +1291,10 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
                 LinearLayout.LayoutParams(-1, maxOf(1, dp(1) / 2)).apply { marginStart = dp(16 + 30 + 14) })
             addView(row().apply {
                 gravity = Gravity.CENTER_VERTICAL
-                minimumHeight = dp(56)
-                setPaddingRelative(dp(16), dp(10), dp(14), dp(10))
+                minimumHeight = dp(rowHeightDp)
+                // The 30 dp icon sets a row's own height; a short row trims its padding to fit.
+                val inset = dp(minOf(10, (rowHeightDp - 30) / 2))
+                setPaddingRelative(dp(16), inset, dp(14), inset)
                 background = RippleDrawable(ColorStateList.valueOf(RIPPLE), null, ColorDrawable(Color.WHITE))
                 foreground = focusRing(radiusDp = 12)
                 isClickable = true
@@ -1248,7 +1306,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
                     background = getDrawable(R.drawable.ic_dp_chevron)?.mutate()?.apply { setTint(MUTED) }
                     importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
                 }, LinearLayout.LayoutParams(dp(20), dp(20)))
-            })
+            }, LinearLayout.LayoutParams(-1, 0, 1f))
         }
     }
 
@@ -1264,16 +1322,14 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         layoutParams = LinearLayout.LayoutParams(dp(sizeDp), dp(sizeDp))
     }
 
-    /** Now Playing as iOS draws its Music widget: the cover's colours behind, the song and plain glyph controls. */
-    private fun homeMediaWidget(compact: Boolean, short: Boolean): View = FrameLayout(this).apply {
-        val radius = dp(22).toFloat()
-        background = GradientDrawable().apply { setColor(SURFACE); cornerRadius = radius }
+    /**
+     * Now Playing as iOS draws its Music widget: the cover's colours behind, the song and plain glyph controls.
+     * With [stackedCoverDp] the cover stands above the song and grows into the widget's spare height, from that
+     * preferred size; without it the cover sits beside the song.
+     */
+    private fun homeMediaWidget(compact: Boolean, short: Boolean, stackedCoverDp: Int? = null): View = HomeRoundedFrame(this, dp(22).toFloat()).apply {
+        background = GradientDrawable().apply { setColor(SURFACE); cornerRadius = dp(22).toFloat() }
         if (!appNight) elevation = dp(2).toFloat()
-        outlineProvider = object : android.view.ViewOutlineProvider() {
-            override fun getOutline(view: View, outline: android.graphics.Outline) =
-                outline.setRoundRect(0, 0, view.width, view.height, radius)
-        }
-        clipToOutline = true
         homeMediaBackdrop = ImageView(this@DiPlayActivity).apply {
             scaleType = ImageView.ScaleType.CENTER_CROP
             alpha = if (appNight) .55f else .35f
@@ -1294,40 +1350,58 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
                 homeEqualizer = EqualizerView(this@DiPlayActivity, IosColors.pink(appNight))
                 addView(homeEqualizer, LinearLayout.LayoutParams(dp(18), dp(13)))
             })
-            val artworkSize = dp(when { compact -> 60; short -> 76; else -> 92 })
-            addView(row().apply {
-                gravity = Gravity.CENTER_VERTICAL
-                setPadding(0, dp(if (compact) 12 else 16), 0, 0)
-                homeMediaArtwork = ImageView(this@DiPlayActivity).apply {
-                    scaleType = ImageView.ScaleType.CENTER_CROP
-                    setImageResource(R.drawable.art_now_playing_placeholder)
-                    val corner = dp(10).toFloat()
-                    outlineProvider = object : android.view.ViewOutlineProvider() {
-                        override fun getOutline(view: View, outline: android.graphics.Outline) =
-                            outline.setRoundRect(0, 0, view.width, view.height, corner)
-                    }
-                    clipToOutline = true
-                    elevation = dp(4).toFloat()
-                    importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
-                }
-                homeMediaArtworkSource = null
-                addView(homeMediaArtwork, LinearLayout.LayoutParams(artworkSize, artworkSize))
+            val headerGap = dp(if (compact) HomeHero.COMPACT_HEADER_GAP_DP else HomeHero.HEADER_GAP_DP)
+            val cover = HomeCoverView(this@DiPlayActivity).apply {
+                scaleType = ImageView.ScaleType.CENTER_CROP
+                setImageResource(R.drawable.art_now_playing_placeholder)
+                val sideCorner = dp(10).toFloat()
+                corner = { side -> if (stackedCoverDp != null) side * HomeHero.CORNER_SHARE else sideCorner }
+                elevation = dp(4).toFloat()
+                importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+                stackedCoverDp?.let { preferredSize = dp(it); maxSize = dp(HomeHero.COVER_MAX_DP) }
+            }
+            homeMediaArtwork = cover
+            homeMediaArtworkSource = null
+            val title = label("", if (compact) 16 else 17, TEXT, true).apply {
+                setSingleLine(true)
+                ellipsize = android.text.TextUtils.TruncateAt.END
+            }
+            val artist = label("", 15, MUTED).apply {
+                // Under a cover one line keeps its height for the cover.
+                maxLines = if (stackedCoverDp != null) 1 else 2
+                ellipsize = android.text.TextUtils.TruncateAt.END
+                setPadding(0, dp(2), 0, 0)
+            }
+            homeMediaTitle = title
+            homeMediaArtist = artist
+            val controlsGap = dp(if (compact) 8 else 12)
+            if (stackedCoverDp != null) {
+                // The cover and the song stay together, centred in the height between caption and controls.
                 addView(column().apply {
-                    setPaddingRelative(dp(14), 0, 0, 0)
-                    homeMediaTitle = label("", if (compact) 16 else 17, TEXT, true).apply {
-                        setSingleLine(true)
-                        ellipsize = android.text.TextUtils.TruncateAt.END
-                    }
-                    addView(homeMediaTitle)
-                    homeMediaArtist = label("", 15, MUTED).apply {
-                        maxLines = 2
-                        ellipsize = android.text.TextUtils.TruncateAt.END
-                        setPadding(0, dp(2), 0, 0)
-                    }
-                    addView(homeMediaArtist)
-                }, LinearLayout.LayoutParams(0, -2, 1f))
-            })
-            addView(View(this@DiPlayActivity), LinearLayout.LayoutParams(1, dp(if (compact) 8 else 12), 1f))
+                    gravity = Gravity.CENTER
+                    setPadding(0, headerGap, 0, 0)
+                    addView(cover, LinearLayout.LayoutParams(-2, 0, 1f))
+                    listOf(title, artist).forEach { it.gravity = Gravity.CENTER }
+                    addView(title, LinearLayout.LayoutParams(-1, -2).apply {
+                        topMargin = dp(if (compact) HomeHero.COMPACT_TEXT_GAP_DP else HomeHero.TEXT_GAP_DP)
+                    })
+                    addView(artist, LinearLayout.LayoutParams(-1, -2))
+                }, LinearLayout.LayoutParams(-1, 0, 1f))
+                addView(View(this@DiPlayActivity), LinearLayout.LayoutParams(1, controlsGap))
+            } else {
+                val artworkSize = dp(when { compact -> 60; short -> 76; else -> 92 })
+                addView(row().apply {
+                    gravity = Gravity.CENTER_VERTICAL
+                    setPadding(0, headerGap, 0, 0)
+                    addView(cover, LinearLayout.LayoutParams(artworkSize, artworkSize))
+                    addView(column().apply {
+                        setPaddingRelative(dp(14), 0, 0, 0)
+                        addView(title)
+                        addView(artist)
+                    }, LinearLayout.LayoutParams(0, -2, 1f))
+                })
+                addView(View(this@DiPlayActivity), LinearLayout.LayoutParams(1, controlsGap, 1f))
+            }
             val previous = transportButton(R.drawable.ic_dp_skip_previous, R.string.home_media_previous, if (compact) 44 else 48, .22f) {
                 com.shilapi.xcertplay.airplay.CarPlayMediaButton.PREVIOUS
             }
@@ -1362,6 +1436,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
                 setPaddingRelative(dp(8), 0, 0, 0)
             })
         })
+        // Stretched to its column's height, the widget keeps the turn centred below its caption.
         addView(row().apply {
             gravity = Gravity.CENTER_VERTICAL
             setPadding(0, dp(if (compact) 10 else 14), 0, 0)
@@ -1386,7 +1461,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
                 homeNavEta = label("", 13, MUTED).apply { setPadding(0, dp(2), 0, 0) }
                 addView(homeNavEta)
             }, LinearLayout.LayoutParams(0, -2, 1f))
-        })
+        }, LinearLayout.LayoutParams(-1, 0, 1f))
         isClickable = true
         isFocusable = true
         setOnClickListener { if (CarPlayBackgroundSession.hasSession()) openProjection() }
@@ -2627,6 +2702,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         filteredSection(content, SettingsSection.CAR_BUTTON,
             getString(R.string.car_button_in_carplay), R.drawable.ic_dp_car) { card -> carButtonCard = card; carButtonControls(card) }
         headUnitSignalSettings(content)
+        headUnitCanProfileSettings(content)
         headUnitTrackTestSettings(content)
         filteredSection(content, SettingsSection.AUDIO_ROUTING,
             getString(R.string.audio_routing), R.drawable.ic_dp_audio) { card ->
@@ -3062,7 +3138,59 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
             card.addView(button(getString(R.string.wireless_connection_help), false) { wirelessHelp() }, matchButton(10, 60))
         }
         androidAutoSettings(content)
+        filteredSection(content, SettingsSection.CARPLAY_ULTRA,
+            getString(R.string.settings_carplay_ultra), R.drawable.ic_dp_dashboard) { card ->
+            toggle(card, getString(R.string.settings_carplay_ultra_try), getString(R.string.settings_carplay_ultra_try_description),
+                AirPlayPersistence.loadCarPlayUltra(this)) {
+                AirPlayPersistence.saveCarPlayUltra(this, it)
+                render()
+                reconnectIfRunning()
+            }
+            if (AirPlayPersistence.loadCarPlayUltra(this)) {
+                toggle(card, getString(R.string.settings_carplay_ultra_car_data),
+                    getString(R.string.settings_carplay_ultra_car_data_description), AirPlayPersistence.loadCarPlayUltraCarData(this)) {
+                    AirPlayPersistence.saveCarPlayUltraCarData(this, it)
+                    render()
+                    markReconnectNeeded()
+                }
+                if (AirPlayPersistence.loadCarPlayUltraCarData(this)) {
+                    card.addView(label(carPlayCarDataText(), 14, MUTED).apply { setPadding(0, dp(NOTE_ATTACH_GAP_DP), 0, 0) })
+                }
+            }
+            carPlayClimateSettings(card)
+        }
         languageSettings(content)
+    }
+
+    // What the next connection describes to the Vehicle app (CarPlayCarData), in the order the Vehicle app lists it.
+    private fun carPlayCarDataText(): String {
+        val described = CarPlayCarData.forConnection(this)
+        if (described.isEmpty()) return getString(R.string.settings_carplay_ultra_car_data_none)
+        return getString(R.string.settings_carplay_ultra_car_data_next, described.joinToString(getString(R.string.preview_list_separator)) { getString(when (it) {
+            CarPlayVehicleState.CarData.FUEL_LEVEL -> R.string.settings_carplay_ultra_car_data_fuel
+            CarPlayVehicleState.CarData.RANGE -> R.string.settings_carplay_ultra_car_data_range
+            CarPlayVehicleState.CarData.ODOMETER -> R.string.settings_carplay_ultra_car_data_odometer
+            CarPlayVehicleState.CarData.TYRES -> R.string.settings_carplay_ultra_car_data_tyres
+            CarPlayVehicleState.CarData.CHARGING -> R.string.settings_carplay_ultra_car_data_charging
+            CarPlayVehicleState.CarData.BATTERY_ENERGY -> R.string.settings_carplay_ultra_car_data_energy
+            CarPlayVehicleState.CarData.OUTSIDE_TEMPERATURE -> R.string.settings_carplay_ultra_car_data_outside
+        }) })
+    }
+
+    // Where CarPlay's climate comes from on this head unit, and the opt-in for changes from the iPhone.
+    private fun carPlayClimateSettings(card: LinearLayout) {
+        val platform = HeadUnitPlatforms.current(this)
+        val source = platform?.takeIf { it.climateSource(this)?.also { probe -> probe.close() } != null }
+        card.addView(label(
+            source?.let { getString(R.string.settings_carplay_climate_source, it.displayName) }
+                ?: getString(R.string.settings_carplay_climate_none),
+            14, MUTED,
+        ).apply { setPadding(0, dp(SETTINGS_BLOCK_GAP_DP), 0, 0) })
+        if (source?.writesClimate == true) {
+            toggle(card, getString(R.string.settings_carplay_climate_writes),
+                getString(R.string.settings_carplay_climate_writes_description, source.displayName),
+                AirPlayPersistence.loadCarPlayClimateWrites(this)) { AirPlayPersistence.saveCarPlayClimateWrites(this, it) }
+        }
     }
 
     private fun about(content: LinearLayout) {
@@ -3080,6 +3208,8 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         }
         section(content, getString(R.string.made_possible_by_open_source)) { card ->
             card.addView(label(getString(R.string.receiver_based_on_xcertplay_licensed_under_gpl_3_0_diplay), 16, MUTED))
+            // CarPlay's vehicle-state protocol (CarPlayVehicleState, Opack) is ported from LIVI, whose licence terms ask for this line.
+            card.addView(label(getString(R.string.about_livi_attribution), 16, MUTED).apply { setPadding(0, dp(NOTE_ATTACH_GAP_DP), 0, 0) })
         }
     }
 
@@ -3567,6 +3697,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
                     HeadUnitSettings.saveWheelKeys(this, it)
                 }
             }
+            if (platform.linksKeysWithRoot && RootI2cTransport.suAvailable()) headUnitLinkKeys(card, platform)
             card.addView(label(getString(R.string.settings_head_unit_reverse_description, platform.displayName), 14, MUTED))
             card.addView(label(headUnitSignalText(), 14, MUTED).apply { setPadding(0, dp(SETTINGS_BLOCK_GAP_DP), 0, 0) })
             if (searchIndexSink == null) platform.vehicleSource(this)?.let { source ->
@@ -3580,6 +3711,95 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
                     if (!isFinishing && !isDestroyed) values.text = headUnitVehicleText(reading)
                 }, 2_500L)
             }
+        }
+    }
+
+    // FYT hands its wheel keys to an app only while a root-set property is on; the switch applies at once.
+    private fun headUnitLinkKeys(card: LinearLayout, platform: HeadUnitPlatform) {
+        var row: Switch? = null
+        row = toggle(card, getString(R.string.settings_head_unit_link_keys),
+            getString(R.string.settings_head_unit_link_keys_description, platform.displayName),
+            HeadUnitSettings.linkKeys(this)) { on ->
+            if (!on) {
+                HeadUnitSettings.saveLinkKeys(this, false)
+                FytKeyLink.apply(this)
+                return@toggle
+            }
+            toast(getString(R.string.settings_head_unit_mfi_root_asking))
+            Thread({
+                // The root manager asks the driver now, while parked, rather than when CarPlay next connects.
+                val granted = RootShell.run("id -u", 30_000L)?.trim() == "0"
+                runOnUiThread {
+                    if (isFinishing || isDestroyed) return@runOnUiThread
+                    if (granted) {
+                        HeadUnitSettings.saveLinkKeys(this, true)
+                        FytKeyLink.apply(this)
+                    } else {
+                        row?.isChecked = false
+                        toast(getString(R.string.settings_head_unit_link_keys_refused, platform.displayName))
+                    }
+                }
+            }, "tarmac-link-keys-root").start()
+        }
+    }
+
+    // The CAN-box profile chosen on the unit, read once when the card opens, and what it carries to the car.
+    private fun headUnitCanProfileSettings(content: LinearLayout) {
+        val platform = HeadUnitPlatforms.current(this) ?: return
+        if (!platform.readsCanProfile) return
+        filteredSection(content, SettingsSection.HEAD_UNIT_CAN_PROFILE,
+            getString(R.string.settings_head_unit_can_title, platform.displayName), R.drawable.ic_dp_car) { card ->
+            card.addView(label(getString(R.string.settings_head_unit_can_description, platform.displayName), 14, MUTED))
+            val details = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+            card.addView(details)
+            if (searchIndexSink != null) return@filteredSection
+            details.addView(label(getString(R.string.settings_head_unit_can_reading), 14, MUTED)
+                .apply { setPadding(0, dp(SETTINGS_BLOCK_GAP_DP), 0, 0) })
+            Thread({
+                val profile = runCatching { platform.readCanProfile(applicationContext) }.getOrNull()
+                runOnUiThread {
+                    if (!isFinishing && !isDestroyed) renderHeadUnitCanProfile(details, platform, profile)
+                }
+            }, "tarmac-can-profile").start()
+        }
+    }
+
+    private fun renderHeadUnitCanProfile(details: LinearLayout, platform: HeadUnitPlatform, profile: HeadUnitCanProfile?) {
+        details.removeAllViews()
+        fun line(text: String, color: Int) = details.addView(label(text, 14, color)
+            .apply { setPadding(0, dp(SETTINGS_BLOCK_GAP_DP), 0, 0) })
+        if (profile == null) {
+            line(getString(R.string.settings_head_unit_can_none, platform.displayName), WARNING)
+            return
+        }
+        val name = profile.names.takeIf { it.isNotEmpty() }?.joinToString(" · ")
+            ?: getString(R.string.settings_head_unit_can_number, profile.protocol ?: 0, profile.variant ?: 0)
+        // The unit's names and the ID keep their own direction inside right-to-left text.
+        val bidi = BidiFormatter.getInstance()
+        line(getString(R.string.settings_head_unit_can_profile, bidi.unicodeWrap(name),
+            bidi.unicodeWrap("0x" + Integer.toHexString(profile.id))), TEXT)
+        for ((feature, support) in profile.features) {
+            val featureName = getString(when (feature) {
+                HeadUnitCanFeature.GUIDANCE -> R.string.settings_head_unit_can_guidance
+                HeadUnitCanFeature.TRACK_TEXT -> R.string.settings_head_unit_can_track
+                HeadUnitCanFeature.DOORS -> R.string.settings_head_unit_can_doors
+                HeadUnitCanFeature.CLIMATE -> R.string.settings_head_unit_can_climate
+                HeadUnitCanFeature.OUTSIDE_TEMPERATURE -> R.string.settings_head_unit_can_outside
+                HeadUnitCanFeature.SURROUND_CAMERA -> R.string.settings_head_unit_can_camera
+            })
+            val supportName = getString(when (support) {
+                HeadUnitSupport.YES -> R.string.settings_head_unit_can_yes
+                HeadUnitSupport.NO -> R.string.settings_head_unit_can_no
+                HeadUnitSupport.ROOT -> R.string.settings_head_unit_can_root
+            })
+            line(getString(R.string.settings_head_unit_can_feature, featureName, supportName), when (support) {
+                HeadUnitSupport.YES -> READY
+                HeadUnitSupport.ROOT -> TEXT
+                HeadUnitSupport.NO -> MUTED
+            })
+        }
+        if (platform.trackTestRoute != null || platform.forwardsAmapGuidance) {
+            line(getString(R.string.settings_head_unit_can_hint), MUTED)
         }
     }
 
@@ -8331,7 +8551,12 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         private const val SEARCH_HIGHLIGHT_MILLIS = 900L
         private const val SPACER = "spacer"
         private const val CONTROL_HEIGHT_DP = 60
+        /** A row of Home's shortcuts list, and the iOS list row a short landscape row uses. */
+        private const val HOME_ROW_HEIGHT_DP = 56
+        private const val HOME_SHORT_ROW_HEIGHT_DP = 44
         private const val CONTROL_GAP_DP = 12
+        /** The text inset of two buttons that share a narrow card. */
+        private const val NARROW_BUTTON_INSET_DP = 8
         private const val GROUP_GAP_DP = 20
         private const val NOTE_LINE_GAP_DP = 4
         private const val NOTE_ATTACH_GAP_DP = 6

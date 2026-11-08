@@ -6,11 +6,15 @@ CAN bus, and a plan for the part that is possible.
 
 ## Short answer
 
-- **CarPlay Ultra itself: no.** Ultra is a per-manufacturer integration that Apple certifies. The iPhone
-  draws the car's own climate and settings screens from design work Apple does with each maker, and it
-  offers Ultra only to vehicles Apple has approved. Nothing an accessory sends can unlock it, and there
-  is no public protocol to implement. Apple has said Ultra cannot be added to cars that already have
-  regular CarPlay, because it needs deep integration with the car's electronics, displays and software.
+- **Climate inside CarPlay: yes, experimentally.** Tarmac answers CarPlay's vehicle-state protocol (ported
+  from LIVI). iOS then draws climate in the dock and its climate panel, and with CarPlay Ultra chosen on the
+  iPhone also the Climate, Radio and Vehicle apps.
+  - On TEYES and FYT head units the values are the car's, read from the CAN box. With the driver's opt-in, the
+    iPhone's allow-listed changes go back through the vendor's service under the rules below: TEYES climate-button
+    presses, FYT voice-assistant commands.
+  - This is built from the firmware and not yet tried on a car. Other head units describe no climate.
+  - The Ultra look and gauges come from a theme asset made for each car model, which Tarmac does not have.
+  - Details: [CARPLAY_ULTRA.md](CARPLAY_ULTRA.md) and [Climate sources by head unit](#climate-sources-by-head-unit).
 - **Car controls beside CarPlay: yes.** Tarmac already draws its own Android panel next to CarPlay
   ([SIDE_PANEL.md](SIDE_PANEL.md)) using CarPlay view areas ([VIEW_AREAS.md](VIEW_AREAS.md)). The same
   mechanism can pin climate and comfort controls to one edge of the screen, which is how Ultra presents
@@ -22,8 +26,9 @@ CAN bus, and a plan for the part that is possible.
 
 ## Why Ultra is out of reach
 
-- The iPhone renders Ultra's gauges and car screens with assets and layouts made for each brand. A
-  receiver cannot supply them.
+- The iPhone renders Ultra's gauges and car screens with assets and layouts made for each brand. The car
+  names its asset in CarPlayStartSession and iOS fetches the signed asset from Apple; a receiver cannot
+  supply one of its own ([CARPLAY_ULTRA.md](CARPLAY_ULTRA.md)).
 - The iPhone gates features by identification. In Tarmac's own tests, declaring Road Object Detection
   (identification parameter 33) made the iPhone reject the whole identification
   (`IdentificationRejected` for 0x0021). The same happened for other fields reserved for approved vehicles.
@@ -46,6 +51,20 @@ adapter per platform:
 | A USB CAN adapter (CANable/slcan, PCAN-USB) on the comfort bus | Android USB host plus the slcan text protocol. Reading is generic. Writing needs the car's own message IDs, from a DBC file or from capturing traffic. | Feasible for enthusiasts; car-specific and risky |
 | OBD-II dongles (ELM327/STN) | Diagnostic requests only: gauges and fault codes. | Read-only |
 | Android Automotive OS (Google built-in) | Climate properties need `CONTROL_CAR_CLIMATE`, a signature/privileged permission. | Not available to a sideloaded app |
+
+## Climate sources by head unit
+
+What CarPlay's climate reads and writes on each platform (November 2026):
+
+| Platform | Reading | Writing | Status |
+|---|---|---|---|
+| TEYES (SPD) | `com.spd.carinfo` getters: switches, fan and seat heating with `getInt`, temperatures with `getBundle`, per zone | `setInt` presses (touch down, touch up) as TEYES's own climate widgets send them, each checked against the next reading | Built from the CC4 firmware and tested against a simulated CAN box; **not run on a car** ([HEADUNIT_SPD_TEYES.md § Climate](HEADUNIT_SPD_TEYES.md#climate)) |
+| FYT (`com.syu.ms`) | canbus module callbacks on FYT's shared climate codes, gated on `U_EXIST_AIR` and the protocol; temperatures only where the scale is certain (tenths, LO/HI markers) | FYT's voice-assistant command (`C_VA_CMD`): absolute A/C, defrost, recirculation; fan and temperature steps; only codes the protocol lists; each checked against the next reading | Built from the UIS7870 firmware and tested against a simulated protocol; **not run on a car** ([HEADUNIT_FYT_DUDU.md § Climate](HEADUNIT_FYT_DUDU.md#climate)) |
+| BYD DiLink | BYD's climate is `BYDAutoAcDevice` in the head unit's framework. Its autoservice feature IDs are not in Tarmac's catalogue: they are read from `BYDAutoFeatureIds` on the unit, and no BYD firmware was available here. | `service call autoservice` set transactions over the local ADB | **Blocked**: run the catalogue probe on a BYD unit with its climate fields added, then confirm each read before any write |
+| Phones and other head units | none | none | CarPlay describes no climate |
+
+Root does not change TEYES's situation. Its setters are already exported without a permission. The only routes root
+adds are the MCU UART (`/dev/ttyHS2`) and `spd.Hal`, which bypass TEYES's profile layer and stay off limits.
 
 ## Path B: controls inside CarPlay
 
