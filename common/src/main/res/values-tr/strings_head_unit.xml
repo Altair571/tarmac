@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TEYES and other recognised head units (docs/HEADUNIT_SPD_TEYES.md). -->
+<resources>
+    <string name="settings_head_unit_title">%1$s ana ünite</string>
+    <string name="settings_head_unit_description">Tarmac bu ana üniteyi tanıdı. Aracın sinyallerini ondan okur ve araca hiçbir şey göndermez.</string>
+    <string name="settings_head_unit_starting_app_on">%1$s, araç çalıştığında Tarmac’ı açar ve araç uykudayken çalışır durumda tutar.</string>
+    <string name="settings_head_unit_starting_app_off">Araç çalıştığında Tarmac’ın açılması için %1$s ayarlarında başlangıç uygulaması olarak Tarmac’ı seçin. %1$s böylece araç uykudayken de Tarmac’ı çalışır durumda tutar.</string>
+    <string name="settings_head_unit_own_carplay">%1$s CarPlay kendiliğinden başlar ve iPhone’u Tarmac’tan önce alabilir. Otomatik başlatmasını %1$s ayarlarından kapatın.</string>
+    <string name="settings_head_unit_open_settings">%1$s ayarlarını aç</string>
+    <string name="settings_head_unit_mfi_chip">Kimlik doğrulama çipi (deneysel)</string>
+    <string name="settings_head_unit_mfi_own">Tarmac’ın kendi kimliği</string>
+    <string name="settings_head_unit_mfi_head_unit">Ana ünite (%1$s)</string>
+    <string name="settings_head_unit_mfi_ready">Ana ünitenin %1$s üzerindeki Apple çipi Tarmac’a açık. Değişiklik bir sonraki bağlantıda uygulanır. Tarmac çipi kullanırken %2$s CarPlay’i kapalı tutun.</string>
+    <string name="settings_head_unit_mfi_blocked">Ana ünitenin Apple çipi %1$s üzerinde, ancak Android güvenlik politikası uygulamaların ona erişmesine izin vermiyor; bu yüzden Tarmac kendi kimliğini kullanır.</string>
+    <string name="settings_head_unit_mfi_missing">Tarmac %1$s bulamadı; bu yüzden kendi kimliğini kullanır.</string>
+    <string name="settings_head_unit_mfi_unknown">Tarmac %1$s denetleyemedi; bu yüzden kendi kimliğini kullanır.</string>
+    <string name="settings_head_unit_signals_title">%1$s araç sinyalleri</string>
+    <string name="settings_head_unit_wheel_keys">Ses ve arama tuşları CarPlay’e</string>
+    <string name="settings_head_unit_wheel_keys_description">CarPlay çalışırken direksiyondaki ses tuşu Siri’yi açar, arama tuşları CarPlay aramalarını yanıtlar ve sonlandırır. Tarmac direksiyon tuşları hizmeti gerekir.</string>
+    <string name="settings_head_unit_reverse_description">Geri viteste Tarmac ekranı %1$s kamerasına bırakır ve CarPlay’i yalnızca geri vites bitince açar.</string>
+    <string name="settings_head_unit_signal_state">Araç çalışıyor: %1$s · Geri vites: %2$s</string>
+    <string name="settings_head_unit_state_on">evet</string>
+    <string name="settings_head_unit_state_off">hayır</string>
+    <string name="settings_head_unit_state_unknown">bilinmiyor</string>
+    <string name="settings_head_unit_vehicle_waiting">CAN kutusu okunuyor…</string>
+    <string name="settings_head_unit_vehicle_none">CAN kutusu değer bildirmiyor.</string>
+    <string name="settings_head_unit_vehicle_values">Hız %1$s km/sa · Dış %2$s °C · Menzil %3$s km · Şarj %4$s %%</string>
+    <string name="settings_head_unit_mfi_head_unit_root">Root ile ana ünite (%1$s)</string>
+    <string name="settings_head_unit_mfi_root">Çipi root ile aç</string>
+    <string name="settings_head_unit_mfi_root_asking">Root isteniyor…</string>
+    <string name="settings_head_unit_mfi_root_ready">Root, ana ünitenin %1$s üzerindeki Apple çipini açtı. Tarmac onu root yardımcı süreciyle kullanır; sistemde hiçbir şey değişmez. Değişiklik bir sonraki bağlantıda uygulanır. Tarmac çipi kullanırken %2$s CarPlay’i kapalı tutun.</string>
+    <string name="settings_head_unit_mfi_root_failed">Root %1$s açamadı; bu yüzden Tarmac kendi kimliğini kullanır.</string>
+    <string name="settings_head_unit_track_test_title">Gösterge paneli ve HUD testleri (deneysel)</string>
+    <string name="settings_head_unit_track_test_description">Tarmac, %1$s ünitesine bir test parçası (Tarmac test, CarPlay) verir; bu, %1$s oynatıcılarının yaptığıyla aynıdır. Gösterge paneline veya HUD’a bakın. Düğmeye basana kadar hiçbir şey gönderilmez.</string>
+    <string name="settings_head_unit_track_test_record">Parça kaydı</string>
+    <string name="settings_head_unit_track_test_other">Diğer medya (14)</string>
+    <string name="settings_head_unit_track_test_media">Medya (1)</string>
+    <string name="settings_head_unit_track_test_enter">Tarmac’ı etkin kaynak yap</string>
+    <string name="settings_head_unit_track_test_enter_description">Bazı araç protokolleri yalnızca etkin kaynağın parçasını gösterir. Bu, ana ünitenin sesini Tarmac’a geçirebilir.</string>
+    <string name="settings_head_unit_track_test_send">Test parçası gönder</string>
+    <string name="settings_head_unit_track_test_sending">Gönderiliyor…</string>
+    <string name="settings_head_unit_track_test_sent">Gönderildi. %1$s günlüğünde ilgili satır sayısı: %2$d</string>
+    <string name="settings_head_unit_track_test_failed">Gönderilmedi: %1$s</string>
+    <string name="settings_head_unit_track_test_nothing_logged">Gönderildi, ancak %1$s günlüğünde bununla ilgili bir şey yok. Diğer parça kaydını deneyin veya Tarmac’ı etkin kaynak yapın.</string>
+    <string name="settings_head_unit_guidance_test">Test yol tarifi gönder</string>
+    <string name="settings_head_unit_guidance_test_description">AMap’in standart yol tarifini yaklaşık 10 saniye gönderir: 350 m sonra sola, Tarmac Street’e dönün. %1$s bunu yalnızca yol tarifini gösteren CAN kutusu profillerinde gösterge paneline veya HUD’a iletir.</string>
+    <string name="settings_head_unit_test_sent_no_log">Gönderildi. Gösterge paneline veya HUD’a bakın. Root olmadan Tarmac, %1$s günlüğünü okuyamaz.</string>
+</resources>

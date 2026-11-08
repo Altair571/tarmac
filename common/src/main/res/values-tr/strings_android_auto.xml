@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android Auto entry on Home and its Settings card; see docs/ANDROID_AUTO.md. -->
+<resources>
+    <string name="home_android_auto">Android Auto</string>
+    <string name="settings_android_auto">Android Auto (deneysel)</string>
+    <string name="settings_android_auto_description">Bir Android telefonu USB kablosuyla veya kablosuz olarak yansıtır. Henüz her telefon ile ana ünitede test edilmedi.</string>
+    <string name="settings_android_auto_identity_installed">Bir ana ünite kimliği yüklü.</string>
+    <string name="settings_android_auto_identity_missing">Yüklü bir ana ünite kimliği yok, bu nedenle Android Auto bağlanamıyor. Kişisel bir derlemeye nasıl ekleneceği docs/ANDROID_AUTO.md dosyasında açıklanıyor.</string>
+    <string name="settings_android_auto_last_connection">Son bağlantı: takıldıktan ilk görüntüye kadar %1$s sn.</string>
+    <string name="settings_android_auto_open">Android Auto\'yu aç</string>
+    <string name="settings_android_auto_open_when_plugged_in">Bir Android telefon takıldığında başlat</string>
+    <string name="settings_android_auto_open_when_plugged_in_description">Bu uygulama açık olsun ya da olmasın, telefonu dokunmadan Android Auto\'ya geçirir ve açar. Android hangi uygulamanın kullanılacağını bir kez sorar; bunu ve “Her zaman”ı seçin.</string>
+    <string name="settings_android_auto_reconnect">Otomatik yeniden bağlan</string>
+    <string name="settings_android_auto_reconnect_description">Telefon takılıyken Android Auto koparsa 1, 2, 4, 8 ve 15 saniye sonra yeniden bağlanır. USB istemi veya kimlik reddedildiyse yeniden denenmez.</string>
+    <string name="settings_android_auto_picture">Görüntü boyutu</string>
+    <string name="settings_android_auto_automatic">Otomatik</string>
+    <string name="settings_android_auto_picture_description">Bir sonraki Android Auto bağlantısında uygulanır. Otomatik, bu ekranın net gösterdiği en büyük boyutu seçer.</string>
+    <string name="settings_android_auto_density">Ekran yoğunluğu</string>
+    <string name="settings_android_auto_density_description">Android Auto\'nun yazı ve düğmeleri ne kadar büyük çizdiği. Yüksek değer daha büyüktür. Bir sonraki Android Auto bağlantısında uygulanır.</string>
+    <string name="settings_android_auto_frame_rate">Kare hızı</string>
+    <string name="settings_android_auto_fps_value">%1$d fps</string>
+    <string name="settings_android_auto_frame_rate_description">60 fps hızlı bir ana ünitede daha akıcı, yavaş bir ünitede daha ağırdır. Bir sonraki Android Auto bağlantısında uygulanır.</string>
+    <string name="settings_android_auto_sound">Yol tarifi ve sistem sesleri</string>
+    <string name="settings_android_auto_sound_separate">Kendi ses akışları</string>
+    <string name="settings_android_auto_sound_media">Medya akışı</string>
+    <string name="settings_android_auto_sound_description">Kendi akışları, aracın yol tariflerini müziğin üzerine karıştırmasını sağlar. Ana ünite yalnızca medya akışını çalıyorsa onu seçin. Bir sonraki Android Auto bağlantısında uygulanır.</string>
+    <string name="settings_android_auto_night">Gece modu</string>
+    <string name="settings_android_auto_night_follow">Android\'i izle</string>
+    <string name="settings_android_auto_night_day">Her zaman gündüz</string>
+    <string name="settings_android_auto_night_night">Her zaman gece</string>
+    <string name="settings_android_auto_driving_side">Android Auto denetimlerini %1$s → %2$s ayarındaki sürücü tarafına yerleştirir.</string>
+    <string name="settings_android_auto_gps">GPS kaynağı</string>
+    <string name="settings_android_auto_gps_phone">Telefon</string>
+    <string name="settings_android_auto_gps_head_unit">Ana ünite</string>
+    <string name="settings_android_auto_gps_description">Ana ünite, bu ünitenin kendi GPS\'ini Android Auto\'ya gönderir; telefonun çekmediği yerlerde işe yarar ve hassas konum gerektirir. Telefon, telefonun kendi GPS\'ini kullanır. Bir sonraki Android Auto bağlantısında uygulanır.</string>
+    <string name="settings_android_auto_next_connection">Kaydedildi. Bir sonraki Android Auto bağlantısında uygulanır.</string>
+    <string name="settings_android_auto_connect_wirelessly">Kablosuz bağlan</string>
+    <string name="settings_android_auto_bluetooth">Bilinen bir telefon Bluetooth ile bağlandığında başlat</string>
+    <string name="settings_android_auto_bluetooth_description">Kablosuz Android Auto\'yu burada daha önce kullanmış bir telefonla başlatır; telefonu bir kez Kablosuz bağlan ile bağlayın. Kablosuz CarPlay için kurulan Wi-Fi\'yi, yoksa Wi-Fi Direct\'i kullanır.</string>
+    <string name="settings_android_auto_forget_phones">Bilinen telefonları unut (%1$d)</string>
+    <string name="settings_android_auto_wireless_permissions">Kablosuz Android Auto\'nun telefona ulaşması için Yakındaki cihazlar veya Konum izni gerekir. Bu uygulamanın izinlerinden verin.</string>
+</resources>

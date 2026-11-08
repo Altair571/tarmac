@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_car_guidance">Quadro strumenti e HUD dell’auto</string>
+    <string name="settings_car_guidance_switch">Invia le svolte al quadro strumenti e all’HUD dell’auto</string>
+    <string name="settings_car_guidance_description">Invia la prossima svolta di CarPlay, la distanza e la via come broadcast di navigazione standard di AMap. Le autoradio il cui servizio CAN o del quadro lo ascolta le mostrano sul quadro di serie o sull’HUD; le altre lo ignorano. Si applica subito.</string>
+</resources>

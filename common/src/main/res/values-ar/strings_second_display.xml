@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_dashboard_display">شاشة لوحة العدادات</string>
+    <string name="settings_dashboard_display_none">بلا (خريطة للشاشة الوسطى فقط)</string>
+    <string name="settings_dashboard_display_option">%1$s (%2$d × %3$d)</string>
+    <string name="settings_dashboard_display_missing">%1$s (غير متصلة)</string>
+    <string name="settings_dashboard_display_description">يعرض خريطة لوحة العدادات على شاشة أخرى يكتشفها Android، مثل لوحة عدادات رقمية. اختر فقط شاشة يراها السائق: فشاشة الراكب تبدو مماثلة بالنسبة إلى Android. يُطبَّق عند الاتصال التالي.</string>
+    <string name="settings_dashboard_display_route">اعرضها كـ</string>
+    <string name="settings_dashboard_display_route_presentation">عرض تقديمي (موصى به)</string>
+    <string name="settings_dashboard_display_route_window">نافذة تطبيق</string>
+    <string name="settings_dashboard_display_route_description">إذا بقيت تلك الشاشة سوداء، فجرّب نافذة تطبيق. يُطبَّق عند الاتصال التالي.</string>
+</resources>

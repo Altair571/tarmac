@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_reverse_camera">倒車影像</string>
+    <string name="settings_reverse_camera_switch">倒車時切換到攝影機</string>
+    <string name="settings_reverse_camera_switch_description">車輛打入倒檔時，Tarmac 會把 CarPlay 移出螢幕，或開啟下方選擇的攝影機應用程式；離開倒檔後再把 CarPlay 切回來。CarPlay 保持連線。</string>
+    <string name="settings_reverse_camera_source">檔位來源</string>
+    <string name="settings_reverse_camera_source_automatic">自動</string>
+    <string name="settings_reverse_camera_source_byd">比亞迪檔位（ADB）</string>
+    <string name="settings_reverse_camera_source_ecarx">吉利 / ECARX 感測器</string>
+    <string name="settings_reverse_camera_source_adapter">車輛資料轉接器</string>
+    <string name="settings_reverse_camera_source_broadcast">車機廣播</string>
+    <string name="settings_reverse_camera_source_none">Tarmac 不知道這台車機的檔位來源。請在車輛資料轉接器（進階）中加入檔位訊號，或設定車機的廣播。</string>
+    <string name="settings_reverse_camera_source_using">檔位讀取自：%1$s</string>
+    <string name="settings_reverse_camera_adapter_no_gear">車輛資料轉接器的對照表中還沒有檔位訊號。</string>
+    <string name="settings_reverse_camera_app">攝影機應用程式</string>
+    <string name="settings_reverse_camera_app_none">無（只把 CarPlay 移開）</string>
+    <string name="settings_reverse_camera_app_description">只有在 CarPlay 移開後攝影機畫面不會自動出現時，才選擇車機的攝影機應用程式。</string>
+    <string name="settings_reverse_camera_broadcast">車機廣播</string>
+    <string name="settings_reverse_camera_broadcast_not_set">未設定</string>
+    <string name="settings_reverse_camera_broadcast_action">廣播 action</string>
+    <string name="settings_reverse_camera_broadcast_extra">extra 名稱</string>
+    <string name="settings_reverse_camera_broadcast_value">倒車時的 extra 值</string>
+    <string name="settings_reverse_camera_broadcast_description">適用於以廣播通知倒車的車機。打入倒檔時用記錄 intent 的應用程式找出 action 和 extra，再填寫在這裡。</string>
+    <string name="settings_reverse_camera_broadcast_remove">移除</string>
+    <string name="settings_reverse_camera_return_needed">要在倒車後切回 CarPlay，Android 需要 Tarmac 擁有「顯示在其他應用程式上層」權限，或開啟方向盤按鍵服務。</string>
+    <string name="settings_reverse_camera_return_allow">允許顯示在其他應用程式上層</string>
+</resources>

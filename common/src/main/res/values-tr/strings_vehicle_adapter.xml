@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_vehicle_adapter">Araç verisi adaptörü (deneysel)</string>
+    <string name="settings_vehicle_adapter_description">Ana ünitesi şarjı, menzili ve vitesi bildirmeyen araçlar için bunları bir OBD-II veya CAN adaptöründen okur. Tarmac yalnızca okur: OBD-II adaptörüne standart okuma istekleri gider, CAN adaptörü yalnızca dinleme modunda açılır. Araca hiçbir zaman yazılmaz.</string>
+    <string name="settings_vehicle_adapter_kind">Adaptör</string>
+    <string name="settings_vehicle_adapter_off">Kapalı</string>
+    <string name="settings_vehicle_adapter_obd_bluetooth">Bluetooth üzerinden OBD-II (ELM327, STN)</string>
+    <string name="settings_vehicle_adapter_obd_usb">USB üzerinden OBD-II (STN, CDC-ACM)</string>
+    <string name="settings_vehicle_adapter_can_usb">USB üzerinden CAN (slcan, yalnızca dinleme)</string>
+    <string name="settings_vehicle_adapter_bluetooth">Bluetooth adaptörü</string>
+    <string name="settings_vehicle_adapter_bluetooth_none">Seçilmedi</string>
+    <string name="settings_vehicle_adapter_bluetooth_empty">Eşlenmiş Bluetooth cihazı yok. Önce OBD-II adaptörünü Android’in Bluetooth ayarlarında eşleyin (PIN genellikle 1234 veya 0000’dır).</string>
+    <string name="settings_vehicle_adapter_bluetooth_permission">Tarmac’in eşlenmiş OBD-II adaptörüne bağlanabilmesi için Yakındaki cihazlar iznini verin.</string>
+    <string name="settings_vehicle_adapter_usb_missing">Takılı bir USB seri adaptör (CDC-ACM) yok. FTDI, CH340 veya CP210x çipli adaptörler henüz desteklenmiyor.</string>
+    <string name="settings_vehicle_adapter_usb_allow">USB adaptörüne izin ver</string>
+    <string name="settings_vehicle_adapter_map">Sinyal haritası</string>
+    <string name="settings_vehicle_adapter_map_none">Yok</string>
+    <string name="settings_vehicle_adapter_map_custom">Özel</string>
+    <string name="settings_vehicle_adapter_map_can">CAN adaptörünün, hangi çerçevelerin şarj, menzil ve vites taşıdığını bilmesi için aracın sinyal haritası (JSON) gerekir.</string>
+    <string name="settings_vehicle_adapter_map_obd">Harita olmadan Tarmac standart batarya PID’ini okur; buna yanıt veren elektrikli araç azdır. Harita, şarj durumu veya vites gibi araca özgü PID’leri ekler.</string>
+    <string name="settings_vehicle_adapter_map_hint">Aracın JSON sinyal haritasını yapıştırın</string>
+    <string name="settings_vehicle_adapter_map_remove">Kaldır</string>
+    <string name="settings_vehicle_adapter_map_invalid">Sinyal haritası kaydedilmedi: %1$s</string>
+    <string name="settings_vehicle_adapter_ev">Apple Haritalar için şarj ve menzil</string>
+    <string name="settings_vehicle_adapter_ev_description">Adaptörden okunan şarjı ve menzili iPhone’a bildirir; böylece Apple Haritalar şarj duraklarını planlayabilir. Bir sonraki bağlantıda uygulanır.</string>
+    <string name="settings_vehicle_adapter_full_range">Tam şarjda menzil</string>
+    <string name="settings_vehicle_adapter_full_range_unknown">Araçtan okunur</string>
+    <string name="settings_vehicle_adapter_full_range_km">%1$d km</string>
+    <string name="settings_vehicle_adapter_full_range_description">Araç yalnızca şarjı bildiriyorsa Tarmac menzili bu değerden hesaplar. Menzil yoksa iPhone’a elektrikli araç bildirilmez.</string>
+    <string name="settings_vehicle_adapter_connectors">Şarj konektörleri</string>
+    <string name="settings_vehicle_adapter_state_off">Okunmuyor</string>
+    <string name="settings_vehicle_adapter_state_connecting">Adaptöre bağlanılıyor…</string>
+    <string name="settings_vehicle_adapter_state_not_found">Adaptör bulunamadı. Takılı veya eşlenmiş olduğunu ve aracın açık olduğunu kontrol edin.</string>
+    <string name="settings_vehicle_adapter_state_no_permission">Tarmac adaptörü henüz kullanamıyor.</string>
+    <string name="settings_vehicle_adapter_state_no_answer">Adaptör yanıt vermedi. Kontak açık mı?</string>
+    <string name="settings_vehicle_adapter_state_no_listen_only">Bu CAN adaptörünün yalnızca dinleme modu yok, bu yüzden Tarmac onu açmıyor.</string>
+    <string name="settings_vehicle_adapter_state_connected">Bağlı</string>
+    <string name="settings_vehicle_adapter_unknown">—</string>
+    <string name="settings_vehicle_adapter_reading">Şarj %1$s · menzil %2$s · vites %3$s</string>
+</resources>

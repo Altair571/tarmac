@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_dashboard_display">儀表螢幕</string>
+    <string name="settings_dashboard_display_none">無（地圖僅供中控螢幕使用）</string>
+    <string name="settings_dashboard_display_option">%1$s（%2$d × %3$d）</string>
+    <string name="settings_dashboard_display_missing">%1$s（未連線）</string>
+    <string name="settings_dashboard_display_description">在 Android 偵測到的另一個螢幕（例如數位儀表）上顯示儀表板地圖。請只選擇駕駛看得到的螢幕：對 Android 來說，副駕螢幕看起來沒有差別。下次連線時套用。</string>
+    <string name="settings_dashboard_display_route">顯示方式</string>
+    <string name="settings_dashboard_display_route_presentation">簡報視窗（建議）</string>
+    <string name="settings_dashboard_display_route_window">應用程式視窗</string>
+    <string name="settings_dashboard_display_route_description">如果那個螢幕一直是黑的，請試試應用程式視窗。下次連線時套用。</string>
+</resources>

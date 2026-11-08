@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_dashboard_display">仪表屏幕</string>
+    <string name="settings_dashboard_display_none">无（地图仅供中控屏使用）</string>
+    <string name="settings_dashboard_display_option">%1$s（%2$d × %3$d）</string>
+    <string name="settings_dashboard_display_missing">%1$s（未连接）</string>
+    <string name="settings_dashboard_display_description">在 Android 识别到的另一块屏幕（如数字仪表）上显示仪表盘地图。请只选择驾驶员能看到的屏幕：在 Android 看来，副驾屏幕没有区别。下次连接时生效。</string>
+    <string name="settings_dashboard_display_route">显示方式</string>
+    <string name="settings_dashboard_display_route_presentation">演示窗口（推荐）</string>
+    <string name="settings_dashboard_display_route_window">应用窗口</string>
+    <string name="settings_dashboard_display_route_description">如果那块屏幕一直是黑的，请尝试应用窗口。下次连接时生效。</string>
+</resources>

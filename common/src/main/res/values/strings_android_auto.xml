@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android Auto entry on Home and its Settings card; see docs/ANDROID_AUTO.md. -->
+<resources>
+    <string name="home_android_auto">Android Auto</string>
+    <string name="settings_android_auto">Android Auto (experimental)</string>
+    <string name="settings_android_auto_description">Project an Android phone over a USB cable or wirelessly. Not yet tested on every phone and head unit.</string>
+    <string name="settings_android_auto_identity_installed">A head-unit identity is installed.</string>
+    <string name="settings_android_auto_identity_missing">No head-unit identity is installed, so Android Auto cannot connect. docs/ANDROID_AUTO.md explains how to add one to a personal build.</string>
+    <string name="settings_android_auto_last_connection">Last connection: %1$s s from plug-in to the first picture.</string>
+    <string name="settings_android_auto_open">Open Android Auto</string>
+    <string name="settings_android_auto_open_when_plugged_in">Start when an Android phone is plugged in</string>
+    <string name="settings_android_auto_open_when_plugged_in_description">Switches the phone to Android Auto and opens it with no tap, whether this app is open or not. Android asks once which app to use; choose this one and “Always”.</string>
+    <string name="settings_android_auto_reconnect">Reconnect automatically</string>
+    <string name="settings_android_auto_reconnect_description">When Android Auto drops while the phone stays plugged in, connect again after 1, 2, 4, 8 and 15 seconds. A refused USB prompt or identity is not retried.</string>
+    <string name="settings_android_auto_picture">Picture size</string>
+    <string name="settings_android_auto_automatic">Automatic</string>
+    <string name="settings_android_auto_picture_description">Applies at the next Android Auto connection. Automatic picks the largest size this screen shows sharply.</string>
+    <string name="settings_android_auto_density">Screen density</string>
+    <string name="settings_android_auto_density_description">How large Android Auto draws text and buttons. Higher is larger. Applies at the next Android Auto connection.</string>
+    <string name="settings_android_auto_frame_rate">Frame rate</string>
+    <string name="settings_android_auto_fps_value">%1$d fps</string>
+    <string name="settings_android_auto_frame_rate_description">60 fps is smoother on a fast head unit and heavier on a slow one. Applies at the next Android Auto connection.</string>
+    <string name="settings_android_auto_sound">Guidance and system sounds</string>
+    <string name="settings_android_auto_sound_separate">Their own streams</string>
+    <string name="settings_android_auto_sound_media">Media stream</string>
+    <string name="settings_android_auto_sound_description">Their own streams let the car mix directions over music. Choose the media stream if a head unit plays only that one. Applies at the next Android Auto connection.</string>
+    <string name="settings_android_auto_night">Night mode</string>
+    <string name="settings_android_auto_night_follow">Follow Android</string>
+    <string name="settings_android_auto_night_day">Always day</string>
+    <string name="settings_android_auto_night_night">Always night</string>
+    <string name="settings_android_auto_driving_side">Android Auto puts its controls on the driver’s side set in %1$s → %2$s.</string>
+    <string name="settings_android_auto_gps">GPS source</string>
+    <string name="settings_android_auto_gps_phone">Phone</string>
+    <string name="settings_android_auto_gps_head_unit">Head unit</string>
+    <string name="settings_android_auto_gps_description">Head unit sends this unit’s own GPS to Android Auto, which helps where the phone’s reception is poor; it needs precise location. Phone keeps the phone’s own GPS. Applies at the next Android Auto connection.</string>
+    <string name="settings_android_auto_next_connection">Saved. It applies at the next Android Auto connection.</string>
+    <string name="settings_android_auto_connect_wirelessly">Connect wirelessly</string>
+    <string name="settings_android_auto_bluetooth">Start when a known phone connects over Bluetooth</string>
+    <string name="settings_android_auto_bluetooth_description">Starts wireless Android Auto with a phone that has used it here before; connect it once with Connect wirelessly. Uses the Wi-Fi set up for wireless CarPlay, or else Wi-Fi Direct.</string>
+    <string name="settings_android_auto_forget_phones">Forget known phones (%1$d)</string>
+    <string name="settings_android_auto_wireless_permissions">Wireless Android Auto needs Nearby devices or Location to reach the phone. Allow them in this app’s permissions.</string>
+</resources>

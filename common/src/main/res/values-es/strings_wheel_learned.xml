@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_wheel_learned_keys">Más botones del volante</string>
+    <string name="settings_wheel_learned_keys_description">Aprende el botón que envíe la unidad principal para la pista siguiente y anterior, contestar o colgar, y el inicio de CarPlay. Funcionan mientras CarPlay está conectado; sin sesión de CarPlay, cada botón conserva la función del coche.</string>
+    <string name="settings_wheel_learned_next">pista siguiente</string>
+    <string name="settings_wheel_learned_previous">pista anterior</string>
+    <string name="settings_wheel_learned_call">contestar / colgar</string>
+    <string name="settings_wheel_learned_home">inicio de CarPlay</string>
+    <string name="settings_wheel_learned_keys_hint">Siri y reproducir/pausa tienen sus propios botones más arriba. Un botón usado allí, o para el zoom del mapa o el joystick, no se puede aprender aquí. Durante una llamada solo funciona el botón de contestar / colgar.</string>
+    <string name="settings_wheel_learned_learn">Aprender un botón nuevo</string>
+    <string name="settings_wheel_learned_remove">Quitar este botón</string>
+</resources>

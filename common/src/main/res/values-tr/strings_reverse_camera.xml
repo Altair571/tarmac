@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_reverse_camera">Geri görüş kamerası</string>
+    <string name="settings_reverse_camera_switch">Geri viteste kameraya geç</string>
+    <string name="settings_reverse_camera_switch_description">Araç geri vitese geçtiğinde Tarmac CarPlay’i ekrandan kaldırır veya aşağıda seçilen kamera uygulamasını açar, araç geri vitesten çıkınca CarPlay’i geri getirir. CarPlay bağlı kalır.</string>
+    <string name="settings_reverse_camera_source">Vites kaynağı</string>
+    <string name="settings_reverse_camera_source_automatic">Otomatik</string>
+    <string name="settings_reverse_camera_source_byd">BYD vitesi (ADB)</string>
+    <string name="settings_reverse_camera_source_ecarx">Geely / ECARX sensörü</string>
+    <string name="settings_reverse_camera_source_adapter">Araç verisi adaptörü</string>
+    <string name="settings_reverse_camera_source_broadcast">Ana ünite yayını</string>
+    <string name="settings_reverse_camera_source_none">Tarmac bu ana ünitede bir vites kaynağı bilmiyor. Araç verisi adaptörüne (Gelişmiş) bir vites sinyali ekleyin veya ana ünitenin yayınını ayarlayın.</string>
+    <string name="settings_reverse_camera_source_using">Vites şuradan okunuyor: %1$s</string>
+    <string name="settings_reverse_camera_adapter_no_gear">Araç verisi adaptörünün haritasında henüz vites sinyali yok.</string>
+    <string name="settings_reverse_camera_app">Kamera uygulaması</string>
+    <string name="settings_reverse_camera_app_none">Yok (yalnızca CarPlay’i kaldır)</string>
+    <string name="settings_reverse_camera_app_description">Ana ünitenin kamera uygulamasını yalnızca CarPlay kaldırıldığında kamera kendiliğinden görünmüyorsa seçin.</string>
+    <string name="settings_reverse_camera_broadcast">Ana ünite yayını</string>
+    <string name="settings_reverse_camera_broadcast_not_set">Ayarlanmadı</string>
+    <string name="settings_reverse_camera_broadcast_action">Yayın eylemi</string>
+    <string name="settings_reverse_camera_broadcast_extra">Ek alan adı</string>
+    <string name="settings_reverse_camera_broadcast_value">Geri viteste ek alan değeri</string>
+    <string name="settings_reverse_camera_broadcast_description">Geri vitesi bir yayınla bildiren ana üniteler içindir. Geri vitese geçerken bir intent kayıt uygulamasıyla eylemi ve ek alanı bulun, ardından buraya girin.</string>
+    <string name="settings_reverse_camera_broadcast_remove">Kaldır</string>
+    <string name="settings_reverse_camera_return_needed">Geri vitesten sonra CarPlay’i geri getirmek için Android, Tarmac’in “Diğer uygulamaların üzerinde göster” iznine sahip olmasını veya direksiyon tuşu hizmetinin açık olmasını gerektirir.</string>
+    <string name="settings_reverse_camera_return_allow">Diğer uygulamaların üzerinde göstermeye izin ver</string>
+</resources>

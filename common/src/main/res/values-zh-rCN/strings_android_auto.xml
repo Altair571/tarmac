@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android Auto entry on Home and its Settings card; see docs/ANDROID_AUTO.md. -->
+<resources>
+    <string name="home_android_auto">Android Auto</string>
+    <string name="settings_android_auto">Android Auto（实验性）</string>
+    <string name="settings_android_auto_description">通过 USB 线或无线方式投射 Android 手机。尚未在所有手机和车机上测试。</string>
+    <string name="settings_android_auto_identity_installed">已安装车机身份。</string>
+    <string name="settings_android_auto_identity_missing">未安装车机身份，因此 Android Auto 无法连接。docs/ANDROID_AUTO.md 介绍了如何将其加入个人构建。</string>
+    <string name="settings_android_auto_last_connection">上次连接：从插入到首个画面用时 %1$s 秒。</string>
+    <string name="settings_android_auto_open">打开 Android Auto</string>
+    <string name="settings_android_auto_open_when_plugged_in">插入 Android 手机时启动</string>
+    <string name="settings_android_auto_open_when_plugged_in_description">无论此应用是否打开，都会无需点按地将手机切换到 Android Auto 并打开。Android 只会询问一次使用哪个应用；请选择此应用并选“始终”。</string>
+    <string name="settings_android_auto_reconnect">自动重新连接</string>
+    <string name="settings_android_auto_reconnect_description">手机仍插着但 Android Auto 断开时，在 1、2、4、8、15 秒后重新连接。若拒绝了 USB 提示或身份被拒，则不重试。</string>
+    <string name="settings_android_auto_picture">画面尺寸</string>
+    <string name="settings_android_auto_automatic">自动</string>
+    <string name="settings_android_auto_picture_description">在下次连接 Android Auto 时生效。自动会选择此屏幕能清晰显示的最大尺寸。</string>
+    <string name="settings_android_auto_density">屏幕密度</string>
+    <string name="settings_android_auto_density_description">Android Auto 绘制文字和按钮的大小。数值越高越大。在下次连接 Android Auto 时生效。</string>
+    <string name="settings_android_auto_frame_rate">帧率</string>
+    <string name="settings_android_auto_fps_value">%1$d fps</string>
+    <string name="settings_android_auto_frame_rate_description">60 fps 在性能强的车机上更流畅，在较慢的车机上负担更重。在下次连接 Android Auto 时生效。</string>
+    <string name="settings_android_auto_sound">导航语音和系统声音</string>
+    <string name="settings_android_auto_sound_separate">独立音频流</string>
+    <string name="settings_android_auto_sound_media">媒体音频流</string>
+    <string name="settings_android_auto_sound_description">使用独立音频流时，车辆可以把导航语音叠加在音乐上。若车机只播放媒体音频流，请选择它。在下次连接 Android Auto 时生效。</string>
+    <string name="settings_android_auto_night">夜间模式</string>
+    <string name="settings_android_auto_night_follow">跟随 Android</string>
+    <string name="settings_android_auto_night_day">始终白天</string>
+    <string name="settings_android_auto_night_night">始终夜间</string>
+    <string name="settings_android_auto_driving_side">Android Auto 会把控件放在 %1$s → %2$s 中设置的驾驶位一侧。</string>
+    <string name="settings_android_auto_gps">GPS 来源</string>
+    <string name="settings_android_auto_gps_phone">手机</string>
+    <string name="settings_android_auto_gps_head_unit">车机</string>
+    <string name="settings_android_auto_gps_description">选择车机时，会把这台车机自己的 GPS 发送给 Android Auto，在手机信号差的地方很有用，需要精确位置权限。选择手机时使用手机自己的 GPS。在下次连接 Android Auto 时生效。</string>
+    <string name="settings_android_auto_next_connection">已保存。在下次连接 Android Auto 时生效。</string>
+    <string name="settings_android_auto_connect_wirelessly">无线连接</string>
+    <string name="settings_android_auto_bluetooth">已知手机通过蓝牙连接时启动</string>
+    <string name="settings_android_auto_bluetooth_description">与曾在此使用过无线 Android Auto 的手机自动启动；首次请用“无线连接”连接一次。使用为无线 CarPlay 设置的 Wi-Fi，否则使用 Wi-Fi Direct。</string>
+    <string name="settings_android_auto_forget_phones">忘记已知手机（%1$d）</string>
+    <string name="settings_android_auto_wireless_permissions">无线 Android Auto 需要“附近的设备”或“位置信息”权限才能连接手机。请在此应用的权限中允许。</string>
+</resources>

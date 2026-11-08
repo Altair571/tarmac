@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="aa_status_connecting">Conectando con Android Auto…</string>
+    <string name="aa_status_waiting_for_phone">Conecta un teléfono Android con un cable USB de datos.</string>
+    <string name="aa_status_permission">Permite el acceso al teléfono en el aviso de USB.</string>
+    <string name="aa_status_switching">Iniciando Android Auto en el teléfono…</string>
+    <string name="aa_status_no_identity">Esta compilación no tiene identidad de unidad principal de Android Auto, así que Android Auto no puede conectarse. Instala una como se describe en docs/ANDROID_AUTO.md.</string>
+    <string name="aa_status_no_usb_host">Este dispositivo no puede actuar como host USB, así que no puede conectar un teléfono por cable.</string>
+    <string name="aa_button_retry">Reintentar</string>
+    <string name="aa_button_close">Cerrar</string>
+    <string name="aa_notification_connected">Conectado a Android Auto</string>
+    <string name="aa_action_previous">Anterior</string>
+    <string name="aa_action_play_pause">Reproducir o pausar</string>
+    <string name="aa_action_next">Siguiente</string>
+    <string name="aa_status_ended_by_phone">Android Auto se cerró en el teléfono.</string>
+    <string name="aa_status_reconnecting">Reintentando en %1$d s…</string>
+    <string name="aa_failure_permission">No se permitió el acceso USB al teléfono.</string>
+    <string name="aa_failure_not_android_auto">Este teléfono no ofrece Android Auto por USB. Comprueba que Android Auto esté configurado y que el cable transmita datos.</string>
+    <string name="aa_failure_no_switch">El teléfono no inició Android Auto. Desbloquéalo y vuelve a conectarlo.</string>
+    <string name="aa_failure_usb">Android no pudo abrir la conexión USB del teléfono. Desconéctalo y vuelve a conectarlo.</string>
+    <string name="aa_failure_identity_rejected">El teléfono rechazó la identidad de Android Auto de esta unidad principal.</string>
+    <string name="aa_failure_version">La versión de Android Auto del teléfono no es compatible.</string>
+    <string name="aa_failure_silent">El teléfono dejó de responder.</string>
+    <string name="aa_failure_disconnected">El teléfono se desconectó.</string>
+    <string name="aa_failure_other">Android Auto se detuvo: %1$s</string>
+    <string name="aa_status_waiting_for_wireless_phone">Esperando el teléfono por Bluetooth. Vincúlalo con esta unidad principal y activa Android Auto inalámbrico en sus ajustes. Si ya está conectado, desactiva y vuelve a activar su Bluetooth.</string>
+    <string name="aa_status_joining_wifi">El teléfono se está conectando al Wi-Fi de esta unidad principal…</string>
+    <string name="aa_button_wireless">Conectar sin cable</string>
+    <string name="aa_notification_waiting">Esperando el teléfono por Bluetooth</string>
+    <string name="aa_start_channel">Inicio de Android Auto</string>
+    <string name="aa_start_text">Conectado por Bluetooth. Toca para iniciar Android Auto.</string>
+    <string name="aa_start_action">Iniciar Android Auto</string>
+    <string name="aa_failure_bluetooth">El Bluetooth está desactivado o esta app no puede usarlo. Activa el Bluetooth y permite Dispositivos cercanos.</string>
+    <string name="aa_failure_no_wireless_phone">Ningún teléfono inició Android Auto inalámbrico. Comprueba que el teléfono esté vinculado con esta unidad principal y que Android Auto inalámbrico esté activado en sus ajustes.</string>
+    <string name="aa_failure_wifi">No se pudo iniciar el Wi-Fi para el teléfono. Android Auto inalámbrico usa la red configurada para CarPlay inalámbrico en Ajustes → Conexión.</string>
+    <string name="aa_failure_phone_wifi">El teléfono no pudo conectarse a través del Wi-Fi de esta unidad principal.</string>
+    <string name="aa_failure_carplay">CarPlay está en uso. Ciérralo antes de iniciar Android Auto inalámbrico.</string>
+</resources>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TEYES and other recognised head units (docs/HEADUNIT_SPD_TEYES.md). -->
+<resources>
+    <string name="settings_head_unit_title">%1$s 車機</string>
+    <string name="settings_head_unit_description">Tarmac 已辨識此車機。它只讀取車輛訊號，從不向車輛傳送任何內容。</string>
+    <string name="settings_head_unit_starting_app_on">%1$s 會在車輛啟動時開啟 Tarmac，並在車輛休眠時讓 Tarmac 持續執行。</string>
+    <string name="settings_head_unit_starting_app_off">若要在車輛啟動時開啟 Tarmac，請在 %1$s 設定中將 Tarmac 選為開機啟動 App。這樣 %1$s 也會在車輛休眠時讓 Tarmac 持續執行。</string>
+    <string name="settings_head_unit_own_carplay">%1$s 內建的 CarPlay 會自動啟動，可能比 Tarmac 先佔用 iPhone。請在 %1$s 設定中關閉其自動啟動。</string>
+    <string name="settings_head_unit_open_settings">開啟 %1$s 設定</string>
+    <string name="settings_head_unit_mfi_chip">認證晶片（實驗性）</string>
+    <string name="settings_head_unit_mfi_own">Tarmac 內建</string>
+    <string name="settings_head_unit_mfi_head_unit">車機（%1$s）</string>
+    <string name="settings_head_unit_mfi_ready">Tarmac 可以開啟車機位於 %1$s 的 Apple 晶片。變更將在下次連線時生效。Tarmac 使用該晶片時，請讓 %2$s CarPlay 保持關閉。</string>
+    <string name="settings_head_unit_mfi_blocked">車機的 Apple 晶片位於 %1$s，但 Android 安全政策不允許 App 開啟它，因此 Tarmac 使用自己的身分。</string>
+    <string name="settings_head_unit_mfi_missing">Tarmac 找不到 %1$s，因此使用自己的身分。</string>
+    <string name="settings_head_unit_mfi_unknown">Tarmac 無法檢查 %1$s，因此使用自己的身分。</string>
+    <string name="settings_head_unit_signals_title">%1$s 車輛訊號</string>
+    <string name="settings_head_unit_wheel_keys">語音與通話鍵用於 CarPlay</string>
+    <string name="settings_head_unit_wheel_keys_description">CarPlay 執行時，方向盤語音鍵會開啟 Siri，通話鍵會接聽與掛斷 CarPlay 通話。需要 Tarmac 方向盤按鍵服務。</string>
+    <string name="settings_head_unit_reverse_description">倒車時，Tarmac 會把螢幕交給 %1$s 攝影機，倒車結束後才開啟 CarPlay。</string>
+    <string name="settings_head_unit_signal_state">車輛已啟動：%1$s · 倒車：%2$s</string>
+    <string name="settings_head_unit_state_on">是</string>
+    <string name="settings_head_unit_state_off">否</string>
+    <string name="settings_head_unit_state_unknown">未知</string>
+    <string name="settings_head_unit_vehicle_waiting">正在讀取 CAN 盒…</string>
+    <string name="settings_head_unit_vehicle_none">CAN 盒未回報任何數值。</string>
+    <string name="settings_head_unit_vehicle_values">車速 %1$s km/h · 車外 %2$s °C · 續航 %3$s km · 電量 %4$s %%</string>
+    <string name="settings_head_unit_mfi_head_unit_root">車機（透過 root，%1$s）</string>
+    <string name="settings_head_unit_mfi_root">使用 root 開啟晶片</string>
+    <string name="settings_head_unit_mfi_root_asking">正在要求 root…</string>
+    <string name="settings_head_unit_mfi_root_ready">已透過 root 開啟車機位於 %1$s 的 Apple 晶片。Tarmac 透過 root 輔助程序使用它，不變更系統任何設定。變更將在下次連線時生效。Tarmac 使用該晶片時，請讓 %2$s CarPlay 保持關閉。</string>
+    <string name="settings_head_unit_mfi_root_failed">root 無法開啟 %1$s，因此 Tarmac 使用自己的身分。</string>
+    <string name="settings_head_unit_track_test_title">儀表板與 HUD 測試（實驗性）</string>
+    <string name="settings_head_unit_track_test_description">Tarmac 以 %1$s 內建播放器的方式向 %1$s 提交一首測試曲目（Tarmac test，CarPlay）。請查看儀表板或 HUD。按下按鈕前不會傳送任何內容。</string>
+    <string name="settings_head_unit_track_test_record">曲目記錄</string>
+    <string name="settings_head_unit_track_test_other">其他媒體（14）</string>
+    <string name="settings_head_unit_track_test_media">媒體（1）</string>
+    <string name="settings_head_unit_track_test_enter">將 Tarmac 設為目前音源</string>
+    <string name="settings_head_unit_track_test_enter_description">部分車型協定只顯示目前音源的曲目。這可能會把車機的聲音切換到 Tarmac。</string>
+    <string name="settings_head_unit_track_test_send">傳送測試曲目</string>
+    <string name="settings_head_unit_track_test_sending">正在傳送…</string>
+    <string name="settings_head_unit_track_test_sent">已傳送。%1$s 記錄了 %2$d 行相關記錄：</string>
+    <string name="settings_head_unit_track_test_failed">未傳送：%1$s</string>
+    <string name="settings_head_unit_track_test_nothing_logged">已傳送，但 %1$s 沒有記錄任何相關內容。請嘗試另一種曲目記錄，或將 Tarmac 設為目前音源。</string>
+    <string name="settings_head_unit_guidance_test">傳送測試導航</string>
+    <string name="settings_head_unit_guidance_test_description">傳送約 10 秒的高德標準導航：350 公尺後左轉進入 Tarmac Street。%1$s 只會在支援導航顯示的 CAN 盒協定上把它傳到儀表板或 HUD。</string>
+    <string name="settings_head_unit_test_sent_no_log">已傳送。請查看儀表板或 HUD。沒有 root 時，Tarmac 無法讀取 %1$s 的記錄。</string>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_wheel_learned_keys">추가 휠 키</string>
+    <string name="settings_wheel_learned_keys_description">헤드 유닛이 다음 곡, 이전 곡, 전화 받기 / 끊기, CarPlay 홈에 보내는 키를 학습합니다. CarPlay가 연결된 동안 작동하며, CarPlay 세션이 없으면 각 키는 차량 본래 기능을 유지합니다.</string>
+    <string name="settings_wheel_learned_next">다음 곡</string>
+    <string name="settings_wheel_learned_previous">이전 곡</string>
+    <string name="settings_wheel_learned_call">받기 / 끊기</string>
+    <string name="settings_wheel_learned_home">CarPlay 홈</string>
+    <string name="settings_wheel_learned_keys_hint">Siri와 재생/일시정지는 위에 전용 키가 있습니다. 그곳이나 지도 확대/축소, 조이스틱에 쓰는 키는 여기서 학습할 수 없습니다. 통화 중에는 받기 / 끊기 키만 작동합니다.</string>
+    <string name="settings_wheel_learned_learn">새 키 학습</string>
+    <string name="settings_wheel_learned_remove">이 키 삭제</string>
+</resources>

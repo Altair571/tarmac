@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="aa_status_connecting">Android Auto\'ya bağlanılıyor…</string>
+    <string name="aa_status_waiting_for_phone">Bir Android telefonu veri aktarımlı USB kablosuyla takın.</string>
+    <string name="aa_status_permission">USB isteminde telefona erişime izin verin.</string>
+    <string name="aa_status_switching">Telefonda Android Auto başlatılıyor…</string>
+    <string name="aa_status_no_identity">Bu derlemede Android Auto ana ünite kimliği yok, bu nedenle Android Auto bağlanamıyor. docs/ANDROID_AUTO.md dosyasında açıklandığı gibi bir kimlik yükleyin.</string>
+    <string name="aa_status_no_usb_host">Bu cihaz USB ana bilgisayarı olamıyor, bu nedenle kabloyla telefon bağlayamaz.</string>
+    <string name="aa_button_retry">Tekrar dene</string>
+    <string name="aa_button_close">Kapat</string>
+    <string name="aa_notification_connected">Android Auto\'ya bağlandı</string>
+    <string name="aa_action_previous">Önceki</string>
+    <string name="aa_action_play_pause">Oynat veya duraklat</string>
+    <string name="aa_action_next">Sonraki</string>
+    <string name="aa_status_ended_by_phone">Android Auto telefonda kapatıldı.</string>
+    <string name="aa_status_reconnecting">%1$d sn sonra yeniden deneniyor…</string>
+    <string name="aa_failure_permission">Telefona USB erişimine izin verilmedi.</string>
+    <string name="aa_failure_not_android_auto">Bu telefon USB üzerinden Android Auto sunmuyor. Android Auto\'nun kurulu olduğunu ve kablonun veri aktardığını kontrol edin.</string>
+    <string name="aa_failure_no_switch">Telefon Android Auto\'yu başlatmadı. Kilidini açıp yeniden takın.</string>
+    <string name="aa_failure_usb">Android telefonun USB bağlantısını açamadı. Telefonu çıkarıp yeniden takın.</string>
+    <string name="aa_failure_identity_rejected">Telefon bu ana ünitenin Android Auto kimliğini reddetti.</string>
+    <string name="aa_failure_version">Telefondaki Android Auto sürümü uyumlu değil.</string>
+    <string name="aa_failure_silent">Telefon yanıt vermeyi bıraktı.</string>
+    <string name="aa_failure_disconnected">Telefonun bağlantısı kesildi.</string>
+    <string name="aa_failure_other">Android Auto durdu: %1$s</string>
+    <string name="aa_status_waiting_for_wireless_phone">Telefon Bluetooth üzerinden bekleniyor. Telefonu bu ana üniteyle eşleyin ve ayarlarından kablosuz Android Auto\'yu açın. Zaten bağlıysa telefonun Bluetooth\'unu kapatıp yeniden açın.</string>
+    <string name="aa_status_joining_wifi">Telefon bu ana ünitenin Wi-Fi ağına bağlanıyor…</string>
+    <string name="aa_button_wireless">Kablosuz bağlan</string>
+    <string name="aa_notification_waiting">Telefon Bluetooth üzerinden bekleniyor</string>
+    <string name="aa_start_channel">Android Auto başlatma</string>
+    <string name="aa_start_text">Bluetooth ile bağlandı. Android Auto\'yu başlatmak için dokunun.</string>
+    <string name="aa_start_action">Android Auto\'yu başlat</string>
+    <string name="aa_failure_bluetooth">Bluetooth kapalı veya bu uygulama Bluetooth\'u kullanamıyor. Bluetooth\'u açın ve Yakındaki cihazlar iznini verin.</string>
+    <string name="aa_failure_no_wireless_phone">Hiçbir telefon kablosuz Android Auto\'yu başlatmadı. Telefonun bu ana üniteyle eşlendiğini ve ayarlarında kablosuz Android Auto\'nun açık olduğunu kontrol edin.</string>
+    <string name="aa_failure_wifi">Telefon için Wi-Fi başlatılamadı. Kablosuz Android Auto, Ayarlar → Bağlantı bölümünde kablosuz CarPlay için kurulan ağı kullanır.</string>
+    <string name="aa_failure_phone_wifi">Telefon bu ana ünitenin Wi-Fi ağı üzerinden bağlanamadı.</string>
+    <string name="aa_failure_carplay">CarPlay çalışıyor. Kablosuz Android Auto\'yu başlatmadan önce CarPlay\'i kapatın.</string>
+</resources>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_vehicle_adapter">車輛資料轉接器（實驗性）</string>
+    <string name="settings_vehicle_adapter_description">對於車機不提供電量、續航和檔位的車輛，從 OBD-II 或 CAN 轉接器讀取這些資料。Tarmac 只讀取：OBD-II 轉接器只收到標準讀取要求，CAN 轉接器以只監聽模式開啟。絕不寫入任何內容到車輛。</string>
+    <string name="settings_vehicle_adapter_kind">轉接器</string>
+    <string name="settings_vehicle_adapter_off">關閉</string>
+    <string name="settings_vehicle_adapter_obd_bluetooth">藍牙 OBD-II（ELM327、STN）</string>
+    <string name="settings_vehicle_adapter_obd_usb">USB OBD-II（STN、CDC-ACM）</string>
+    <string name="settings_vehicle_adapter_can_usb">USB CAN（slcan，只監聽）</string>
+    <string name="settings_vehicle_adapter_bluetooth">藍牙轉接器</string>
+    <string name="settings_vehicle_adapter_bluetooth_none">未選擇</string>
+    <string name="settings_vehicle_adapter_bluetooth_empty">沒有已配對的藍牙裝置。請先在 Android 藍牙設定中配對 OBD-II 轉接器（PIN 通常為 1234 或 0000）。</string>
+    <string name="settings_vehicle_adapter_bluetooth_permission">請允許「鄰近裝置」，讓 Tarmac 能連線到已配對的 OBD-II 轉接器。</string>
+    <string name="settings_vehicle_adapter_usb_missing">未插入 USB 序列轉接器（CDC-ACM）。目前尚不支援 FTDI、CH340 或 CP210x 晶片的轉接器。</string>
+    <string name="settings_vehicle_adapter_usb_allow">允許使用 USB 轉接器</string>
+    <string name="settings_vehicle_adapter_map">訊號對照表</string>
+    <string name="settings_vehicle_adapter_map_none">無</string>
+    <string name="settings_vehicle_adapter_map_custom">自訂</string>
+    <string name="settings_vehicle_adapter_map_can">CAN 轉接器需要這輛車的訊號對照表（JSON），才能知道哪些訊框帶有電量、續航和檔位。</string>
+    <string name="settings_vehicle_adapter_map_obd">沒有對照表時，Tarmac 會讀取標準電池 PID，但很少有純電車會回應。對照表可加入車輛自有的 PID，例如電量或檔位。</string>
+    <string name="settings_vehicle_adapter_map_hint">貼上這輛車的 JSON 訊號對照表</string>
+    <string name="settings_vehicle_adapter_map_remove">移除</string>
+    <string name="settings_vehicle_adapter_map_invalid">訊號對照表未儲存：%1$s</string>
+    <string name="settings_vehicle_adapter_ev">為 Apple 地圖提供電量和續航</string>
+    <string name="settings_vehicle_adapter_ev_description">把轉接器讀到的電量和續航告訴 iPhone，讓 Apple 地圖規劃充電站。下次連線時套用。</string>
+    <string name="settings_vehicle_adapter_full_range">滿電續航</string>
+    <string name="settings_vehicle_adapter_full_range_unknown">從車輛讀取</string>
+    <string name="settings_vehicle_adapter_full_range_km">%1$d 公里</string>
+    <string name="settings_vehicle_adapter_full_range_description">車輛只提供電量時，Tarmac 會用這個數值估算續航。沒有續航資料時，不會告訴 iPhone 這是電動車。</string>
+    <string name="settings_vehicle_adapter_connectors">充電接頭</string>
+    <string name="settings_vehicle_adapter_state_off">未讀取</string>
+    <string name="settings_vehicle_adapter_state_connecting">正在連線到轉接器…</string>
+    <string name="settings_vehicle_adapter_state_not_found">找不到轉接器。請確認它已插入或已配對，並確認車輛已啟動。</string>
+    <string name="settings_vehicle_adapter_state_no_permission">Tarmac 尚無權使用這個轉接器。</string>
+    <string name="settings_vehicle_adapter_state_no_answer">轉接器沒有回應。點火開關打開了嗎？</string>
+    <string name="settings_vehicle_adapter_state_no_listen_only">這個 CAN 轉接器沒有只監聽模式，因此 Tarmac 不會開啟它。</string>
+    <string name="settings_vehicle_adapter_state_connected">已連線</string>
+    <string name="settings_vehicle_adapter_unknown">—</string>
+    <string name="settings_vehicle_adapter_reading">電量 %1$s · 續航 %2$s · 檔位 %3$s</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- CarPlay turns as AMap's standard guidance broadcast for CAN-box and cluster services (docs/OEM_CLUSTER.md). -->
+    <string name="settings_car_guidance">Car cluster and HUD</string>
+    <string name="settings_car_guidance_switch">Send turns to the car’s cluster and HUD</string>
+    <string name="settings_car_guidance_description">Sends CarPlay’s next turn, distance and street as the standard AMap navigation broadcast. Head units whose CAN-box or cluster service listens for it show them on the factory cluster or HUD; others ignore it. Applies at once.</string>
+</resources>

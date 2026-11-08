@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Learned wheel keys for any head unit (docs/WHEEL_KEY_MAPPING.md). Action names fill wheel_key_assign and wheel_key_press. -->
+    <string name="settings_wheel_learned_keys">More wheel keys</string>
+    <string name="settings_wheel_learned_keys_description">Learn whichever key the head unit sends for next and previous track, answer or hang up, and CarPlay home. They act while CarPlay is connected; without a CarPlay session each key keeps the car’s own action.</string>
+    <string name="settings_wheel_learned_next">next track</string>
+    <string name="settings_wheel_learned_previous">previous track</string>
+    <string name="settings_wheel_learned_call">answer / hang up</string>
+    <string name="settings_wheel_learned_home">CarPlay home</string>
+    <string name="settings_wheel_learned_keys_hint">Siri and play/pause have their own keys above. A key used there, or for map zoom or the joystick, cannot be learned here. During a call only the answer / hang-up key acts.</string>
+    <string name="settings_wheel_learned_learn">Learn a new key</string>
+    <string name="settings_wheel_learned_remove">Remove this key</string>
+</resources>

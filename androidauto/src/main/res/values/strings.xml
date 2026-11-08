@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="aa_title" translatable="false">Android Auto</string>
+    <string name="aa_notification_channel" translatable="false">Android Auto</string>
+    <string name="aa_status_connecting">Connecting to Android Auto…</string>
+    <string name="aa_status_waiting_for_phone">Plug in an Android phone with a USB data cable.</string>
+    <string name="aa_status_permission">Allow access to the phone in the USB prompt.</string>
+    <string name="aa_status_switching">Starting Android Auto on the phone…</string>
+    <string name="aa_status_no_identity">This build has no Android Auto head-unit identity, so Android Auto cannot connect. Install one as docs/ANDROID_AUTO.md describes.</string>
+    <string name="aa_status_no_usb_host">This device cannot be a USB host, so it cannot connect a phone by cable.</string>
+    <string name="aa_button_retry">Try again</string>
+    <string name="aa_button_close">Close</string>
+    <string name="aa_notification_connected">Connected to Android Auto</string>
+    <string name="aa_action_previous">Previous</string>
+    <string name="aa_action_play_pause">Play or pause</string>
+    <string name="aa_action_next">Next</string>
+    <string name="aa_status_ended_by_phone">Android Auto was closed on the phone.</string>
+    <string name="aa_status_reconnecting">Trying again in %1$d s…</string>
+    <string name="aa_failure_permission">USB access to the phone was not allowed.</string>
+    <string name="aa_failure_not_android_auto">This phone does not offer Android Auto over USB. Check that Android Auto is set up and that the cable carries data.</string>
+    <string name="aa_failure_no_switch">The phone did not start Android Auto. Unlock it and plug it in again.</string>
+    <string name="aa_failure_usb">Android could not open the phone’s USB connection. Unplug the phone and plug it in again.</string>
+    <string name="aa_failure_identity_rejected">The phone refused this head unit’s Android Auto identity.</string>
+    <string name="aa_failure_version">The phone’s Android Auto version is not compatible.</string>
+    <string name="aa_failure_silent">The phone stopped responding.</string>
+    <string name="aa_failure_disconnected">The phone was disconnected.</string>
+    <string name="aa_failure_other">Android Auto stopped: %1$s</string>
+    <string name="aa_status_waiting_for_wireless_phone">Waiting for the phone over Bluetooth. Pair it with this head unit and turn on wireless Android Auto in its settings. If it is already connected, turn its Bluetooth off and on.</string>
+    <string name="aa_status_joining_wifi">The phone is joining this head unit’s Wi-Fi…</string>
+    <string name="aa_button_wireless">Connect wirelessly</string>
+    <string name="aa_notification_waiting">Waiting for the phone over Bluetooth</string>
+    <string name="aa_start_channel">Android Auto start</string>
+    <string name="aa_start_text">Connected over Bluetooth. Tap to start Android Auto.</string>
+    <string name="aa_start_action">Start Android Auto</string>
+    <string name="aa_failure_bluetooth">Bluetooth is off, or this app may not use it. Turn Bluetooth on and allow Nearby devices.</string>
+    <string name="aa_failure_no_wireless_phone">No phone started wireless Android Auto. Check that the phone is paired with this head unit and that wireless Android Auto is on in its settings.</string>
+    <string name="aa_failure_wifi">The Wi-Fi for the phone did not start. Wireless Android Auto uses the network set up for wireless CarPlay in Settings → Connection.</string>
+    <string name="aa_failure_phone_wifi">The phone could not connect over this head unit’s Wi-Fi.</string>
+    <string name="aa_failure_carplay">CarPlay is running. Close it before starting wireless Android Auto.</string>
+</resources>

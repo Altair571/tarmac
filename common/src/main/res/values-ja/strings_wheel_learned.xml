@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_wheel_learned_keys">その他のハンドルキー</string>
+    <string name="settings_wheel_learned_keys_description">次の曲、前の曲、電話の応答 / 終了、CarPlay ホームにヘッドユニットが送るキーを学習します。CarPlay の接続中に動作し、CarPlay セッションがないときは各キーは車本来の動作のままです。</string>
+    <string name="settings_wheel_learned_next">次の曲</string>
+    <string name="settings_wheel_learned_previous">前の曲</string>
+    <string name="settings_wheel_learned_call">応答 / 終了</string>
+    <string name="settings_wheel_learned_home">CarPlay ホーム</string>
+    <string name="settings_wheel_learned_keys_hint">Siri と再生 / 一時停止には上に専用のキーがあります。そこで使っているキーや、地図のズーム、ジョイスティックに使っているキーはここでは学習できません。通話中は応答 / 終了のキーだけが動作します。</string>
+    <string name="settings_wheel_learned_learn">新しいキーを学習</string>
+    <string name="settings_wheel_learned_remove">このキーを削除</string>
+</resources>

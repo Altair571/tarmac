@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_vehicle_adapter">차량 데이터 어댑터 (실험 기능)</string>
+    <string name="settings_vehicle_adapter_description">헤드 유닛이 충전량, 주행 가능 거리, 기어를 알려 주지 않는 차를 위해 OBD-II 또는 CAN 어댑터에서 읽어 옵니다. Tarmac은 읽기만 합니다. OBD-II 어댑터에는 표준 읽기 요청만 보내고, CAN 어댑터는 수신 전용 모드로 엽니다. 차에는 아무것도 쓰지 않습니다.</string>
+    <string name="settings_vehicle_adapter_kind">어댑터</string>
+    <string name="settings_vehicle_adapter_off">끔</string>
+    <string name="settings_vehicle_adapter_obd_bluetooth">블루투스 OBD-II (ELM327, STN)</string>
+    <string name="settings_vehicle_adapter_obd_usb">USB OBD-II (STN, CDC-ACM)</string>
+    <string name="settings_vehicle_adapter_can_usb">USB CAN (slcan, 수신 전용)</string>
+    <string name="settings_vehicle_adapter_bluetooth">블루투스 어댑터</string>
+    <string name="settings_vehicle_adapter_bluetooth_none">선택 안 함</string>
+    <string name="settings_vehicle_adapter_bluetooth_empty">페어링된 블루투스 기기가 없습니다. 먼저 Android 블루투스 설정에서 OBD-II 어댑터를 페어링하세요(PIN은 보통 1234 또는 0000입니다).</string>
+    <string name="settings_vehicle_adapter_bluetooth_permission">Tarmac이 페어링된 OBD-II 어댑터에 연결할 수 있도록 근처 기기 권한을 허용하세요.</string>
+    <string name="settings_vehicle_adapter_usb_missing">USB 시리얼 어댑터(CDC-ACM)가 연결되어 있지 않습니다. FTDI, CH340, CP210x 칩 어댑터는 아직 지원하지 않습니다.</string>
+    <string name="settings_vehicle_adapter_usb_allow">USB 어댑터 허용</string>
+    <string name="settings_vehicle_adapter_map">신호 맵</string>
+    <string name="settings_vehicle_adapter_map_none">없음</string>
+    <string name="settings_vehicle_adapter_map_custom">사용자 지정</string>
+    <string name="settings_vehicle_adapter_map_can">CAN 어댑터는 어느 프레임에 충전량, 주행 가능 거리, 기어가 담기는지 알기 위해 차량 신호 맵(JSON)이 필요합니다.</string>
+    <string name="settings_vehicle_adapter_map_obd">맵이 없으면 Tarmac은 표준 배터리 PID를 읽는데, 이에 응답하는 전기차는 많지 않습니다. 맵을 쓰면 충전 상태나 기어 같은 차량 고유 PID를 추가할 수 있습니다.</string>
+    <string name="settings_vehicle_adapter_map_hint">차량의 JSON 신호 맵 붙여넣기</string>
+    <string name="settings_vehicle_adapter_map_remove">삭제</string>
+    <string name="settings_vehicle_adapter_map_invalid">신호 맵을 저장하지 못했습니다: %1$s</string>
+    <string name="settings_vehicle_adapter_ev">Apple 지도용 충전량과 주행 가능 거리</string>
+    <string name="settings_vehicle_adapter_ev_description">어댑터에서 읽은 충전량과 주행 가능 거리를 iPhone에 알려 Apple 지도가 충전소를 계획할 수 있게 합니다. 다음 연결부터 적용됩니다.</string>
+    <string name="settings_vehicle_adapter_full_range">완충 시 주행 가능 거리</string>
+    <string name="settings_vehicle_adapter_full_range_unknown">차에서 읽기</string>
+    <string name="settings_vehicle_adapter_full_range_km">%1$d km</string>
+    <string name="settings_vehicle_adapter_full_range_description">차가 충전량만 알려 주면 Tarmac이 이 값으로 주행 가능 거리를 계산합니다. 주행 가능 거리가 없으면 iPhone에 전기차라고 알리지 않습니다.</string>
+    <string name="settings_vehicle_adapter_connectors">충전 커넥터</string>
+    <string name="settings_vehicle_adapter_state_off">읽지 않음</string>
+    <string name="settings_vehicle_adapter_state_connecting">어댑터에 연결하는 중…</string>
+    <string name="settings_vehicle_adapter_state_not_found">어댑터를 찾을 수 없습니다. 연결 또는 페어링되어 있고 차가 켜져 있는지 확인하세요.</string>
+    <string name="settings_vehicle_adapter_state_no_permission">Tarmac이 아직 어댑터를 사용할 수 없습니다.</string>
+    <string name="settings_vehicle_adapter_state_no_answer">어댑터가 응답하지 않았습니다. 시동이 켜져 있나요?</string>
+    <string name="settings_vehicle_adapter_state_no_listen_only">이 CAN 어댑터에는 수신 전용 모드가 없어서 Tarmac이 열지 않습니다.</string>
+    <string name="settings_vehicle_adapter_state_connected">연결됨</string>
+    <string name="settings_vehicle_adapter_unknown">—</string>
+    <string name="settings_vehicle_adapter_reading">충전량 %1$s · 주행 가능 거리 %2$s · 기어 %3$s</string>
+</resources>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android Auto entry on Home and its Settings card; see docs/ANDROID_AUTO.md. -->
+<resources>
+    <string name="home_android_auto">Android Auto</string>
+    <string name="settings_android_auto">Android Auto（実験的機能）</string>
+    <string name="settings_android_auto_description">USB ケーブルまたはワイヤレスで Android スマートフォンを投影します。すべてのスマートフォンとヘッドユニットではまだテストされていません。</string>
+    <string name="settings_android_auto_identity_installed">ヘッドユニット ID がインストールされています。</string>
+    <string name="settings_android_auto_identity_missing">ヘッドユニット ID がインストールされていないため、Android Auto に接続できません。個人用ビルドへの追加方法は docs/ANDROID_AUTO.md を参照してください。</string>
+    <string name="settings_android_auto_last_connection">前回の接続: 接続から最初の映像まで %1$s 秒。</string>
+    <string name="settings_android_auto_open">Android Auto を開く</string>
+    <string name="settings_android_auto_open_when_plugged_in">Android スマートフォン接続時に開始</string>
+    <string name="settings_android_auto_open_when_plugged_in_description">このアプリが開いていてもいなくても、タップなしでスマートフォンを Android Auto に切り替えて開きます。使用するアプリを Android が一度だけ尋ねるので、このアプリと「常時」を選んでください。</string>
+    <string name="settings_android_auto_reconnect">自動で再接続</string>
+    <string name="settings_android_auto_reconnect_description">スマートフォンを接続したまま Android Auto が切れたとき、1、2、4、8、15 秒後に再接続します。USB の確認や ID が拒否された場合は再試行しません。</string>
+    <string name="settings_android_auto_picture">画面サイズ</string>
+    <string name="settings_android_auto_automatic">自動</string>
+    <string name="settings_android_auto_picture_description">次回の Android Auto 接続時に適用されます。自動では、この画面で鮮明に表示できる最大サイズを選びます。</string>
+    <string name="settings_android_auto_density">画面密度</string>
+    <string name="settings_android_auto_density_description">Android Auto の文字やボタンの大きさです。値が大きいほど大きくなります。次回の Android Auto 接続時に適用されます。</string>
+    <string name="settings_android_auto_frame_rate">フレームレート</string>
+    <string name="settings_android_auto_fps_value">%1$d fps</string>
+    <string name="settings_android_auto_frame_rate_description">60 fps は高速なヘッドユニットではより滑らかですが、低速なものでは負荷が増えます。次回の Android Auto 接続時に適用されます。</string>
+    <string name="settings_android_auto_sound">案内音声とシステム音</string>
+    <string name="settings_android_auto_sound_separate">専用のストリーム</string>
+    <string name="settings_android_auto_sound_media">メディアストリーム</string>
+    <string name="settings_android_auto_sound_description">専用のストリームなら、車が音楽に案内音声を重ねられます。ヘッドユニットがメディアしか再生しない場合はメディアストリームを選んでください。次回の Android Auto 接続時に適用されます。</string>
+    <string name="settings_android_auto_night">ナイトモード</string>
+    <string name="settings_android_auto_night_follow">Android に合わせる</string>
+    <string name="settings_android_auto_night_day">常に昼</string>
+    <string name="settings_android_auto_night_night">常に夜</string>
+    <string name="settings_android_auto_driving_side">Android Auto の操作部は %1$s → %2$s で設定した運転席側に配置されます。</string>
+    <string name="settings_android_auto_gps">GPS の取得元</string>
+    <string name="settings_android_auto_gps_phone">スマートフォン</string>
+    <string name="settings_android_auto_gps_head_unit">ヘッドユニット</string>
+    <string name="settings_android_auto_gps_description">ヘッドユニットを選ぶと、このユニットの GPS を Android Auto に送ります。スマートフォンの受信が弱い場所で役立ち、正確な位置情報が必要です。スマートフォンを選ぶとスマートフォン自身の GPS を使います。次回の Android Auto 接続時に適用されます。</string>
+    <string name="settings_android_auto_next_connection">保存しました。次回の Android Auto 接続時に適用されます。</string>
+    <string name="settings_android_auto_connect_wirelessly">ワイヤレスで接続</string>
+    <string name="settings_android_auto_bluetooth">既知のスマートフォンが Bluetooth で接続したら開始</string>
+    <string name="settings_android_auto_bluetooth_description">以前ここでワイヤレス Android Auto を使ったスマートフォンで開始します。最初に一度「ワイヤレスで接続」で接続してください。ワイヤレス CarPlay 用に設定した Wi-Fi を使用し、未設定の場合は Wi-Fi Direct を使用します。</string>
+    <string name="settings_android_auto_forget_phones">既知のスマートフォンを削除（%1$d）</string>
+    <string name="settings_android_auto_wireless_permissions">ワイヤレス Android Auto がスマートフォンに接続するには、付近のデバイスまたは位置情報の権限が必要です。このアプリの権限で許可してください。</string>
+</resources>

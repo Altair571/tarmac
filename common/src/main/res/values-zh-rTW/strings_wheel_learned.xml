@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_wheel_learned_keys">更多方向盤按鍵</string>
+    <string name="settings_wheel_learned_keys_description">學習車機為下一首、上一首、接聽 / 掛斷和 CarPlay 主畫面送出的按鍵。這些按鍵在 CarPlay 連線時生效；沒有 CarPlay 工作階段時，每個按鍵保留車輛原本的功能。</string>
+    <string name="settings_wheel_learned_next">下一首</string>
+    <string name="settings_wheel_learned_previous">上一首</string>
+    <string name="settings_wheel_learned_call">接聽 / 掛斷</string>
+    <string name="settings_wheel_learned_home">CarPlay 主畫面</string>
+    <string name="settings_wheel_learned_keys_hint">Siri 和播放/暫停在上方有各自的按鍵。已在那裡使用，或用於地圖縮放、搖桿的按鍵，不能在這裡學習。通話時只有接聽 / 掛斷鍵生效。</string>
+    <string name="settings_wheel_learned_learn">學習新按鍵</string>
+    <string name="settings_wheel_learned_remove">移除這個按鍵</string>
+</resources>

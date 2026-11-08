@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TEYES and other recognised head units (docs/HEADUNIT_SPD_TEYES.md). -->
+<resources>
+    <string name="settings_head_unit_title">Unidad principal %1$s</string>
+    <string name="settings_head_unit_description">Tarmac ha reconocido esta unidad principal. Lee de ella las señales del coche y nunca envía nada al coche.</string>
+    <string name="settings_head_unit_starting_app_on">%1$s abre Tarmac al arrancar el coche y lo mantiene en marcha mientras el coche está en reposo.</string>
+    <string name="settings_head_unit_starting_app_off">Para abrir Tarmac al arrancar el coche, elige Tarmac como aplicación de inicio en los ajustes de %1$s. Así %1$s también mantiene Tarmac en marcha mientras el coche está en reposo.</string>
+    <string name="settings_head_unit_own_carplay">El CarPlay propio de %1$s se inicia solo y puede tomar el iPhone antes que Tarmac. Desactiva su inicio automático en los ajustes de %1$s.</string>
+    <string name="settings_head_unit_open_settings">Abrir ajustes de %1$s</string>
+    <string name="settings_head_unit_mfi_chip">Chip de autenticación (experimental)</string>
+    <string name="settings_head_unit_mfi_own">El de Tarmac</string>
+    <string name="settings_head_unit_mfi_head_unit">Unidad principal (%1$s)</string>
+    <string name="settings_head_unit_mfi_ready">Tarmac puede abrir el chip de Apple de la unidad principal en %1$s. Un cambio se aplica en la siguiente conexión. Mantén cerrado el CarPlay de %2$s mientras Tarmac usa el chip.</string>
+    <string name="settings_head_unit_mfi_blocked">El chip de Apple de la unidad principal está en %1$s, pero la política de seguridad de Android no deja que las apps lo abran, así que Tarmac usa su propia identidad.</string>
+    <string name="settings_head_unit_mfi_missing">Tarmac no ha encontrado %1$s, así que usa su propia identidad.</string>
+    <string name="settings_head_unit_mfi_unknown">Tarmac no ha podido comprobar %1$s, así que usa su propia identidad.</string>
+    <string name="settings_head_unit_signals_title">Señales del coche de %1$s</string>
+    <string name="settings_head_unit_wheel_keys">Botones de voz y llamada a CarPlay</string>
+    <string name="settings_head_unit_wheel_keys_description">Mientras CarPlay funciona, el botón de voz del volante abre Siri y los de llamada contestan y cuelgan las llamadas de CarPlay. Necesita el servicio Botones del volante de Tarmac.</string>
+    <string name="settings_head_unit_reverse_description">Al dar marcha atrás, Tarmac deja la pantalla a la cámara de %1$s y abre CarPlay solo cuando termina la marcha atrás.</string>
+    <string name="settings_head_unit_signal_state">Coche encendido: %1$s · Marcha atrás: %2$s</string>
+    <string name="settings_head_unit_state_on">sí</string>
+    <string name="settings_head_unit_state_off">no</string>
+    <string name="settings_head_unit_state_unknown">desconocido</string>
+    <string name="settings_head_unit_vehicle_waiting">Leyendo la caja CAN…</string>
+    <string name="settings_head_unit_vehicle_none">La caja CAN no informa de ningún valor.</string>
+    <string name="settings_head_unit_vehicle_values">Velocidad %1$s km/h · Exterior %2$s °C · Autonomía %3$s km · Carga %4$s %%</string>
+    <string name="settings_head_unit_mfi_head_unit_root">Unidad principal con root (%1$s)</string>
+    <string name="settings_head_unit_mfi_root">Abrir el chip con root</string>
+    <string name="settings_head_unit_mfi_root_asking">Solicitando root…</string>
+    <string name="settings_head_unit_mfi_root_ready">Root ha abierto el chip de Apple de la unidad principal en %1$s. Tarmac lo usa mediante un asistente con root y no cambia nada del sistema. Un cambio se aplica en la siguiente conexión. Mantén cerrado el CarPlay de %2$s mientras Tarmac usa el chip.</string>
+    <string name="settings_head_unit_mfi_root_failed">Root no ha podido abrir %1$s, así que Tarmac usa su propia identidad.</string>
+    <string name="settings_head_unit_track_test_title">Pruebas del cuadro y el HUD (experimental)</string>
+    <string name="settings_head_unit_track_test_description">Tarmac entrega a %1$s una pista de prueba (Tarmac test, CarPlay) igual que los reproductores propios de %1$s. Mira el cuadro de instrumentos o el HUD. No se envía nada hasta que pulses el botón.</string>
+    <string name="settings_head_unit_track_test_record">Registro de pista</string>
+    <string name="settings_head_unit_track_test_other">Otro medio (14)</string>
+    <string name="settings_head_unit_track_test_media">Medios (1)</string>
+    <string name="settings_head_unit_track_test_enter">Hacer de Tarmac la fuente activa</string>
+    <string name="settings_head_unit_track_test_enter_description">Algunos protocolos del coche solo muestran la pista de la fuente activa. Esto puede pasar el audio de la unidad principal a Tarmac.</string>
+    <string name="settings_head_unit_track_test_send">Enviar una pista de prueba</string>
+    <string name="settings_head_unit_track_test_sending">Enviando…</string>
+    <string name="settings_head_unit_track_test_sent">Enviado. %1$s registró %2$d líneas relacionadas:</string>
+    <string name="settings_head_unit_track_test_failed">No enviado: %1$s</string>
+    <string name="settings_head_unit_track_test_nothing_logged">Enviado, pero %1$s no registró nada. Prueba el otro registro de pista o haz de Tarmac la fuente activa.</string>
+    <string name="settings_head_unit_guidance_test">Enviar una guía de prueba</string>
+    <string name="settings_head_unit_guidance_test_description">Envía la guía estándar de AMap durante unos 10 segundos: gira a la izquierda en 350 m hacia Tarmac Street. %1$s la pasa al cuadro o al HUD solo con los perfiles de caja CAN que muestran la guía.</string>
+    <string name="settings_head_unit_test_sent_no_log">Enviado. Mira el cuadro o el HUD. Sin root, Tarmac no puede leer el registro de %1$s.</string>
+</resources>

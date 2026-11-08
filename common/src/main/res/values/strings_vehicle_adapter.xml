@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- OBD-II and CAN adapters for charge, range and gear (docs/VEHICLE_DATA.md). -->
+    <string name="settings_vehicle_adapter">Car data adapter (experimental)</string>
+    <string name="settings_vehicle_adapter_description">Reads charge, range and gear from an OBD-II or CAN adapter, for cars whose head unit does not report them. Tarmac only reads: an OBD-II adapter gets standard read requests, and a CAN adapter is opened listen-only. Nothing is ever written to the car.</string>
+    <string name="settings_vehicle_adapter_kind">Adapter</string>
+    <string name="settings_vehicle_adapter_off">Off</string>
+    <string name="settings_vehicle_adapter_obd_bluetooth">OBD-II over Bluetooth (ELM327, STN)</string>
+    <string name="settings_vehicle_adapter_obd_usb">OBD-II over USB (STN, CDC-ACM)</string>
+    <string name="settings_vehicle_adapter_can_usb">CAN over USB (slcan, listen-only)</string>
+    <string name="settings_vehicle_adapter_bluetooth">Bluetooth adapter</string>
+    <string name="settings_vehicle_adapter_bluetooth_none">Not chosen</string>
+    <string name="settings_vehicle_adapter_bluetooth_empty">No paired Bluetooth devices. Pair the OBD-II adapter in Android’s Bluetooth settings first (the PIN is usually 1234 or 0000).</string>
+    <string name="settings_vehicle_adapter_bluetooth_permission">Allow Nearby devices so Tarmac can connect to the paired OBD-II adapter.</string>
+    <string name="settings_vehicle_adapter_usb_missing">No USB serial adapter (CDC-ACM) is plugged in. Adapters with an FTDI, CH340 or CP210x chip are not supported yet.</string>
+    <string name="settings_vehicle_adapter_usb_allow">Allow the USB adapter</string>
+    <string name="settings_vehicle_adapter_map">Signal map</string>
+    <string name="settings_vehicle_adapter_map_none">None</string>
+    <string name="settings_vehicle_adapter_map_custom">Custom</string>
+    <string name="settings_vehicle_adapter_map_can">A CAN adapter needs the car’s signal map (JSON) to know which frames carry charge, range and gear.</string>
+    <string name="settings_vehicle_adapter_map_obd">Without a map Tarmac reads the standard battery PID, which few electric cars answer. A map adds the car’s own PIDs, such as its state of charge or gear.</string>
+    <string name="settings_vehicle_adapter_map_hint">Paste the car’s JSON signal map</string>
+    <string name="settings_vehicle_adapter_map_remove">Remove</string>
+    <string name="settings_vehicle_adapter_map_invalid">Signal map not saved: %1$s</string>
+    <string name="settings_vehicle_adapter_ev">Charge and range for Apple Maps</string>
+    <string name="settings_vehicle_adapter_ev_description">Tells the iPhone the charge and range from the adapter, so Apple Maps can plan charging stops. Applies at the next connection.</string>
+    <string name="settings_vehicle_adapter_full_range">Range at full charge</string>
+    <string name="settings_vehicle_adapter_full_range_unknown">Read from the car</string>
+    <string name="settings_vehicle_adapter_full_range_km">%1$d km</string>
+    <string name="settings_vehicle_adapter_full_range_description">When the car reports only its charge, Tarmac works out the range from this figure. Without a range the iPhone is not told about an electric car.</string>
+    <string name="settings_vehicle_adapter_connectors">Charging connectors</string>
+    <string name="settings_vehicle_adapter_state_off">Not reading</string>
+    <string name="settings_vehicle_adapter_state_connecting">Connecting to the adapter…</string>
+    <string name="settings_vehicle_adapter_state_not_found">Adapter not found. Check that it is plugged in or paired and that the car is on.</string>
+    <string name="settings_vehicle_adapter_state_no_permission">Tarmac may not use the adapter yet.</string>
+    <string name="settings_vehicle_adapter_state_no_answer">The adapter did not answer. Is the ignition on?</string>
+    <string name="settings_vehicle_adapter_state_no_listen_only">This CAN adapter has no listen-only mode, so Tarmac does not open it.</string>
+    <string name="settings_vehicle_adapter_state_connected">Connected</string>
+    <string name="settings_vehicle_adapter_unknown">—</string>
+    <string name="settings_vehicle_adapter_reading">Charge %1$s · range %2$s · gear %3$s</string>
+</resources>

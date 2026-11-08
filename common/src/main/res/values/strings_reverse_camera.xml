@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Reversing-camera switch in Settings > Vehicle (docs/REVERSE_CAMERA.md). -->
+    <string name="settings_reverse_camera">Reversing camera</string>
+    <string name="settings_reverse_camera_switch">Switch to the camera when reversing</string>
+    <string name="settings_reverse_camera_switch_description">When the car goes into reverse, Tarmac moves CarPlay off the screen or opens the camera app chosen below, and brings CarPlay back once the car has left reverse. CarPlay stays connected.</string>
+    <string name="settings_reverse_camera_source">Gear from</string>
+    <string name="settings_reverse_camera_source_automatic">Automatic</string>
+    <string name="settings_reverse_camera_source_byd">BYD gear (ADB)</string>
+    <string name="settings_reverse_camera_source_ecarx">Geely / ECARX sensor</string>
+    <string name="settings_reverse_camera_source_adapter">Car data adapter</string>
+    <string name="settings_reverse_camera_source_broadcast">Head-unit broadcast</string>
+    <string name="settings_reverse_camera_source_none">Tarmac knows no gear source on this head unit. Add a gear signal to the car data adapter (Advanced) or set up the head unit’s broadcast.</string>
+    <string name="settings_reverse_camera_source_using">Reading the gear from: %1$s</string>
+    <string name="settings_reverse_camera_adapter_no_gear">The car data adapter has no gear signal in its map yet.</string>
+    <string name="settings_reverse_camera_app">Camera app</string>
+    <string name="settings_reverse_camera_app_none">None (move CarPlay away)</string>
+    <string name="settings_reverse_camera_app_description">Pick the head unit’s camera app only if the camera does not appear by itself once CarPlay moves away.</string>
+    <string name="settings_reverse_camera_broadcast">Head-unit broadcast</string>
+    <string name="settings_reverse_camera_broadcast_not_set">Not set</string>
+    <string name="settings_reverse_camera_broadcast_action">Broadcast action</string>
+    <string name="settings_reverse_camera_broadcast_extra">Extra name</string>
+    <string name="settings_reverse_camera_broadcast_value">Extra value in reverse</string>
+    <string name="settings_reverse_camera_broadcast_description">For head units that announce reverse with a broadcast. Find the action and extra with an intent-logging app while shifting into reverse, then enter them here.</string>
+    <string name="settings_reverse_camera_broadcast_remove">Remove</string>
+    <string name="settings_reverse_camera_return_needed">To bring CarPlay back after reverse, Android needs Tarmac to have “Display over other apps” or the wheel key service on.</string>
+    <string name="settings_reverse_camera_return_allow">Allow display over other apps</string>
+</resources>

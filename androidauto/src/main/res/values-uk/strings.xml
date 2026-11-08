@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="aa_status_connecting">Підключення до Android Auto…</string>
+    <string name="aa_status_waiting_for_phone">Підключіть телефон Android кабелем USB з передаванням даних.</string>
+    <string name="aa_status_permission">Дозвольте доступ до телефона в запиті USB.</string>
+    <string name="aa_status_switching">Запуск Android Auto на телефоні…</string>
+    <string name="aa_status_no_identity">У цій збірці немає посвідчення головного пристрою Android Auto, тому Android Auto не може підключитися. Установіть його, як описано в docs/ANDROID_AUTO.md.</string>
+    <string name="aa_status_no_usb_host">Цей пристрій не може бути USB-хостом, тому не може підключити телефон кабелем.</string>
+    <string name="aa_button_retry">Повторити</string>
+    <string name="aa_button_close">Закрити</string>
+    <string name="aa_notification_connected">Підключено до Android Auto</string>
+    <string name="aa_action_previous">Попередній</string>
+    <string name="aa_action_play_pause">Відтворити або призупинити</string>
+    <string name="aa_action_next">Наступний</string>
+    <string name="aa_status_ended_by_phone">Android Auto закрито на телефоні.</string>
+    <string name="aa_status_reconnecting">Повтор через %1$d с…</string>
+    <string name="aa_failure_permission">Доступ до телефона через USB не дозволено.</string>
+    <string name="aa_failure_not_android_auto">Цей телефон не підтримує Android Auto через USB. Перевірте, що Android Auto налаштовано, а кабель передає дані.</string>
+    <string name="aa_failure_no_switch">Телефон не запустив Android Auto. Розблокуйте його та підключіть знову.</string>
+    <string name="aa_failure_usb">Android не зміг відкрити USB-підключення телефона. Від’єднайте телефон і підключіть знову.</string>
+    <string name="aa_failure_identity_rejected">Телефон відхилив посвідчення Android Auto цього головного пристрою.</string>
+    <string name="aa_failure_version">Версія Android Auto на телефоні несумісна.</string>
+    <string name="aa_failure_silent">Телефон перестав відповідати.</string>
+    <string name="aa_failure_disconnected">Телефон від’єднано.</string>
+    <string name="aa_failure_other">Android Auto зупинено: %1$s</string>
+    <string name="aa_status_waiting_for_wireless_phone">Очікування телефона через Bluetooth. Створіть пару з цим головним пристроєм і ввімкніть бездротовий Android Auto в налаштуваннях телефона. Якщо телефон уже підключено, вимкніть і знову ввімкніть на ньому Bluetooth.</string>
+    <string name="aa_status_joining_wifi">Телефон підключається до Wi-Fi цього головного пристрою…</string>
+    <string name="aa_button_wireless">Підключити без дроту</string>
+    <string name="aa_notification_waiting">Очікування телефона через Bluetooth</string>
+    <string name="aa_start_channel">Запуск Android Auto</string>
+    <string name="aa_start_text">Підключено через Bluetooth. Торкніться, щоб запустити Android Auto.</string>
+    <string name="aa_start_action">Запустити Android Auto</string>
+    <string name="aa_failure_bluetooth">Bluetooth вимкнено, або застосунку заборонено його використовувати. Увімкніть Bluetooth і надайте дозвіл «Пристрої поблизу».</string>
+    <string name="aa_failure_no_wireless_phone">Жоден телефон не запустив бездротовий Android Auto. Перевірте, що телефон з’єднано в пару з цим головним пристроєм і що в його налаштуваннях увімкнено бездротовий Android Auto.</string>
+    <string name="aa_failure_wifi">Не вдалося запустити Wi-Fi для телефона. Бездротовий Android Auto використовує мережу, налаштовану для бездротового CarPlay у розділі Налаштування → Підключення.</string>
+    <string name="aa_failure_phone_wifi">Телефону не вдалося підключитися через Wi-Fi цього головного пристрою.</string>
+    <string name="aa_failure_carplay">CarPlay працює. Закрийте його, перш ніж запускати бездротовий Android Auto.</string>
+</resources>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_vehicle_adapter">車両データアダプター（実験的機能）</string>
+    <string name="settings_vehicle_adapter_description">ヘッドユニットが充電量・航続距離・ギアを報告しない車向けに、OBD-II または CAN アダプターから読み取ります。Tarmac は読み取るだけです。OBD-II アダプターには標準の読み取り要求だけを送り、CAN アダプターは受信専用モードで開きます。車に書き込むことはありません。</string>
+    <string name="settings_vehicle_adapter_kind">アダプター</string>
+    <string name="settings_vehicle_adapter_off">オフ</string>
+    <string name="settings_vehicle_adapter_obd_bluetooth">Bluetooth 経由の OBD-II（ELM327、STN）</string>
+    <string name="settings_vehicle_adapter_obd_usb">USB 経由の OBD-II（STN、CDC-ACM）</string>
+    <string name="settings_vehicle_adapter_can_usb">USB 経由の CAN（slcan、受信専用）</string>
+    <string name="settings_vehicle_adapter_bluetooth">Bluetooth アダプター</string>
+    <string name="settings_vehicle_adapter_bluetooth_none">未選択</string>
+    <string name="settings_vehicle_adapter_bluetooth_empty">ペアリング済みの Bluetooth デバイスがありません。先に Android の Bluetooth 設定で OBD-II アダプターをペアリングしてください（PIN は通常 1234 か 0000 です）。</string>
+    <string name="settings_vehicle_adapter_bluetooth_permission">Tarmac がペアリング済みの OBD-II アダプターに接続できるよう、付近のデバイスを許可してください。</string>
+    <string name="settings_vehicle_adapter_usb_missing">USB シリアルアダプター（CDC-ACM）が接続されていません。FTDI、CH340、CP210x チップのアダプターにはまだ対応していません。</string>
+    <string name="settings_vehicle_adapter_usb_allow">USB アダプターを許可</string>
+    <string name="settings_vehicle_adapter_map">信号マップ</string>
+    <string name="settings_vehicle_adapter_map_none">なし</string>
+    <string name="settings_vehicle_adapter_map_custom">カスタム</string>
+    <string name="settings_vehicle_adapter_map_can">CAN アダプターでは、どのフレームに充電量・航続距離・ギアが含まれるかを知るために、車の信号マップ（JSON）が必要です。</string>
+    <string name="settings_vehicle_adapter_map_obd">マップがない場合、Tarmac は標準のバッテリー PID を読み取りますが、これに応答する電気自動車はわずかです。マップを使うと、充電状態やギアなど車独自の PID を追加できます。</string>
+    <string name="settings_vehicle_adapter_map_hint">車の JSON 信号マップを貼り付け</string>
+    <string name="settings_vehicle_adapter_map_remove">削除</string>
+    <string name="settings_vehicle_adapter_map_invalid">信号マップを保存できませんでした: %1$s</string>
+    <string name="settings_vehicle_adapter_ev">Apple マップ用の充電量と航続距離</string>
+    <string name="settings_vehicle_adapter_ev_description">アダプターから読んだ充電量と航続距離を iPhone に伝え、Apple マップが充電スポットを計画できるようにします。次回の接続から適用されます。</string>
+    <string name="settings_vehicle_adapter_full_range">満充電時の航続距離</string>
+    <string name="settings_vehicle_adapter_full_range_unknown">車から読み取る</string>
+    <string name="settings_vehicle_adapter_full_range_km">%1$d km</string>
+    <string name="settings_vehicle_adapter_full_range_description">車が充電量しか報告しない場合、Tarmac はこの値から航続距離を求めます。航続距離がない場合、iPhone に電気自動車であることは伝えません。</string>
+    <string name="settings_vehicle_adapter_connectors">充電コネクター</string>
+    <string name="settings_vehicle_adapter_state_off">読み取りなし</string>
+    <string name="settings_vehicle_adapter_state_connecting">アダプターに接続中…</string>
+    <string name="settings_vehicle_adapter_state_not_found">アダプターが見つかりません。接続またはペアリングされていて、車の電源が入っているか確認してください。</string>
+    <string name="settings_vehicle_adapter_state_no_permission">Tarmac はまだアダプターを使用できません。</string>
+    <string name="settings_vehicle_adapter_state_no_answer">アダプターが応答しません。イグニッションはオンですか？</string>
+    <string name="settings_vehicle_adapter_state_no_listen_only">この CAN アダプターには受信専用モードがないため、Tarmac は開きません。</string>
+    <string name="settings_vehicle_adapter_state_connected">接続済み</string>
+    <string name="settings_vehicle_adapter_unknown">—</string>
+    <string name="settings_vehicle_adapter_reading">充電量 %1$s · 航続距離 %2$s · ギア %3$s</string>
+</resources>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_reverse_camera">Камера заднего вида</string>
+    <string name="settings_reverse_camera_switch">Переключаться на камеру при движении назад</string>
+    <string name="settings_reverse_camera_switch_description">Когда включается задний ход, Tarmac убирает CarPlay с экрана или открывает выбранное ниже приложение камеры и возвращает CarPlay, когда задний ход выключен. CarPlay остаётся подключённым.</string>
+    <string name="settings_reverse_camera_source">Передача из</string>
+    <string name="settings_reverse_camera_source_automatic">Автоматически</string>
+    <string name="settings_reverse_camera_source_byd">Передача BYD (ADB)</string>
+    <string name="settings_reverse_camera_source_ecarx">Датчик Geely / ECARX</string>
+    <string name="settings_reverse_camera_source_adapter">Адаптер данных автомобиля</string>
+    <string name="settings_reverse_camera_source_broadcast">Широковещательное сообщение ГУ</string>
+    <string name="settings_reverse_camera_source_none">Tarmac не знает источника передачи на этом головном устройстве. Добавьте сигнал передачи в адаптер данных автомобиля (Дополнительно) или настройте широковещательное сообщение головного устройства.</string>
+    <string name="settings_reverse_camera_source_using">Передача читается из: %1$s</string>
+    <string name="settings_reverse_camera_adapter_no_gear">В карте адаптера данных автомобиля пока нет сигнала передачи.</string>
+    <string name="settings_reverse_camera_app">Приложение камеры</string>
+    <string name="settings_reverse_camera_app_none">Нет (только убрать CarPlay)</string>
+    <string name="settings_reverse_camera_app_description">Выбирайте приложение камеры головного устройства, только если камера не появляется сама, когда CarPlay убран.</string>
+    <string name="settings_reverse_camera_broadcast">Широковещательное сообщение ГУ</string>
+    <string name="settings_reverse_camera_broadcast_not_set">Не задано</string>
+    <string name="settings_reverse_camera_broadcast_action">Действие (action)</string>
+    <string name="settings_reverse_camera_broadcast_extra">Имя extra</string>
+    <string name="settings_reverse_camera_broadcast_value">Значение extra при заднем ходе</string>
+    <string name="settings_reverse_camera_broadcast_description">Для головных устройств, которые сообщают о заднем ходе широковещательным сообщением. Найдите action и extra приложением для записи интентов, включая задний ход, и введите их здесь.</string>
+    <string name="settings_reverse_camera_broadcast_remove">Удалить</string>
+    <string name="settings_reverse_camera_return_needed">Чтобы вернуть CarPlay после заднего хода, Android требует, чтобы у Tarmac было разрешение «Поверх других приложений» или была включена служба кнопок руля.</string>
+    <string name="settings_reverse_camera_return_allow">Разрешить показ поверх других приложений</string>
+</resources>

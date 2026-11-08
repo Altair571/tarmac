@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_car_guidance">لوحة عدادات السيارة وشاشة HUD</string>
+    <string name="settings_car_guidance_switch">إرسال الانعطافات إلى لوحة عدادات السيارة وشاشة HUD</string>
+    <string name="settings_car_guidance_description">يرسل الانعطاف التالي في CarPlay ومسافته واسم الشارع عبر بث الملاحة القياسي لـ AMap. تعرضها وحدات الرأس التي تستمع خدمة CAN أو لوحة العدادات فيها إلى هذا البث على لوحة العدادات الأصلية أو شاشة HUD، وتتجاهله الوحدات الأخرى. يُطبَّق فورًا.</string>
+</resources>

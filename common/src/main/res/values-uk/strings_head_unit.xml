@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TEYES and other recognised head units (docs/HEADUNIT_SPD_TEYES.md). -->
+<resources>
+    <string name="settings_head_unit_title">Головний пристрій %1$s</string>
+    <string name="settings_head_unit_description">Tarmac розпізнав цей головний пристрій. Він читає з нього сигнали автомобіля й ніколи нічого не надсилає в автомобіль.</string>
+    <string name="settings_head_unit_starting_app_on">%1$s відкриває Tarmac під час запуску автомобіля й не закриває його, поки автомобіль спить.</string>
+    <string name="settings_head_unit_starting_app_off">Щоб Tarmac відкривався під час запуску автомобіля, виберіть Tarmac застосунком запуску в налаштуваннях %1$s. Тоді %1$s також не закриває Tarmac, поки автомобіль спить.</string>
+    <string name="settings_head_unit_own_carplay">Власний CarPlay %1$s запускається сам і може зайняти iPhone раніше за Tarmac. Вимкніть його автозапуск у налаштуваннях %1$s.</string>
+    <string name="settings_head_unit_open_settings">Відкрити налаштування %1$s</string>
+    <string name="settings_head_unit_mfi_chip">Чип автентифікації (експериментально)</string>
+    <string name="settings_head_unit_mfi_own">Власний Tarmac</string>
+    <string name="settings_head_unit_mfi_head_unit">Головний пристрій (%1$s)</string>
+    <string name="settings_head_unit_mfi_ready">Чип Apple головного пристрою на %1$s доступний Tarmac. Зміна набуде чинності під час наступного підключення. Не відкривайте CarPlay %2$s, поки Tarmac використовує чип.</string>
+    <string name="settings_head_unit_mfi_blocked">Чип Apple головного пристрою розташований на %1$s, але політика безпеки Android не дає застосункам його відкрити, тому Tarmac використовує власну ідентифікацію.</string>
+    <string name="settings_head_unit_mfi_missing">Tarmac не знайшов %1$s, тому використовує власну ідентифікацію.</string>
+    <string name="settings_head_unit_mfi_unknown">Tarmac не зміг перевірити %1$s, тому використовує власну ідентифікацію.</string>
+    <string name="settings_head_unit_signals_title">Сигнали автомобіля %1$s</string>
+    <string name="settings_head_unit_wheel_keys">Кнопки голосу й виклику для CarPlay</string>
+    <string name="settings_head_unit_wheel_keys_description">Поки працює CarPlay, кнопка голосу на кермі відкриває Siri, а кнопки виклику приймають і завершують дзвінки CarPlay. Потрібна служба «Кнопки керма Tarmac».</string>
+    <string name="settings_head_unit_reverse_description">Під час руху заднім ходом Tarmac залишає екран камері %1$s і відкриває CarPlay лише після вимкнення заднього ходу.</string>
+    <string name="settings_head_unit_signal_state">Автомобіль запущено: %1$s · Задній хід: %2$s</string>
+    <string name="settings_head_unit_state_on">так</string>
+    <string name="settings_head_unit_state_off">ні</string>
+    <string name="settings_head_unit_state_unknown">невідомо</string>
+    <string name="settings_head_unit_vehicle_waiting">Читання CAN-адаптера…</string>
+    <string name="settings_head_unit_vehicle_none">CAN-адаптер не передає значень.</string>
+    <string name="settings_head_unit_vehicle_values">Швидкість %1$s км/год · Надворі %2$s °C · Запас ходу %3$s км · Заряд %4$s %%</string>
+    <string name="settings_head_unit_mfi_head_unit_root">Головний пристрій через root (%1$s)</string>
+    <string name="settings_head_unit_mfi_root">Відкрити чип через root</string>
+    <string name="settings_head_unit_mfi_root_asking">Запит root…</string>
+    <string name="settings_head_unit_mfi_root_ready">Root відкрив чип Apple головного пристрою на %1$s. Tarmac використовує його через допоміжний процес із root, нічого не змінюючи в системі. Зміна набуде чинності під час наступного підключення. Не відкривайте CarPlay %2$s, поки Tarmac використовує чип.</string>
+    <string name="settings_head_unit_mfi_root_failed">Root не зміг відкрити %1$s, тому Tarmac використовує власну ідентифікацію.</string>
+    <string name="settings_head_unit_track_test_title">Перевірка панелі приладів і HUD (експериментально)</string>
+    <string name="settings_head_unit_track_test_description">Tarmac передає %1$s тестовий трек (Tarmac test, CarPlay) так само, як власні плеєри %1$s. Дивіться на панель приладів або HUD. Нічого не надсилається, доки ви не натиснете кнопку.</string>
+    <string name="settings_head_unit_track_test_record">Запис треку</string>
+    <string name="settings_head_unit_track_test_other">Інші медіа (14)</string>
+    <string name="settings_head_unit_track_test_media">Медіа (1)</string>
+    <string name="settings_head_unit_track_test_enter">Зробити Tarmac активним джерелом</string>
+    <string name="settings_head_unit_track_test_enter_description">Деякі протоколи автомобіля показують трек лише активного джерела. Це може перемкнути звук головного пристрою на Tarmac.</string>
+    <string name="settings_head_unit_track_test_send">Надіслати тестовий трек</string>
+    <string name="settings_head_unit_track_test_sending">Надсилання…</string>
+    <string name="settings_head_unit_track_test_sent">Надіслано. %1$s записав пов’язаних рядків: %2$d</string>
+    <string name="settings_head_unit_track_test_failed">Не надіслано: %1$s</string>
+    <string name="settings_head_unit_track_test_nothing_logged">Надіслано, але %1$s нічого про це не записав. Спробуйте інший запис треку або зробіть Tarmac активним джерелом.</string>
+    <string name="settings_head_unit_guidance_test">Надіслати тестове ведення</string>
+    <string name="settings_head_unit_guidance_test_description">Надсилає стандартне ведення AMap приблизно на 10 секунд: через 350 м поворот ліворуч на Tarmac Street. %1$s передає його на панель приладів або HUD лише для профілів CAN-адаптера, які показують ведення.</string>
+    <string name="settings_head_unit_test_sent_no_log">Надіслано. Дивіться на панель приладів або HUD. Без root Tarmac не може прочитати журнал %1$s.</string>
+</resources>

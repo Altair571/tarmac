@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_dashboard_display">Экран приборной панели</string>
+    <string name="settings_dashboard_display_none">Нет (карта только для центрального экрана)</string>
+    <string name="settings_dashboard_display_option">%1$s (%2$d × %3$d)</string>
+    <string name="settings_dashboard_display_missing">%1$s (не подключён)</string>
+    <string name="settings_dashboard_display_description">Показывает карту приборной панели на другом экране, который видит Android, например на цифровой приборной панели. Выбирайте только экран, который видит водитель: экран пассажира для Android выглядит так же. Применяется при следующем подключении.</string>
+    <string name="settings_dashboard_display_route">Показывать как</string>
+    <string name="settings_dashboard_display_route_presentation">Презентация (рекомендуется)</string>
+    <string name="settings_dashboard_display_route_window">Окно приложения</string>
+    <string name="settings_dashboard_display_route_description">Если этот экран остаётся чёрным, попробуйте «Окно приложения». Применяется при следующем подключении.</string>
+</resources>

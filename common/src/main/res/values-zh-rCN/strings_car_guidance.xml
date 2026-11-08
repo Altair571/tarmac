@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_car_guidance">原车仪表和 HUD</string>
+    <string name="settings_car_guidance_switch">把转向信息发送到原车仪表和 HUD</string>
+    <string name="settings_car_guidance_description">以高德标准导航广播发送 CarPlay 的下一个转向、距离和道路名称。车机的协议盒或仪表服务监听此广播时，会在原车仪表或 HUD 上显示；不监听的车机会忽略它。立即生效。</string>
+</resources>

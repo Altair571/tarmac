@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TEYES and other recognised head units (docs/HEADUNIT_SPD_TEYES.md). -->
+<resources>
+    <string name="settings_head_unit_title">%1$s head unit</string>
+    <string name="settings_head_unit_description">Tarmac recognised this head unit. It reads the car’s signals from it and never sends anything to the car.</string>
+    <string name="settings_head_unit_starting_app_on">%1$s opens Tarmac when the car starts and keeps it running while the car sleeps.</string>
+    <string name="settings_head_unit_starting_app_off">To open Tarmac when the car starts, choose Tarmac as the starting app in %1$s Settings. %1$s then also keeps Tarmac running while the car sleeps.</string>
+    <string name="settings_head_unit_own_carplay">%1$s CarPlay starts by itself and can take the iPhone before Tarmac. Turn off its automatic start in %1$s Settings.</string>
+    <string name="settings_head_unit_open_settings">Open %1$s Settings</string>
+    <string name="settings_head_unit_mfi_chip">Authentication chip (experimental)</string>
+    <string name="settings_head_unit_mfi_own">Tarmac’s own</string>
+    <string name="settings_head_unit_mfi_head_unit">Head unit (%1$s)</string>
+    <string name="settings_head_unit_mfi_ready">The head unit’s Apple chip on %1$s is open to Tarmac. A change applies at the next connection. Keep %2$s CarPlay closed while Tarmac uses the chip.</string>
+    <string name="settings_head_unit_mfi_blocked">The head unit’s Apple chip is on %1$s, but Android’s security policy keeps apps away from it, so Tarmac uses its own identity.</string>
+    <string name="settings_head_unit_mfi_missing">Tarmac found no %1$s, so it uses its own identity.</string>
+    <string name="settings_head_unit_mfi_unknown">Tarmac could not check %1$s, so it uses its own identity.</string>
+    <string name="settings_head_unit_signals_title">%1$s car signals</string>
+    <string name="settings_head_unit_wheel_keys">Voice and call keys to CarPlay</string>
+    <string name="settings_head_unit_wheel_keys_description">While CarPlay runs, the wheel’s voice key opens Siri and its call keys answer and end CarPlay calls. Needs the Tarmac wheel keys service.</string>
+    <string name="settings_head_unit_reverse_description">While reversing, Tarmac leaves the screen to the %1$s camera and opens CarPlay only after reverse ends.</string>
+    <string name="settings_head_unit_signal_state">Car on: %1$s · Reverse: %2$s</string>
+    <string name="settings_head_unit_state_on">yes</string>
+    <string name="settings_head_unit_state_off">no</string>
+    <string name="settings_head_unit_state_unknown">unknown</string>
+    <string name="settings_head_unit_vehicle_waiting">Reading the CAN box…</string>
+    <string name="settings_head_unit_vehicle_none">The CAN box reports no values.</string>
+    <string name="settings_head_unit_vehicle_values">Speed %1$s km/h · Outside %2$s °C · Range %3$s km · Charge %4$s %%</string>
+    <string name="settings_head_unit_mfi_head_unit_root">Head unit with root (%1$s)</string>
+    <string name="settings_head_unit_mfi_root">Open the chip with root</string>
+    <string name="settings_head_unit_mfi_root_asking">Asking for root…</string>
+    <string name="settings_head_unit_mfi_root_ready">Root opened the head unit’s Apple chip on %1$s. Tarmac uses it through a root helper; nothing on the system is changed. A change applies at the next connection. Keep %2$s CarPlay closed while Tarmac uses the chip.</string>
+    <string name="settings_head_unit_mfi_root_failed">Root could not open %1$s, so Tarmac uses its own identity.</string>
+    <string name="settings_head_unit_track_test_title">Cluster and HUD tests (experimental)</string>
+    <string name="settings_head_unit_track_test_description">Tarmac hands %1$s one test track (Tarmac test, CarPlay) the way %1$s’s own players do. Watch the instrument cluster or HUD. Nothing is sent until you press the button.</string>
+    <string name="settings_head_unit_track_test_record">Track record</string>
+    <string name="settings_head_unit_track_test_other">Other media (14)</string>
+    <string name="settings_head_unit_track_test_media">Media (1)</string>
+    <string name="settings_head_unit_track_test_enter">Make Tarmac the active source</string>
+    <string name="settings_head_unit_track_test_enter_description">Some car protocols show only the active source’s track. This can switch the head unit’s audio to Tarmac.</string>
+    <string name="settings_head_unit_track_test_send">Send a test track</string>
+    <string name="settings_head_unit_track_test_sending">Sending…</string>
+    <string name="settings_head_unit_track_test_sent">Sent. %1$s logged %2$d related lines:</string>
+    <string name="settings_head_unit_track_test_failed">Not sent: %1$s</string>
+    <string name="settings_head_unit_track_test_nothing_logged">Sent, but %1$s logged nothing about it. Try the other track record, or make Tarmac the active source.</string>
+    <string name="settings_head_unit_guidance_test">Send test guidance</string>
+    <string name="settings_head_unit_guidance_test_description">Sends AMap’s standard guidance for about 10 seconds: turn left in 350 m onto Tarmac Street. %1$s passes it to the cluster or HUD only on CAN-box profiles that show guidance.</string>
+    <string name="settings_head_unit_test_sent_no_log">Sent. Watch the cluster or HUD. Without root, Tarmac cannot read %1$s’s log.</string>
+</resources>

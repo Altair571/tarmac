@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_dashboard_display">メーター画面</string>
+    <string name="settings_dashboard_display_none">なし（センター画面用の地図のみ）</string>
+    <string name="settings_dashboard_display_option">%1$s（%2$d × %3$d）</string>
+    <string name="settings_dashboard_display_missing">%1$s（未接続）</string>
+    <string name="settings_dashboard_display_description">Android が認識する別の画面（デジタルメーターなど）にダッシュボード地図を表示します。運転者が見る画面だけを選んでください。助手席の画面も Android には同じように見えます。次回の接続から適用されます。</string>
+    <string name="settings_dashboard_display_route">表示方法</string>
+    <string name="settings_dashboard_display_route_presentation">プレゼンテーション（推奨）</string>
+    <string name="settings_dashboard_display_route_window">アプリウィンドウ</string>
+    <string name="settings_dashboard_display_route_description">その画面が黒いままの場合は、アプリウィンドウを試してください。次回の接続から適用されます。</string>
+</resources>

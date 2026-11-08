@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TEYES and other recognised head units (docs/HEADUNIT_SPD_TEYES.md). -->
+<resources>
+    <string name="settings_head_unit_title">%1$s 車載端末</string>
+    <string name="settings_head_unit_description">Tarmacはこの車載端末を認識しました。車の信号を読み取るだけで、車には何も送信しません。</string>
+    <string name="settings_head_unit_starting_app_on">%1$sは車の起動時にTarmacを開き、車のスリープ中もTarmacを動作させ続けます。</string>
+    <string name="settings_head_unit_starting_app_off">車の起動時にTarmacを開くには、%1$sの設定で起動アプリにTarmacを選んでください。%1$sは車のスリープ中もTarmacを動作させ続けるようになります。</string>
+    <string name="settings_head_unit_own_carplay">%1$sのCarPlayは自動で起動し、TarmacよりもiPhoneを先に使うことがあります。%1$sの設定で自動起動をオフにしてください。</string>
+    <string name="settings_head_unit_open_settings">%1$sの設定を開く</string>
+    <string name="settings_head_unit_mfi_chip">認証チップ（実験的機能）</string>
+    <string name="settings_head_unit_mfi_own">Tarmac独自</string>
+    <string name="settings_head_unit_mfi_head_unit">車載端末（%1$s）</string>
+    <string name="settings_head_unit_mfi_ready">%1$sにある車載端末のAppleチップはTarmacから使えます。変更は次回の接続から適用されます。Tarmacがチップを使っている間は%2$sのCarPlayを閉じたままにしてください。</string>
+    <string name="settings_head_unit_mfi_blocked">車載端末のAppleチップは%1$sにありますが、Androidのセキュリティポリシーによりアプリから開けないため、Tarmacは独自のIDを使います。</string>
+    <string name="settings_head_unit_mfi_missing">%1$sが見つからないため、Tarmacは独自のIDを使います。</string>
+    <string name="settings_head_unit_mfi_unknown">%1$sを確認できなかったため、Tarmacは独自のIDを使います。</string>
+    <string name="settings_head_unit_signals_title">%1$sの車両信号</string>
+    <string name="settings_head_unit_wheel_keys">音声・通話ボタンをCarPlayへ</string>
+    <string name="settings_head_unit_wheel_keys_description">CarPlayの動作中は、ステアリングの音声ボタンでSiriを開き、通話ボタンでCarPlayの通話に応答・終了します。Tarmacステアリングスイッチのサービスが必要です。</string>
+    <string name="settings_head_unit_reverse_description">後退中、Tarmacは画面を%1$sのカメラに任せ、後退が終わってからCarPlayを開きます。</string>
+    <string name="settings_head_unit_signal_state">車の起動: %1$s · 後退: %2$s</string>
+    <string name="settings_head_unit_state_on">はい</string>
+    <string name="settings_head_unit_state_off">いいえ</string>
+    <string name="settings_head_unit_state_unknown">不明</string>
+    <string name="settings_head_unit_vehicle_waiting">CANボックスを読み取り中…</string>
+    <string name="settings_head_unit_vehicle_none">CANボックスから値が報告されていません。</string>
+    <string name="settings_head_unit_vehicle_values">速度 %1$s km/h · 外気 %2$s °C · 航続距離 %3$s km · 充電 %4$s %%</string>
+    <string name="settings_head_unit_mfi_head_unit_root">車載端末（root経由、%1$s）</string>
+    <string name="settings_head_unit_mfi_root">rootでチップを開く</string>
+    <string name="settings_head_unit_mfi_root_asking">rootを要求しています…</string>
+    <string name="settings_head_unit_mfi_root_ready">rootで%1$sにある車載端末のAppleチップを開けました。Tarmacはroot権限の補助プロセス経由で使用し、システムは何も変更しません。変更は次回の接続から適用されます。Tarmacがチップを使っている間は%2$sのCarPlayを閉じたままにしてください。</string>
+    <string name="settings_head_unit_mfi_root_failed">rootでも%1$sを開けなかったため、Tarmacは独自のIDを使います。</string>
+    <string name="settings_head_unit_track_test_title">メーターとHUDのテスト（実験的機能）</string>
+    <string name="settings_head_unit_track_test_description">Tarmacは%1$s純正プレーヤーと同じ方法で、%1$sにテスト曲（Tarmac test、CarPlay）を渡します。メーターやHUDを確認してください。ボタンを押すまで何も送信しません。</string>
+    <string name="settings_head_unit_track_test_record">曲レコード</string>
+    <string name="settings_head_unit_track_test_other">その他のメディア（14）</string>
+    <string name="settings_head_unit_track_test_media">メディア（1）</string>
+    <string name="settings_head_unit_track_test_enter">Tarmacをアクティブなソースにする</string>
+    <string name="settings_head_unit_track_test_enter_description">車のプロトコルによっては、アクティブなソースの曲だけを表示します。車載端末の音声がTarmacに切り替わることがあります。</string>
+    <string name="settings_head_unit_track_test_send">テスト曲を送信</string>
+    <string name="settings_head_unit_track_test_sending">送信中…</string>
+    <string name="settings_head_unit_track_test_sent">送信しました。%1$sが記録した関連行: %2$d</string>
+    <string name="settings_head_unit_track_test_failed">送信できませんでした: %1$s</string>
+    <string name="settings_head_unit_track_test_nothing_logged">送信しましたが、%1$sは何も記録していません。もう一方の曲レコードを試すか、Tarmacをアクティブなソースにしてください。</string>
+    <string name="settings_head_unit_guidance_test">テスト案内を送信</string>
+    <string name="settings_head_unit_guidance_test_description">AMap標準の案内を約10秒間送信します：350 m先、左折してTarmac Streetへ。%1$sは案内を表示するCANボックスのプロファイルでのみ、メーターやHUDに渡します。</string>
+    <string name="settings_head_unit_test_sent_no_log">送信しました。メーターやHUDを確認してください。rootがないと、Tarmacは%1$sのログを読めません。</string>
+</resources>

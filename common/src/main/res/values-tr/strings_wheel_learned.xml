@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_wheel_learned_keys">Diğer direksiyon tuşları</string>
+    <string name="settings_wheel_learned_keys_description">Ana ünitenin sonraki ve önceki parça, aramayı yanıtlama veya kapatma ve CarPlay ana ekranı için gönderdiği tuşu öğrenir. Tuşlar CarPlay bağlıyken çalışır; CarPlay oturumu yokken her tuş aracın kendi işlevini korur.</string>
+    <string name="settings_wheel_learned_next">sonraki parça</string>
+    <string name="settings_wheel_learned_previous">önceki parça</string>
+    <string name="settings_wheel_learned_call">yanıtla / kapat</string>
+    <string name="settings_wheel_learned_home">CarPlay ana ekranı</string>
+    <string name="settings_wheel_learned_keys_hint">Siri ve oynat/duraklat için yukarıda ayrı tuşlar var. Orada ya da harita yakınlaştırma veya joystick için kullanılan bir tuş burada öğrenilemez. Arama sırasında yalnızca yanıtla / kapat tuşu çalışır.</string>
+    <string name="settings_wheel_learned_learn">Yeni tuş öğren</string>
+    <string name="settings_wheel_learned_remove">Bu tuşu kaldır</string>
+</resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_car_guidance">Панель приладів і HUD автомобіля</string>
+    <string name="settings_car_guidance_switch">Передавати повороти на панель приладів і HUD</string>
+    <string name="settings_car_guidance_description">Надсилає наступний поворот CarPlay, відстань і вулицю як стандартне навігаційне широкомовне повідомлення AMap. Головні пристрої, у яких служба CAN-бокса чи панелі приладів його приймає, показують їх на штатній панелі або HUD; решта його ігнорує. Застосовується одразу.</string>
+</resources>

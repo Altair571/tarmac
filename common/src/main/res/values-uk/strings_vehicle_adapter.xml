@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_vehicle_adapter">Адаптер даних автомобіля (експериментально)</string>
+    <string name="settings_vehicle_adapter_description">Зчитує заряд, запас ходу й передачу через адаптер OBD-II або CAN — для автомобілів, чий головний пристрій їх не повідомляє. Tarmac лише читає: адаптер OBD-II отримує стандартні запити читання, а адаптер CAN відкривається в режимі лише прослуховування. До автомобіля нічого не записується.</string>
+    <string name="settings_vehicle_adapter_kind">Адаптер</string>
+    <string name="settings_vehicle_adapter_off">Вимк.</string>
+    <string name="settings_vehicle_adapter_obd_bluetooth">OBD-II через Bluetooth (ELM327, STN)</string>
+    <string name="settings_vehicle_adapter_obd_usb">OBD-II через USB (STN, CDC-ACM)</string>
+    <string name="settings_vehicle_adapter_can_usb">CAN через USB (slcan, лише прослуховування)</string>
+    <string name="settings_vehicle_adapter_bluetooth">Bluetooth-адаптер</string>
+    <string name="settings_vehicle_adapter_bluetooth_none">Не вибрано</string>
+    <string name="settings_vehicle_adapter_bluetooth_empty">Немає спарених пристроїв Bluetooth. Спершу спарте адаптер OBD-II у налаштуваннях Bluetooth Android (PIN зазвичай 1234 або 0000).</string>
+    <string name="settings_vehicle_adapter_bluetooth_permission">Дозвольте доступ до пристроїв поблизу, щоб Tarmac міг під’єднатися до спареного адаптера OBD-II.</string>
+    <string name="settings_vehicle_adapter_usb_missing">USB-адаптер послідовного порту (CDC-ACM) не під’єднано. Адаптери з чипами FTDI, CH340 або CP210x поки не підтримуються.</string>
+    <string name="settings_vehicle_adapter_usb_allow">Дозволити USB-адаптер</string>
+    <string name="settings_vehicle_adapter_map">Карта сигналів</string>
+    <string name="settings_vehicle_adapter_map_none">Немає</string>
+    <string name="settings_vehicle_adapter_map_custom">Власна</string>
+    <string name="settings_vehicle_adapter_map_can">Адаптеру CAN потрібна карта сигналів автомобіля (JSON), щоб знати, у яких кадрах заряд, запас ходу й передача.</string>
+    <string name="settings_vehicle_adapter_map_obd">Без карти Tarmac читає стандартний PID батареї, на який відповідають небагато електромобілів. Карта додає власні PID автомобіля, як-от рівень заряду чи передачу.</string>
+    <string name="settings_vehicle_adapter_map_hint">Вставте карту сигналів автомобіля в JSON</string>
+    <string name="settings_vehicle_adapter_map_remove">Видалити</string>
+    <string name="settings_vehicle_adapter_map_invalid">Карту сигналів не збережено: %1$s</string>
+    <string name="settings_vehicle_adapter_ev">Заряд і запас ходу для Apple Карт</string>
+    <string name="settings_vehicle_adapter_ev_description">Повідомляє iPhone заряд і запас ходу від адаптера, щоб Apple Карти планували зупинки для заряджання. Застосовується під час наступного під’єднання.</string>
+    <string name="settings_vehicle_adapter_full_range">Запас ходу при повному заряді</string>
+    <string name="settings_vehicle_adapter_full_range_unknown">З автомобіля</string>
+    <string name="settings_vehicle_adapter_full_range_km">%1$d км</string>
+    <string name="settings_vehicle_adapter_full_range_description">Якщо автомобіль повідомляє лише заряд, Tarmac обчислює запас ходу за цим значенням. Без запасу ходу iPhone не дізнається про електромобіль.</string>
+    <string name="settings_vehicle_adapter_connectors">Зарядні роз’єми</string>
+    <string name="settings_vehicle_adapter_state_off">Не зчитується</string>
+    <string name="settings_vehicle_adapter_state_connecting">Під’єднання до адаптера…</string>
+    <string name="settings_vehicle_adapter_state_not_found">Адаптер не знайдено. Перевірте, чи він під’єднаний або спарений і чи увімкнено автомобіль.</string>
+    <string name="settings_vehicle_adapter_state_no_permission">Tarmac поки не може використовувати адаптер.</string>
+    <string name="settings_vehicle_adapter_state_no_answer">Адаптер не відповів. Запалювання увімкнено?</string>
+    <string name="settings_vehicle_adapter_state_no_listen_only">Цей адаптер CAN не має режиму лише прослуховування, тому Tarmac його не відкриває.</string>
+    <string name="settings_vehicle_adapter_state_connected">Під’єднано</string>
+    <string name="settings_vehicle_adapter_unknown">—</string>
+    <string name="settings_vehicle_adapter_reading">Заряд %1$s · запас ходу %2$s · передача %3$s</string>
+</resources>

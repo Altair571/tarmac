@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android Auto entry on Home and its Settings card; see docs/ANDROID_AUTO.md. -->
+<resources>
+    <string name="home_android_auto">Android Auto</string>
+    <string name="settings_android_auto">Android Auto (تجريبي)</string>
+    <string name="settings_android_auto_description">اعرض هاتف Android عبر كابل USB أو لاسلكيًا. لم يُختبر بعد على كل هاتف ووحدة رأس.</string>
+    <string name="settings_android_auto_identity_installed">هوية وحدة الرأس مثبّتة.</string>
+    <string name="settings_android_auto_identity_missing">لا توجد هوية وحدة رأس مثبّتة، لذا لا يمكن لـ Android Auto الاتصال. يشرح docs/ANDROID_AUTO.md كيفية إضافتها إلى إصدار شخصي.</string>
+    <string name="settings_android_auto_last_connection">آخر اتصال: %1$s ث من التوصيل حتى أول صورة.</string>
+    <string name="settings_android_auto_open">فتح Android Auto</string>
+    <string name="settings_android_auto_open_when_plugged_in">البدء عند توصيل هاتف Android</string>
+    <string name="settings_android_auto_open_when_plugged_in_description">يحوّل الهاتف إلى Android Auto ويفتحه دون أي لمسة، سواء كان هذا التطبيق مفتوحًا أم لا. يسأل Android مرة واحدة عن التطبيق المطلوب؛ اختر هذا التطبيق ثم «دائمًا».</string>
+    <string name="settings_android_auto_reconnect">إعادة الاتصال تلقائيًا</string>
+    <string name="settings_android_auto_reconnect_description">إذا انقطع Android Auto والهاتف ما زال موصولًا، يُعاد الاتصال بعد 1 و2 و4 و8 و15 ثانية. لا تُعاد المحاولة بعد رفض نافذة USB أو الهوية.</string>
+    <string name="settings_android_auto_picture">حجم الصورة</string>
+    <string name="settings_android_auto_automatic">تلقائي</string>
+    <string name="settings_android_auto_picture_description">يُطبَّق عند الاتصال التالي بـ Android Auto. يختار الوضع التلقائي أكبر حجم تعرضه هذه الشاشة بوضوح.</string>
+    <string name="settings_android_auto_density">كثافة الشاشة</string>
+    <string name="settings_android_auto_density_description">حجم النصوص والأزرار في Android Auto. القيمة الأعلى أكبر. يُطبَّق عند الاتصال التالي بـ Android Auto.</string>
+    <string name="settings_android_auto_frame_rate">معدل الإطارات</string>
+    <string name="settings_android_auto_fps_value">%1$d إطارًا/ث</string>
+    <string name="settings_android_auto_frame_rate_description">60 إطارًا/ث أكثر سلاسة على وحدة رأس سريعة وأثقل على وحدة بطيئة. يُطبَّق عند الاتصال التالي بـ Android Auto.</string>
+    <string name="settings_android_auto_sound">أصوات الإرشاد والنظام</string>
+    <string name="settings_android_auto_sound_separate">مسارات صوت خاصة بها</string>
+    <string name="settings_android_auto_sound_media">مسار الوسائط</string>
+    <string name="settings_android_auto_sound_description">تتيح المسارات الخاصة للسيارة مزج الإرشادات فوق الموسيقى. اختر مسار الوسائط إذا كانت وحدة الرأس لا تشغّل غيره. يُطبَّق عند الاتصال التالي بـ Android Auto.</string>
+    <string name="settings_android_auto_night">الوضع الليلي</string>
+    <string name="settings_android_auto_night_follow">اتباع Android</string>
+    <string name="settings_android_auto_night_day">نهار دائمًا</string>
+    <string name="settings_android_auto_night_night">ليل دائمًا</string>
+    <string name="settings_android_auto_driving_side">يضع Android Auto عناصر التحكم في جهة السائق المحددة في %1$s ← %2$s.</string>
+    <string name="settings_android_auto_gps">مصدر GPS</string>
+    <string name="settings_android_auto_gps_phone">الهاتف</string>
+    <string name="settings_android_auto_gps_head_unit">وحدة الرأس</string>
+    <string name="settings_android_auto_gps_description">يرسل خيار وحدة الرأس موقع GPS الخاص بهذه الوحدة إلى Android Auto، وهذا يفيد حين يكون استقبال الهاتف ضعيفًا؛ ويحتاج إلى الموقع الدقيق. يُبقي خيار الهاتف GPS الهاتف نفسه. يُطبَّق عند الاتصال التالي بـ Android Auto.</string>
+    <string name="settings_android_auto_next_connection">تم الحفظ. يُطبَّق عند الاتصال التالي بـ Android Auto.</string>
+    <string name="settings_android_auto_connect_wirelessly">اتصال لاسلكي</string>
+    <string name="settings_android_auto_bluetooth">البدء عند اتصال هاتف معروف عبر البلوتوث</string>
+    <string name="settings_android_auto_bluetooth_description">يبدأ Android Auto اللاسلكي مع هاتف استخدمه هنا من قبل؛ اربطه مرة واحدة عبر «اتصال لاسلكي». يستخدم شبكة Wi-Fi المعدّة لـ CarPlay اللاسلكي، وإلا فـ Wi-Fi Direct.</string>
+    <string name="settings_android_auto_forget_phones">نسيان الهواتف المعروفة (%1$d)</string>
+    <string name="settings_android_auto_wireless_permissions">يحتاج Android Auto اللاسلكي إلى إذن الأجهزة القريبة أو الموقع للوصول إلى الهاتف. اسمح بهما في أذونات هذا التطبيق.</string>
+</resources>

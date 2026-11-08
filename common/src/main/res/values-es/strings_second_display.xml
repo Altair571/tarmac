@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_dashboard_display">Pantalla del cuadro</string>
+    <string name="settings_dashboard_display_none">Ninguna (mapa solo para la pantalla central)</string>
+    <string name="settings_dashboard_display_option">%1$s (%2$d × %3$d)</string>
+    <string name="settings_dashboard_display_missing">%1$s (no conectada)</string>
+    <string name="settings_dashboard_display_description">Muestra el mapa del cuadro en otra pantalla que Android detecta, como un cuadro de instrumentos digital. Elige solo una pantalla que vea el conductor: para Android, una pantalla del pasajero es igual. Se aplica en la próxima conexión.</string>
+    <string name="settings_dashboard_display_route">Mostrar como</string>
+    <string name="settings_dashboard_display_route_presentation">Presentación (recomendado)</string>
+    <string name="settings_dashboard_display_route_window">Ventana de app</string>
+    <string name="settings_dashboard_display_route_description">Si esa pantalla sigue negra, prueba Ventana de app. Se aplica en la próxima conexión.</string>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_dashboard_display">계기판 화면</string>
+    <string name="settings_dashboard_display_none">없음(중앙 화면용 지도만)</string>
+    <string name="settings_dashboard_display_option">%1$s(%2$d × %3$d)</string>
+    <string name="settings_dashboard_display_missing">%1$s(연결 안 됨)</string>
+    <string name="settings_dashboard_display_description">Android가 인식하는 다른 화면(디지털 계기판 등)에 대시보드 지도를 표시합니다. 운전자가 보는 화면만 선택하세요. 동승석 화면도 Android에는 똑같이 보입니다. 다음 연결부터 적용됩니다.</string>
+    <string name="settings_dashboard_display_route">표시 방식</string>
+    <string name="settings_dashboard_display_route_presentation">프레젠테이션(권장)</string>
+    <string name="settings_dashboard_display_route_window">앱 창</string>
+    <string name="settings_dashboard_display_route_description">그 화면이 계속 검게 나오면 앱 창을 사용해 보세요. 다음 연결부터 적용됩니다.</string>
+</resources>

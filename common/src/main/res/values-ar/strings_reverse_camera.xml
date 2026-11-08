@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_reverse_camera">كاميرا الرجوع</string>
+    <string name="settings_reverse_camera_switch">التبديل إلى الكاميرا عند الرجوع للخلف</string>
+    <string name="settings_reverse_camera_switch_description">عندما تنتقل السيارة إلى وضع الرجوع، ينقل Tarmac تطبيق CarPlay عن الشاشة أو يفتح تطبيق الكاميرا المختار أدناه، ثم يعيد CarPlay بعد خروج السيارة من وضع الرجوع. يظل CarPlay متصلًا.</string>
+    <string name="settings_reverse_camera_source">ناقل الحركة من</string>
+    <string name="settings_reverse_camera_source_automatic">تلقائي</string>
+    <string name="settings_reverse_camera_source_byd">ناقل حركة BYD (ADB)</string>
+    <string name="settings_reverse_camera_source_ecarx">مستشعر Geely / ECARX</string>
+    <string name="settings_reverse_camera_source_adapter">محوّل بيانات السيارة</string>
+    <string name="settings_reverse_camera_source_broadcast">بث وحدة الرأس</string>
+    <string name="settings_reverse_camera_source_none">لا يعرف Tarmac مصدرًا لناقل الحركة في وحدة الرأس هذه. أضف إشارة ناقل الحركة إلى محوّل بيانات السيارة (متقدم) أو اضبط بث وحدة الرأس.</string>
+    <string name="settings_reverse_camera_source_using">يُقرأ ناقل الحركة من: %1$s</string>
+    <string name="settings_reverse_camera_adapter_no_gear">لا تحتوي خريطة محوّل بيانات السيارة على إشارة ناقل الحركة بعد.</string>
+    <string name="settings_reverse_camera_app">تطبيق الكاميرا</string>
+    <string name="settings_reverse_camera_app_none">بلا (إبعاد CarPlay فقط)</string>
+    <string name="settings_reverse_camera_app_description">اختر تطبيق كاميرا وحدة الرأس فقط إذا لم تظهر الكاميرا من تلقاء نفسها بعد إبعاد CarPlay.</string>
+    <string name="settings_reverse_camera_broadcast">بث وحدة الرأس</string>
+    <string name="settings_reverse_camera_broadcast_not_set">غير مضبوط</string>
+    <string name="settings_reverse_camera_broadcast_action">إجراء البث</string>
+    <string name="settings_reverse_camera_broadcast_extra">اسم الحقل الإضافي</string>
+    <string name="settings_reverse_camera_broadcast_value">قيمة الحقل الإضافي عند الرجوع</string>
+    <string name="settings_reverse_camera_broadcast_description">لوحدات الرأس التي تعلن الرجوع للخلف عبر بث. اعثر على الإجراء والحقل الإضافي بتطبيق لتسجيل النوايا أثناء التبديل إلى الرجوع، ثم أدخلهما هنا.</string>
+    <string name="settings_reverse_camera_broadcast_remove">إزالة</string>
+    <string name="settings_reverse_camera_return_needed">لإعادة CarPlay بعد الرجوع للخلف، يحتاج Android إلى منح Tarmac إذن «العرض فوق التطبيقات الأخرى» أو تشغيل خدمة مفاتيح المقود.</string>
+    <string name="settings_reverse_camera_return_allow">السماح بالعرض فوق التطبيقات الأخرى</string>
+</resources>

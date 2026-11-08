@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="aa_status_connecting">جارٍ الاتصال بـ Android Auto…</string>
+    <string name="aa_status_waiting_for_phone">وصّل هاتف Android بكابل USB يدعم نقل البيانات.</string>
+    <string name="aa_status_permission">اسمح بالوصول إلى الهاتف في نافذة USB.</string>
+    <string name="aa_status_switching">جارٍ تشغيل Android Auto على الهاتف…</string>
+    <string name="aa_status_no_identity">لا يحتوي هذا الإصدار على هوية وحدة رأس لـ Android Auto، لذا لا يمكن الاتصال. ثبّت هوية كما يوضح docs/ANDROID_AUTO.md.</string>
+    <string name="aa_status_no_usb_host">لا يمكن لهذا الجهاز العمل كمضيف USB، لذا لا يمكنه توصيل هاتف بالكابل.</string>
+    <string name="aa_button_retry">حاول مجددًا</string>
+    <string name="aa_button_close">إغلاق</string>
+    <string name="aa_notification_connected">متصل بـ Android Auto</string>
+    <string name="aa_action_previous">السابق</string>
+    <string name="aa_action_play_pause">تشغيل أو إيقاف مؤقت</string>
+    <string name="aa_action_next">التالي</string>
+    <string name="aa_status_ended_by_phone">أُغلق Android Auto على الهاتف.</string>
+    <string name="aa_status_reconnecting">إعادة المحاولة خلال %1$d ث…</string>
+    <string name="aa_failure_permission">لم يُسمح بالوصول إلى الهاتف عبر USB.</string>
+    <string name="aa_failure_not_android_auto">لا يوفّر هذا الهاتف Android Auto عبر USB. تأكد من إعداد Android Auto وأن الكابل ينقل البيانات.</string>
+    <string name="aa_failure_no_switch">لم يبدأ الهاتف Android Auto. افتح قفله ثم أعد توصيله.</string>
+    <string name="aa_failure_usb">تعذّر على Android فتح اتصال USB بالهاتف. افصل الهاتف ثم أعد توصيله.</string>
+    <string name="aa_failure_identity_rejected">رفض الهاتف هوية Android Auto لهذه الوحدة.</string>
+    <string name="aa_failure_version">إصدار Android Auto على الهاتف غير متوافق.</string>
+    <string name="aa_failure_silent">توقف الهاتف عن الاستجابة.</string>
+    <string name="aa_failure_disconnected">انقطع اتصال الهاتف.</string>
+    <string name="aa_failure_other">توقف Android Auto: %1$s</string>
+    <string name="aa_status_waiting_for_wireless_phone">في انتظار الهاتف عبر البلوتوث. اقرنه بهذه الوحدة وفعّل Android Auto اللاسلكي في إعداداته. إذا كان متصلاً بالفعل، فأوقف البلوتوث فيه ثم شغّله من جديد.</string>
+    <string name="aa_status_joining_wifi">الهاتف يتصل بشبكة Wi-Fi الخاصة بهذه الوحدة…</string>
+    <string name="aa_button_wireless">اتصال لاسلكي</string>
+    <string name="aa_notification_waiting">في انتظار الهاتف عبر البلوتوث</string>
+    <string name="aa_start_channel">بدء Android Auto</string>
+    <string name="aa_start_text">متصل عبر البلوتوث. انقر لبدء Android Auto.</string>
+    <string name="aa_start_action">بدء Android Auto</string>
+    <string name="aa_failure_bluetooth">البلوتوث متوقف، أو لا يُسمح لهذا التطبيق باستخدامه. شغّل البلوتوث واسمح بإذن الأجهزة القريبة.</string>
+    <string name="aa_failure_no_wireless_phone">لم يبدأ أي هاتف Android Auto اللاسلكي. تحقق من أن الهاتف مقترن بهذه الوحدة وأن Android Auto اللاسلكي مفعّل في إعداداته.</string>
+    <string name="aa_failure_wifi">تعذر بدء شبكة Wi-Fi للهاتف. يستخدم Android Auto اللاسلكي الشبكة المعدّة لـ CarPlay اللاسلكي في الإعدادات ← الاتصال.</string>
+    <string name="aa_failure_phone_wifi">تعذر على الهاتف الاتصال عبر شبكة Wi-Fi الخاصة بهذه الوحدة.</string>
+    <string name="aa_failure_carplay">CarPlay قيد التشغيل. أغلقه قبل بدء Android Auto اللاسلكي.</string>
+</resources>

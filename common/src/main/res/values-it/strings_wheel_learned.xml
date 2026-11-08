@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_wheel_learned_keys">Altri tasti al volante</string>
+    <string name="settings_wheel_learned_keys_description">Impara il tasto che l’autoradio invia per brano successivo e precedente, rispondere o riagganciare e la schermata Home di CarPlay. I tasti agiscono mentre CarPlay è connesso; senza una sessione CarPlay ogni tasto mantiene la funzione dell’auto.</string>
+    <string name="settings_wheel_learned_next">brano successivo</string>
+    <string name="settings_wheel_learned_previous">brano precedente</string>
+    <string name="settings_wheel_learned_call">rispondi / riaggancia</string>
+    <string name="settings_wheel_learned_home">Home di CarPlay</string>
+    <string name="settings_wheel_learned_keys_hint">Siri e riproduci/pausa hanno i propri tasti più sopra. Un tasto usato lì, o per lo zoom della mappa o il joystick, non può essere imparato qui. Durante una chiamata agisce solo il tasto rispondi / riaggancia.</string>
+    <string name="settings_wheel_learned_learn">Impara un nuovo tasto</string>
+    <string name="settings_wheel_learned_remove">Rimuovi questo tasto</string>
+</resources>

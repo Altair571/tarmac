@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_car_guidance">Приборная панель и HUD автомобиля</string>
+    <string name="settings_car_guidance_switch">Передавать повороты на приборную панель и HUD</string>
+    <string name="settings_car_guidance_description">Отправляет следующий поворот CarPlay, расстояние и улицу как стандартное навигационное широковещательное сообщение AMap. Головные устройства, у которых служба CAN-бокса или приборной панели его принимает, показывают их на штатной панели или HUD; остальные его игнорируют. Применяется сразу.</string>
+</resources>

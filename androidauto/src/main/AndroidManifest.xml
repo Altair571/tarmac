@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-feature android:name="android.hardware.usb.host" android:required="false" />
+
+    <application>
+        <!-- The Android Auto screen. Landscape, as Android Auto's video sizes are. -->
+        <activity
+            android:name="com.shilapi.xcertplay.androidauto.ui.AndroidAutoActivity"
+            android:configChanges="density|keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+            android:exported="false"
+            android:label="@string/aa_title"
+            android:launchMode="singleTask"
+            android:resizeableActivity="true"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@android:style/Theme.Material.NoActionBar.Fullscreen" />
+
+        <!-- Offers Android Auto when an Android phone is plugged in; decides in code, shows nothing. -->
+        <activity
+            android:name="com.shilapi.xcertplay.androidauto.ui.AndroidAutoUsbAttachedActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:label="@string/aa_title"
+            android:noHistory="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/android_auto_usb_filter" />
+        </activity>
+
+        <service
+            android:name="com.shilapi.xcertplay.androidauto.AndroidAutoService"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice|microphone|location" />
+
+        <receiver
+            android:name="com.shilapi.xcertplay.androidauto.AndroidAutoMediaActionReceiver"
+            android:exported="false" />
+
+        <!-- Wireless Android Auto when a phone that used it here connects over Bluetooth; off until the driver turns it on. -->
+        <receiver
+            android:name="com.shilapi.xcertplay.androidauto.wireless.AndroidAutoBluetoothReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

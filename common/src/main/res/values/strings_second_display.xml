@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The dashboard map on a second screen the driver picks (docs/SECOND_DISPLAY_MAP.md). -->
+    <string name="settings_dashboard_display">Dashboard screen</string>
+    <string name="settings_dashboard_display_none">None (map for the centre screen only)</string>
+    <string name="settings_dashboard_display_option">%1$s (%2$d × %3$d)</string>
+    <string name="settings_dashboard_display_missing">%1$s (not connected)</string>
+    <string name="settings_dashboard_display_description">Shows the dashboard map on another screen that Android reports, such as a digital instrument cluster. Pick only a screen the driver sees: to Android a passenger screen looks the same. Applies at the next connection.</string>
+    <string name="settings_dashboard_display_route">Show it as</string>
+    <string name="settings_dashboard_display_route_presentation">Presentation (recommended)</string>
+    <string name="settings_dashboard_display_route_window">App window</string>
+    <string name="settings_dashboard_display_route_description">If that screen stays black, try App window. Applies at the next connection.</string>
+</resources>

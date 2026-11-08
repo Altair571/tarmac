@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_wheel_learned_keys">Другие кнопки руля</string>
+    <string name="settings_wheel_learned_keys_description">Запоминает кнопку, которую головное устройство отправляет для следующего и предыдущего трека, ответа или завершения вызова и главного экрана CarPlay. Кнопки работают, пока CarPlay подключён; без сеанса CarPlay каждая кнопка сохраняет функцию автомобиля.</string>
+    <string name="settings_wheel_learned_next">следующий трек</string>
+    <string name="settings_wheel_learned_previous">предыдущий трек</string>
+    <string name="settings_wheel_learned_call">ответ / завершение вызова</string>
+    <string name="settings_wheel_learned_home">главный экран CarPlay</string>
+    <string name="settings_wheel_learned_keys_hint">У Siri и воспроизведения/паузы свои кнопки выше. Кнопку, занятую там или для масштаба карты и джойстика, здесь запомнить нельзя. Во время вызова работает только кнопка ответа / завершения.</string>
+    <string name="settings_wheel_learned_learn">Запомнить новую кнопку</string>
+    <string name="settings_wheel_learned_remove">Удалить эту кнопку</string>
+</resources>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_vehicle_adapter">محوّل بيانات السيارة (تجريبي)</string>
+    <string name="settings_vehicle_adapter_description">يقرأ الشحن والمدى وناقل الحركة من محوّل OBD-II أو CAN، للسيارات التي لا تُبلغ وحدة الرأس فيها عنها. يكتفي Tarmac بالقراءة: يتلقى محوّل OBD-II طلبات قراءة قياسية، ويُفتح محوّل CAN في وضع الاستماع فقط. لا يُكتب أي شيء إلى السيارة أبدًا.</string>
+    <string name="settings_vehicle_adapter_kind">المحوّل</string>
+    <string name="settings_vehicle_adapter_off">إيقاف</string>
+    <string name="settings_vehicle_adapter_obd_bluetooth">OBD-II عبر البلوتوث (ELM327، STN)</string>
+    <string name="settings_vehicle_adapter_obd_usb">OBD-II عبر USB (STN، CDC-ACM)</string>
+    <string name="settings_vehicle_adapter_can_usb">CAN عبر USB (slcan، استماع فقط)</string>
+    <string name="settings_vehicle_adapter_bluetooth">محوّل البلوتوث</string>
+    <string name="settings_vehicle_adapter_bluetooth_none">لم يُختر</string>
+    <string name="settings_vehicle_adapter_bluetooth_empty">لا توجد أجهزة بلوتوث مقترنة. اقرن محوّل OBD-II أولًا في إعدادات البلوتوث في Android (الرمز عادةً 1234 أو 0000).</string>
+    <string name="settings_vehicle_adapter_bluetooth_permission">اسمح بالأجهزة القريبة كي يتصل Tarmac بمحوّل OBD-II المقترن.</string>
+    <string name="settings_vehicle_adapter_usb_missing">لا يوجد محوّل USB تسلسلي (CDC-ACM) موصول. المحوّلات التي تستخدم شريحة FTDI أو CH340 أو CP210x غير مدعومة بعد.</string>
+    <string name="settings_vehicle_adapter_usb_allow">السماح بمحوّل USB</string>
+    <string name="settings_vehicle_adapter_map">خريطة الإشارات</string>
+    <string name="settings_vehicle_adapter_map_none">لا شيء</string>
+    <string name="settings_vehicle_adapter_map_custom">مخصّصة</string>
+    <string name="settings_vehicle_adapter_map_can">يحتاج محوّل CAN إلى خريطة إشارات السيارة (JSON) ليعرف الإطارات التي تحمل الشحن والمدى وناقل الحركة.</string>
+    <string name="settings_vehicle_adapter_map_obd">من دون خريطة يقرأ Tarmac معرّف PID القياسي للبطارية، وقليل من السيارات الكهربائية يجيب عنه. تضيف الخريطة معرّفات PID الخاصة بالسيارة، مثل حالة الشحن أو ناقل الحركة.</string>
+    <string name="settings_vehicle_adapter_map_hint">الصق خريطة إشارات السيارة بصيغة JSON</string>
+    <string name="settings_vehicle_adapter_map_remove">إزالة</string>
+    <string name="settings_vehicle_adapter_map_invalid">لم تُحفظ خريطة الإشارات: %1$s</string>
+    <string name="settings_vehicle_adapter_ev">الشحن والمدى لخرائط Apple</string>
+    <string name="settings_vehicle_adapter_ev_description">يُبلغ iPhone بالشحن والمدى من المحوّل، كي تخطط خرائط Apple لمحطات الشحن. يُطبَّق عند الاتصال التالي.</string>
+    <string name="settings_vehicle_adapter_full_range">المدى عند الشحن الكامل</string>
+    <string name="settings_vehicle_adapter_full_range_unknown">يُقرأ من السيارة</string>
+    <string name="settings_vehicle_adapter_full_range_km">%1$d كم</string>
+    <string name="settings_vehicle_adapter_full_range_description">عندما لا تُبلغ السيارة إلا عن الشحن، يحسب Tarmac المدى من هذا الرقم. ومن دون مدى لا يُبلَّغ iPhone بوجود سيارة كهربائية.</string>
+    <string name="settings_vehicle_adapter_connectors">موصلات الشحن</string>
+    <string name="settings_vehicle_adapter_state_off">لا قراءة</string>
+    <string name="settings_vehicle_adapter_state_connecting">جارٍ الاتصال بالمحوّل…</string>
+    <string name="settings_vehicle_adapter_state_not_found">لم يُعثر على المحوّل. تحقّق من أنه موصول أو مقترن ومن أن السيارة تعمل.</string>
+    <string name="settings_vehicle_adapter_state_no_permission">لا يُسمح لـ Tarmac باستخدام المحوّل بعد.</string>
+    <string name="settings_vehicle_adapter_state_no_answer">لم يُجب المحوّل. هل المحرّك قيد التشغيل؟</string>
+    <string name="settings_vehicle_adapter_state_no_listen_only">لا يدعم محوّل CAN هذا وضع الاستماع فقط، لذا لا يفتحه Tarmac.</string>
+    <string name="settings_vehicle_adapter_state_connected">متصل</string>
+    <string name="settings_vehicle_adapter_unknown">—</string>
+    <string name="settings_vehicle_adapter_reading">الشحن %1$s · المدى %2$s · ناقل الحركة %3$s</string>
+</resources>

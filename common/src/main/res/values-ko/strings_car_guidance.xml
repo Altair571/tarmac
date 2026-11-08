@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_car_guidance">차량 계기판과 HUD</string>
+    <string name="settings_car_guidance_switch">회전 안내를 차량 계기판과 HUD로 보내기</string>
+    <string name="settings_car_guidance_description">CarPlay의 다음 회전, 거리, 도로 이름을 AMap 표준 내비게이션 브로드캐스트로 보냅니다. CAN 박스나 계기판 서비스가 이를 받는 헤드 유닛은 순정 계기판이나 HUD에 표시하고, 그렇지 않은 유닛은 무시합니다. 바로 적용됩니다.</string>
+</resources>

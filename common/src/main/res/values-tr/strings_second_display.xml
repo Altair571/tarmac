@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_dashboard_display">Gösterge ekranı</string>
+    <string name="settings_dashboard_display_none">Yok (yalnızca orta ekran için harita)</string>
+    <string name="settings_dashboard_display_option">%1$s (%2$d × %3$d)</string>
+    <string name="settings_dashboard_display_missing">%1$s (bağlı değil)</string>
+    <string name="settings_dashboard_display_description">Gösterge haritasını Android\'in algıladığı başka bir ekranda, örneğin dijital gösterge panelinde gösterir. Yalnızca sürücünün gördüğü bir ekranı seçin: yolcu ekranı Android için aynı görünür. Bir sonraki bağlantıda uygulanır.</string>
+    <string name="settings_dashboard_display_route">Gösterim biçimi</string>
+    <string name="settings_dashboard_display_route_presentation">Sunum (önerilen)</string>
+    <string name="settings_dashboard_display_route_window">Uygulama penceresi</string>
+    <string name="settings_dashboard_display_route_description">O ekran siyah kalırsa Uygulama penceresi seçeneğini deneyin. Bir sonraki bağlantıda uygulanır.</string>
+</resources>

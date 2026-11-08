@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TEYES and other recognised head units (docs/HEADUNIT_SPD_TEYES.md). -->
+<resources>
+    <string name="settings_head_unit_title">%1$s 헤드 유닛</string>
+    <string name="settings_head_unit_description">Tarmac이 이 헤드 유닛을 인식했습니다. 차량 신호를 읽기만 하며 차량에는 아무것도 보내지 않습니다.</string>
+    <string name="settings_head_unit_starting_app_on">%1$s가 차량 시동 시 Tarmac을 열고 차량이 절전 중일 때도 Tarmac을 계속 실행합니다.</string>
+    <string name="settings_head_unit_starting_app_off">차량 시동 시 Tarmac을 열려면 %1$s 설정에서 시작 앱으로 Tarmac을 선택하세요. 그러면 %1$s가 차량이 절전 중일 때도 Tarmac을 계속 실행합니다.</string>
+    <string name="settings_head_unit_own_carplay">%1$s 자체 CarPlay가 자동으로 시작되어 Tarmac보다 먼저 iPhone을 사용할 수 있습니다. %1$s 설정에서 자동 시작을 끄세요.</string>
+    <string name="settings_head_unit_open_settings">%1$s 설정 열기</string>
+    <string name="settings_head_unit_mfi_chip">인증 칩 (실험 기능)</string>
+    <string name="settings_head_unit_mfi_own">Tarmac 자체</string>
+    <string name="settings_head_unit_mfi_head_unit">헤드 유닛 (%1$s)</string>
+    <string name="settings_head_unit_mfi_ready">%1$s에 있는 헤드 유닛의 Apple 칩을 Tarmac이 열 수 있습니다. 변경 사항은 다음 연결부터 적용됩니다. Tarmac이 칩을 사용하는 동안 %2$s CarPlay를 닫아 두세요.</string>
+    <string name="settings_head_unit_mfi_blocked">헤드 유닛의 Apple 칩은 %1$s에 있지만 Android 보안 정책이 앱의 접근을 막기 때문에 Tarmac은 자체 ID를 사용합니다.</string>
+    <string name="settings_head_unit_mfi_missing">Tarmac이 %1$s을(를) 찾지 못해 자체 ID를 사용합니다.</string>
+    <string name="settings_head_unit_mfi_unknown">Tarmac이 %1$s을(를) 확인하지 못해 자체 ID를 사용합니다.</string>
+    <string name="settings_head_unit_signals_title">%1$s 차량 신호</string>
+    <string name="settings_head_unit_wheel_keys">음성 및 통화 키를 CarPlay로</string>
+    <string name="settings_head_unit_wheel_keys_description">CarPlay가 실행 중일 때 핸들의 음성 키는 Siri를 열고 통화 키는 CarPlay 통화를 받고 끊습니다. Tarmac 핸들 키 서비스가 필요합니다.</string>
+    <string name="settings_head_unit_reverse_description">후진 중에는 Tarmac이 화면을 %1$s 카메라에 맡기고 후진이 끝난 뒤에만 CarPlay를 엽니다.</string>
+    <string name="settings_head_unit_signal_state">차량 시동: %1$s · 후진: %2$s</string>
+    <string name="settings_head_unit_state_on">예</string>
+    <string name="settings_head_unit_state_off">아니요</string>
+    <string name="settings_head_unit_state_unknown">알 수 없음</string>
+    <string name="settings_head_unit_vehicle_waiting">CAN 박스를 읽는 중…</string>
+    <string name="settings_head_unit_vehicle_none">CAN 박스가 값을 보고하지 않습니다.</string>
+    <string name="settings_head_unit_vehicle_values">속도 %1$s km/h · 외기 %2$s °C · 주행 가능 거리 %3$s km · 충전 %4$s %%</string>
+    <string name="settings_head_unit_mfi_head_unit_root">헤드 유닛, root 사용 (%1$s)</string>
+    <string name="settings_head_unit_mfi_root">root로 칩 열기</string>
+    <string name="settings_head_unit_mfi_root_asking">root 요청 중…</string>
+    <string name="settings_head_unit_mfi_root_ready">root로 %1$s에 있는 헤드 유닛의 Apple 칩을 열었습니다. Tarmac은 root 도우미 프로세스를 통해 칩을 사용하며 시스템은 변경하지 않습니다. 변경 사항은 다음 연결부터 적용됩니다. Tarmac이 칩을 사용하는 동안 %2$s CarPlay를 닫아 두세요.</string>
+    <string name="settings_head_unit_mfi_root_failed">root로도 %1$s을(를) 열지 못해 Tarmac은 자체 ID를 사용합니다.</string>
+    <string name="settings_head_unit_track_test_title">계기판 및 HUD 테스트 (실험 기능)</string>
+    <string name="settings_head_unit_track_test_description">Tarmac이 %1$s 자체 플레이어와 같은 방식으로 %1$s에 테스트 곡(Tarmac test, CarPlay)을 전달합니다. 계기판이나 HUD를 확인하세요. 버튼을 누르기 전에는 아무것도 보내지 않습니다.</string>
+    <string name="settings_head_unit_track_test_record">곡 레코드</string>
+    <string name="settings_head_unit_track_test_other">기타 미디어 (14)</string>
+    <string name="settings_head_unit_track_test_media">미디어 (1)</string>
+    <string name="settings_head_unit_track_test_enter">Tarmac을 활성 소스로 설정</string>
+    <string name="settings_head_unit_track_test_enter_description">일부 차량 프로토콜은 활성 소스의 곡만 표시합니다. 헤드 유닛의 오디오가 Tarmac으로 전환될 수 있습니다.</string>
+    <string name="settings_head_unit_track_test_send">테스트 곡 보내기</string>
+    <string name="settings_head_unit_track_test_sending">보내는 중…</string>
+    <string name="settings_head_unit_track_test_sent">보냈습니다. %1$s가 기록한 관련 줄: %2$d</string>
+    <string name="settings_head_unit_track_test_failed">보내지 못함: %1$s</string>
+    <string name="settings_head_unit_track_test_nothing_logged">보냈지만 %1$s가 아무것도 기록하지 않았습니다. 다른 곡 레코드를 시도하거나 Tarmac을 활성 소스로 설정하세요.</string>
+    <string name="settings_head_unit_guidance_test">테스트 안내 보내기</string>
+    <string name="settings_head_unit_guidance_test_description">AMap 표준 안내를 약 10초 동안 보냅니다: 350m 앞에서 좌회전하여 Tarmac Street로. %1$s는 안내를 표시하는 CAN 박스 프로필에서만 계기판이나 HUD에 전달합니다.</string>
+    <string name="settings_head_unit_test_sent_no_log">보냈습니다. 계기판이나 HUD를 확인하세요. root가 없으면 Tarmac은 %1$s 로그를 읽을 수 없습니다.</string>
+</resources>

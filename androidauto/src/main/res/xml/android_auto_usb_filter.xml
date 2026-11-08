@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Devices Android offers the Android Auto screen for when they are plugged in.
+    AndroidAutoUsb.classify() decides in code and refuses anything that is not an Android phone.
+    Android matches the device descriptor and then every interface descriptor, so the class
+    entries catch a phone in its ordinary MTP or ADB mode before the accessory switch.
+    PTP (class 6) is left out on purpose: an iPhone exposes PTP, and listing it would put an
+    app chooser in front of CarPlay.
+-->
+<resources>
+    <!-- Already in accessory mode (Google 0x18D1:0x2D00 and 0x2D01, accessory + ADB). -->
+    <usb-device vendor-id="6353" product-id="11520" />
+    <usb-device vendor-id="6353" product-id="11521" />
+    <!-- Vendor class: Android's MTP interface and the accessory interface. -->
+    <usb-device class="255" subclass="255" protocol="0" />
+    <!-- ADB. -->
+    <usb-device class="255" subclass="66" protocol="1" />
+</resources>

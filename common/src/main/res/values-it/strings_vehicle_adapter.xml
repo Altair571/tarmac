@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_vehicle_adapter">Adattatore dati auto (sperimentale)</string>
+    <string name="settings_vehicle_adapter_description">Legge carica, autonomia e marcia da un adattatore OBD-II o CAN, per le auto la cui autoradio non le comunica. Tarmac si limita a leggere: l’adattatore OBD-II riceve richieste di lettura standard e l’adattatore CAN viene aperto in sola ascolto. Non viene mai scritto nulla sull’auto.</string>
+    <string name="settings_vehicle_adapter_kind">Adattatore</string>
+    <string name="settings_vehicle_adapter_off">Disattivato</string>
+    <string name="settings_vehicle_adapter_obd_bluetooth">OBD-II via Bluetooth (ELM327, STN)</string>
+    <string name="settings_vehicle_adapter_obd_usb">OBD-II via USB (STN, CDC-ACM)</string>
+    <string name="settings_vehicle_adapter_can_usb">CAN via USB (slcan, sola ascolto)</string>
+    <string name="settings_vehicle_adapter_bluetooth">Adattatore Bluetooth</string>
+    <string name="settings_vehicle_adapter_bluetooth_none">Non scelto</string>
+    <string name="settings_vehicle_adapter_bluetooth_empty">Nessun dispositivo Bluetooth associato. Associa prima l’adattatore OBD-II nelle impostazioni Bluetooth di Android (il PIN di solito è 1234 o 0000).</string>
+    <string name="settings_vehicle_adapter_bluetooth_permission">Consenti Dispositivi nelle vicinanze per permettere a Tarmac di collegarsi all’adattatore OBD-II associato.</string>
+    <string name="settings_vehicle_adapter_usb_missing">Nessun adattatore seriale USB (CDC-ACM) collegato. Gli adattatori con chip FTDI, CH340 o CP210x non sono ancora supportati.</string>
+    <string name="settings_vehicle_adapter_usb_allow">Consenti l’adattatore USB</string>
+    <string name="settings_vehicle_adapter_map">Mappa dei segnali</string>
+    <string name="settings_vehicle_adapter_map_none">Nessuna</string>
+    <string name="settings_vehicle_adapter_map_custom">Personalizzata</string>
+    <string name="settings_vehicle_adapter_map_can">Un adattatore CAN ha bisogno della mappa dei segnali dell’auto (JSON) per sapere quali frame portano carica, autonomia e marcia.</string>
+    <string name="settings_vehicle_adapter_map_obd">Senza mappa Tarmac legge il PID standard della batteria, a cui rispondono poche auto elettriche. Una mappa aggiunge i PID propri dell’auto, come lo stato di carica o la marcia.</string>
+    <string name="settings_vehicle_adapter_map_hint">Incolla la mappa dei segnali JSON dell’auto</string>
+    <string name="settings_vehicle_adapter_map_remove">Rimuovi</string>
+    <string name="settings_vehicle_adapter_map_invalid">Mappa dei segnali non salvata: %1$s</string>
+    <string name="settings_vehicle_adapter_ev">Carica e autonomia per Apple Maps</string>
+    <string name="settings_vehicle_adapter_ev_description">Comunica all’iPhone carica e autonomia lette dall’adattatore, così Apple Maps può pianificare le soste di ricarica. Si applica alla prossima connessione.</string>
+    <string name="settings_vehicle_adapter_full_range">Autonomia a carica completa</string>
+    <string name="settings_vehicle_adapter_full_range_unknown">Letta dall’auto</string>
+    <string name="settings_vehicle_adapter_full_range_km">%1$d km</string>
+    <string name="settings_vehicle_adapter_full_range_description">Se l’auto comunica solo la carica, Tarmac calcola l’autonomia da questo valore. Senza autonomia l’iPhone non viene informato di un’auto elettrica.</string>
+    <string name="settings_vehicle_adapter_connectors">Connettori di ricarica</string>
+    <string name="settings_vehicle_adapter_state_off">Nessuna lettura</string>
+    <string name="settings_vehicle_adapter_state_connecting">Connessione all’adattatore…</string>
+    <string name="settings_vehicle_adapter_state_not_found">Adattatore non trovato. Verifica che sia collegato o associato e che l’auto sia accesa.</string>
+    <string name="settings_vehicle_adapter_state_no_permission">Tarmac non può ancora usare l’adattatore.</string>
+    <string name="settings_vehicle_adapter_state_no_answer">L’adattatore non ha risposto. Il quadro è acceso?</string>
+    <string name="settings_vehicle_adapter_state_no_listen_only">Questo adattatore CAN non ha la modalità sola ascolto, quindi Tarmac non lo apre.</string>
+    <string name="settings_vehicle_adapter_state_connected">Connesso</string>
+    <string name="settings_vehicle_adapter_unknown">—</string>
+    <string name="settings_vehicle_adapter_reading">Carica %1$s · autonomia %2$s · marcia %3$s</string>
+</resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_car_guidance">Araç gösterge paneli ve HUD</string>
+    <string name="settings_car_guidance_switch">Dönüşleri aracın gösterge paneline ve HUD’una gönder</string>
+    <string name="settings_car_guidance_description">CarPlay’in sonraki dönüşünü, mesafesini ve sokak adını AMap’in standart navigasyon yayını olarak gönderir. CAN kutusu veya gösterge paneli hizmeti bu yayını dinleyen ana üniteler bunları fabrika gösterge panelinde veya HUD’da gösterir; diğerleri yok sayar. Hemen uygulanır.</string>
+</resources>

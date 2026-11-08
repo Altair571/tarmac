@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_car_guidance">車のメーターと HUD</string>
+    <string name="settings_car_guidance_switch">曲がる方向を車のメーターと HUD に送信</string>
+    <string name="settings_car_guidance_description">CarPlay の次の曲がり角、距離、通り名を AMap 標準のナビゲーションブロードキャストとして送信します。CAN ボックスやメーターのサービスがこれを受信するヘッドユニットでは純正メーターや HUD に表示され、それ以外では無視されます。すぐに適用されます。</string>
+</resources>

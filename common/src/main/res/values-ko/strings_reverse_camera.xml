@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_reverse_camera">후방 카메라</string>
+    <string name="settings_reverse_camera_switch">후진 시 카메라로 전환</string>
+    <string name="settings_reverse_camera_switch_description">차가 후진 기어에 들어가면 Tarmac이 CarPlay를 화면에서 치우거나 아래에서 고른 카메라 앱을 열고, 후진에서 벗어나면 CarPlay를 다시 보여 줍니다. CarPlay 연결은 유지됩니다.</string>
+    <string name="settings_reverse_camera_source">기어 정보</string>
+    <string name="settings_reverse_camera_source_automatic">자동</string>
+    <string name="settings_reverse_camera_source_byd">BYD 기어(ADB)</string>
+    <string name="settings_reverse_camera_source_ecarx">Geely / ECARX 센서</string>
+    <string name="settings_reverse_camera_source_adapter">차량 데이터 어댑터</string>
+    <string name="settings_reverse_camera_source_broadcast">헤드 유닛 브로드캐스트</string>
+    <string name="settings_reverse_camera_source_none">이 헤드 유닛에서 Tarmac이 아는 기어 정보원이 없습니다. 차량 데이터 어댑터(고급)에 기어 신호를 추가하거나 헤드 유닛의 브로드캐스트를 설정하세요.</string>
+    <string name="settings_reverse_camera_source_using">기어 정보 출처: %1$s</string>
+    <string name="settings_reverse_camera_adapter_no_gear">차량 데이터 어댑터의 맵에 아직 기어 신호가 없습니다.</string>
+    <string name="settings_reverse_camera_app">카메라 앱</string>
+    <string name="settings_reverse_camera_app_none">없음(CarPlay만 치우기)</string>
+    <string name="settings_reverse_camera_app_description">CarPlay를 치워도 카메라가 저절로 나타나지 않을 때만 헤드 유닛의 카메라 앱을 고르세요.</string>
+    <string name="settings_reverse_camera_broadcast">헤드 유닛 브로드캐스트</string>
+    <string name="settings_reverse_camera_broadcast_not_set">설정 안 됨</string>
+    <string name="settings_reverse_camera_broadcast_action">브로드캐스트 액션</string>
+    <string name="settings_reverse_camera_broadcast_extra">엑스트라 이름</string>
+    <string name="settings_reverse_camera_broadcast_value">후진 시 엑스트라 값</string>
+    <string name="settings_reverse_camera_broadcast_description">후진을 브로드캐스트로 알리는 헤드 유닛용입니다. 후진 기어를 넣으면서 인텐트 기록 앱으로 액션과 엑스트라를 찾아 여기에 입력하세요.</string>
+    <string name="settings_reverse_camera_broadcast_remove">삭제</string>
+    <string name="settings_reverse_camera_return_needed">후진 후 CarPlay를 다시 보여 주려면 Tarmac에 ‘다른 앱 위에 표시’ 권한이 있거나 휠 키 서비스가 켜져 있어야 합니다.</string>
+    <string name="settings_reverse_camera_return_allow">다른 앱 위에 표시 허용</string>
+</resources>

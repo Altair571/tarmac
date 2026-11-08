@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_car_guidance">Cuadro y HUD del coche</string>
+    <string name="settings_car_guidance_switch">Enviar los giros al cuadro y al HUD del coche</string>
+    <string name="settings_car_guidance_description">Envía el próximo giro de CarPlay, la distancia y la calle como la difusión de navegación estándar de AMap. Las unidades principales cuyo servicio de CAN o de cuadro la escuchan los muestran en el cuadro de fábrica o el HUD; las demás la ignoran. Se aplica al momento.</string>
+</resources>

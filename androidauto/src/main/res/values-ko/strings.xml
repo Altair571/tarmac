@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="aa_status_connecting">Android Auto에 연결하는 중…</string>
+    <string name="aa_status_waiting_for_phone">데이터 전송이 되는 USB 케이블로 Android 휴대전화를 연결하세요.</string>
+    <string name="aa_status_permission">USB 안내 창에서 휴대전화 접근을 허용하세요.</string>
+    <string name="aa_status_switching">휴대전화에서 Android Auto를 시작하는 중…</string>
+    <string name="aa_status_no_identity">이 빌드에는 Android Auto 헤드 유닛 ID가 없어 Android Auto에 연결할 수 없습니다. docs/ANDROID_AUTO.md에 설명된 대로 설치하세요.</string>
+    <string name="aa_status_no_usb_host">이 기기는 USB 호스트가 될 수 없어 케이블로 휴대전화를 연결할 수 없습니다.</string>
+    <string name="aa_button_retry">다시 시도</string>
+    <string name="aa_button_close">닫기</string>
+    <string name="aa_notification_connected">Android Auto에 연결됨</string>
+    <string name="aa_action_previous">이전</string>
+    <string name="aa_action_play_pause">재생 또는 일시정지</string>
+    <string name="aa_action_next">다음</string>
+    <string name="aa_status_ended_by_phone">휴대전화에서 Android Auto가 종료되었습니다.</string>
+    <string name="aa_status_reconnecting">%1$d초 후 다시 시도합니다…</string>
+    <string name="aa_failure_permission">휴대전화의 USB 접근이 허용되지 않았습니다.</string>
+    <string name="aa_failure_not_android_auto">이 휴대전화는 USB를 통한 Android Auto를 지원하지 않습니다. Android Auto가 설정되어 있고 케이블이 데이터를 전송하는지 확인하세요.</string>
+    <string name="aa_failure_no_switch">휴대전화에서 Android Auto가 시작되지 않았습니다. 잠금을 해제하고 다시 연결하세요.</string>
+    <string name="aa_failure_usb">Android가 휴대전화의 USB 연결을 열 수 없습니다. 휴대전화를 뺐다가 다시 연결하세요.</string>
+    <string name="aa_failure_identity_rejected">휴대전화가 이 헤드 유닛의 Android Auto ID를 거부했습니다.</string>
+    <string name="aa_failure_version">휴대전화의 Android Auto 버전이 호환되지 않습니다.</string>
+    <string name="aa_failure_silent">휴대전화가 응답하지 않습니다.</string>
+    <string name="aa_failure_disconnected">휴대전화 연결이 끊어졌습니다.</string>
+    <string name="aa_failure_other">Android Auto가 중지됨: %1$s</string>
+    <string name="aa_status_waiting_for_wireless_phone">Bluetooth로 휴대전화를 기다리는 중입니다. 휴대전화를 이 헤드 유닛과 페어링하고 휴대전화 설정에서 무선 Android Auto를 켜세요. 이미 연결되어 있으면 휴대전화의 Bluetooth를 껐다가 다시 켜세요.</string>
+    <string name="aa_status_joining_wifi">휴대전화가 이 헤드 유닛의 Wi-Fi에 연결하는 중입니다…</string>
+    <string name="aa_button_wireless">무선으로 연결</string>
+    <string name="aa_notification_waiting">Bluetooth로 휴대전화를 기다리는 중</string>
+    <string name="aa_start_channel">Android Auto 시작</string>
+    <string name="aa_start_text">Bluetooth로 연결되었습니다. 탭하여 Android Auto를 시작하세요.</string>
+    <string name="aa_start_action">Android Auto 시작</string>
+    <string name="aa_failure_bluetooth">Bluetooth가 꺼져 있거나 이 앱이 Bluetooth를 사용할 수 없습니다. Bluetooth를 켜고 주변 기기 권한을 허용하세요.</string>
+    <string name="aa_failure_no_wireless_phone">무선 Android Auto를 시작한 휴대전화가 없습니다. 휴대전화가 이 헤드 유닛과 페어링되어 있고 휴대전화 설정에서 무선 Android Auto가 켜져 있는지 확인하세요.</string>
+    <string name="aa_failure_wifi">휴대전화용 Wi-Fi를 시작하지 못했습니다. 무선 Android Auto는 설정 → 연결에서 무선 CarPlay용으로 설정한 네트워크를 사용합니다.</string>
+    <string name="aa_failure_phone_wifi">휴대전화가 이 헤드 유닛의 Wi-Fi로 연결하지 못했습니다.</string>
+    <string name="aa_failure_carplay">CarPlay가 실행 중입니다. 무선 Android Auto를 시작하기 전에 CarPlay를 닫으세요.</string>
+</resources>

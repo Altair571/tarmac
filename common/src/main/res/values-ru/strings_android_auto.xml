@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android Auto entry on Home and its Settings card; see docs/ANDROID_AUTO.md. -->
+<resources>
+    <string name="home_android_auto">Android Auto</string>
+    <string name="settings_android_auto">Android Auto (экспериментально)</string>
+    <string name="settings_android_auto_description">Выводит телефон Android по кабелю USB или без провода. Ещё не проверено на всех телефонах и головных устройствах.</string>
+    <string name="settings_android_auto_identity_installed">Удостоверение головного устройства установлено.</string>
+    <string name="settings_android_auto_identity_missing">Удостоверение головного устройства не установлено, поэтому Android Auto не может подключиться. Как добавить его в личную сборку, описано в docs/ANDROID_AUTO.md.</string>
+    <string name="settings_android_auto_last_connection">Последнее подключение: %1$s с от подключения до первого изображения.</string>
+    <string name="settings_android_auto_open">Открыть Android Auto</string>
+    <string name="settings_android_auto_open_when_plugged_in">Запускать при подключении телефона Android</string>
+    <string name="settings_android_auto_open_when_plugged_in_description">Переключает телефон в Android Auto и открывает его без касаний, открыто это приложение или нет. Android один раз спросит, какое приложение использовать: выберите это и «Всегда».</string>
+    <string name="settings_android_auto_reconnect">Переподключаться автоматически</string>
+    <string name="settings_android_auto_reconnect_description">Если Android Auto прервался, а телефон остался подключён, подключается снова через 1, 2, 4, 8 и 15 секунд. После отказа в запросе USB или отклонения удостоверения повтора нет.</string>
+    <string name="settings_android_auto_picture">Размер изображения</string>
+    <string name="settings_android_auto_automatic">Автоматически</string>
+    <string name="settings_android_auto_picture_description">Применяется при следующем подключении Android Auto. В автоматическом режиме выбирается наибольший размер, который этот экран показывает чётко.</string>
+    <string name="settings_android_auto_density">Плотность экрана</string>
+    <string name="settings_android_auto_density_description">Насколько крупно Android Auto рисует текст и кнопки. Больше значение — крупнее. Применяется при следующем подключении Android Auto.</string>
+    <string name="settings_android_auto_frame_rate">Частота кадров</string>
+    <string name="settings_android_auto_fps_value">%1$d к/с</string>
+    <string name="settings_android_auto_frame_rate_description">60 к/с плавнее на быстром головном устройстве и тяжелее для медленного. Применяется при следующем подключении Android Auto.</string>
+    <string name="settings_android_auto_sound">Подсказки и системные звуки</string>
+    <string name="settings_android_auto_sound_separate">Собственные потоки</string>
+    <string name="settings_android_auto_sound_media">Поток мультимедиа</string>
+    <string name="settings_android_auto_sound_description">Собственные потоки позволяют машине накладывать подсказки на музыку. Выберите поток мультимедиа, если головное устройство воспроизводит только его. Применяется при следующем подключении Android Auto.</string>
+    <string name="settings_android_auto_night">Ночной режим</string>
+    <string name="settings_android_auto_night_follow">Как в Android</string>
+    <string name="settings_android_auto_night_day">Всегда день</string>
+    <string name="settings_android_auto_night_night">Всегда ночь</string>
+    <string name="settings_android_auto_driving_side">Android Auto размещает элементы управления со стороны водителя, заданной в разделе %1$s → %2$s.</string>
+    <string name="settings_android_auto_gps">Источник GPS</string>
+    <string name="settings_android_auto_gps_phone">Телефон</string>
+    <string name="settings_android_auto_gps_head_unit">Головное устройство</string>
+    <string name="settings_android_auto_gps_description">Вариант «Головное устройство» передаёт в Android Auto GPS этого устройства; это помогает там, где телефон плохо ловит сигнал, и требует точного местоположения. Вариант «Телефон» оставляет GPS самого телефона. Применяется при следующем подключении Android Auto.</string>
+    <string name="settings_android_auto_next_connection">Сохранено. Применится при следующем подключении Android Auto.</string>
+    <string name="settings_android_auto_connect_wirelessly">Подключить без провода</string>
+    <string name="settings_android_auto_bluetooth">Запускать, когда известный телефон подключается по Bluetooth</string>
+    <string name="settings_android_auto_bluetooth_description">Запускает беспроводной Android Auto с телефоном, который уже использовал его здесь; подключите его один раз кнопкой «Подключить без провода». Использует Wi-Fi, настроенный для беспроводного CarPlay, а иначе Wi-Fi Direct.</string>
+    <string name="settings_android_auto_forget_phones">Забыть известные телефоны (%1$d)</string>
+    <string name="settings_android_auto_wireless_permissions">Беспроводному Android Auto нужны разрешения «Рядом находящиеся устройства» или «Местоположение», чтобы связаться с телефоном. Разрешите их в настройках разрешений приложения.</string>
+</resources>

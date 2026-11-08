@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_reverse_camera">Telecamera di retromarcia</string>
+    <string name="settings_reverse_camera_switch">Passa alla telecamera in retromarcia</string>
+    <string name="settings_reverse_camera_switch_description">Quando l’auto inserisce la retromarcia, Tarmac toglie CarPlay dallo schermo o apre l’app della telecamera scelta sotto, e riporta CarPlay quando l’auto esce dalla retromarcia. CarPlay resta connesso.</string>
+    <string name="settings_reverse_camera_source">Marcia da</string>
+    <string name="settings_reverse_camera_source_automatic">Automatica</string>
+    <string name="settings_reverse_camera_source_byd">Marcia BYD (ADB)</string>
+    <string name="settings_reverse_camera_source_ecarx">Sensore Geely / ECARX</string>
+    <string name="settings_reverse_camera_source_adapter">Adattatore dati auto</string>
+    <string name="settings_reverse_camera_source_broadcast">Broadcast dell’autoradio</string>
+    <string name="settings_reverse_camera_source_none">Tarmac non conosce alcuna fonte della marcia su questa autoradio. Aggiungi un segnale della marcia all’adattatore dati auto (Avanzate) o configura il broadcast dell’autoradio.</string>
+    <string name="settings_reverse_camera_source_using">La marcia viene letta da: %1$s</string>
+    <string name="settings_reverse_camera_adapter_no_gear">La mappa dell’adattatore dati auto non ha ancora un segnale della marcia.</string>
+    <string name="settings_reverse_camera_app">App della telecamera</string>
+    <string name="settings_reverse_camera_app_none">Nessuna (sposta solo CarPlay)</string>
+    <string name="settings_reverse_camera_app_description">Scegli l’app della telecamera dell’autoradio solo se la telecamera non compare da sola quando CarPlay si sposta.</string>
+    <string name="settings_reverse_camera_broadcast">Broadcast dell’autoradio</string>
+    <string name="settings_reverse_camera_broadcast_not_set">Non impostato</string>
+    <string name="settings_reverse_camera_broadcast_action">Azione del broadcast</string>
+    <string name="settings_reverse_camera_broadcast_extra">Nome dell’extra</string>
+    <string name="settings_reverse_camera_broadcast_value">Valore dell’extra in retromarcia</string>
+    <string name="settings_reverse_camera_broadcast_description">Per le autoradio che annunciano la retromarcia con un broadcast. Trova l’azione e l’extra con un’app che registra gli intent mentre inserisci la retromarcia, poi inseriscili qui.</string>
+    <string name="settings_reverse_camera_broadcast_remove">Rimuovi</string>
+    <string name="settings_reverse_camera_return_needed">Per riportare CarPlay dopo la retromarcia, Android richiede che Tarmac abbia «Mostra sopra altre app» o il servizio dei tasti al volante attivo.</string>
+    <string name="settings_reverse_camera_return_allow">Consenti la visualizzazione sopra altre app</string>
+</resources>

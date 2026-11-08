@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_reverse_camera">バックカメラ</string>
+    <string name="settings_reverse_camera_switch">後退時にカメラへ切り替え</string>
+    <string name="settings_reverse_camera_switch_description">車がリバースに入ると、Tarmac は CarPlay を画面から外すか、下で選んだカメラアプリを開き、リバースから抜けたら CarPlay を戻します。CarPlay の接続は維持されます。</string>
+    <string name="settings_reverse_camera_source">ギアの取得元</string>
+    <string name="settings_reverse_camera_source_automatic">自動</string>
+    <string name="settings_reverse_camera_source_byd">BYD のギア（ADB）</string>
+    <string name="settings_reverse_camera_source_ecarx">Geely / ECARX センサー</string>
+    <string name="settings_reverse_camera_source_adapter">車両データアダプター</string>
+    <string name="settings_reverse_camera_source_broadcast">ヘッドユニットのブロードキャスト</string>
+    <string name="settings_reverse_camera_source_none">このヘッドユニットで Tarmac が知っているギアの取得元はありません。車両データアダプター（詳細設定）にギア信号を追加するか、ヘッドユニットのブロードキャストを設定してください。</string>
+    <string name="settings_reverse_camera_source_using">ギアの取得元: %1$s</string>
+    <string name="settings_reverse_camera_adapter_no_gear">車両データアダプターのマップにはまだギア信号がありません。</string>
+    <string name="settings_reverse_camera_app">カメラアプリ</string>
+    <string name="settings_reverse_camera_app_none">なし（CarPlay をどけるだけ）</string>
+    <string name="settings_reverse_camera_app_description">CarPlay をどけてもカメラが自動で表示されない場合だけ、ヘッドユニットのカメラアプリを選んでください。</string>
+    <string name="settings_reverse_camera_broadcast">ヘッドユニットのブロードキャスト</string>
+    <string name="settings_reverse_camera_broadcast_not_set">未設定</string>
+    <string name="settings_reverse_camera_broadcast_action">ブロードキャストのアクション</string>
+    <string name="settings_reverse_camera_broadcast_extra">エクストラ名</string>
+    <string name="settings_reverse_camera_broadcast_value">リバース時のエクストラ値</string>
+    <string name="settings_reverse_camera_broadcast_description">リバースをブロードキャストで知らせるヘッドユニット向けです。リバースに入れながらインテント記録アプリでアクションとエクストラを調べ、ここに入力してください。</string>
+    <string name="settings_reverse_camera_broadcast_remove">削除</string>
+    <string name="settings_reverse_camera_return_needed">リバースの後に CarPlay を戻すには、Tarmac に「他のアプリの上に重ねて表示」を許可するか、ハンドルキーサービスをオンにする必要があります。</string>
+    <string name="settings_reverse_camera_return_allow">他のアプリの上に重ねて表示を許可</string>
+</resources>

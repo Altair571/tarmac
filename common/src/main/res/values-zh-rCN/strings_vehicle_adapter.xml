@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_vehicle_adapter">车辆数据适配器（实验性）</string>
+    <string name="settings_vehicle_adapter_description">对于车机不提供电量、续航和挡位的车辆，从 OBD-II 或 CAN 适配器读取这些数据。Tarmac 只读取：OBD-II 适配器只收到标准读取请求，CAN 适配器以只监听模式打开。绝不向车辆写入任何内容。</string>
+    <string name="settings_vehicle_adapter_kind">适配器</string>
+    <string name="settings_vehicle_adapter_off">关闭</string>
+    <string name="settings_vehicle_adapter_obd_bluetooth">蓝牙 OBD-II（ELM327、STN）</string>
+    <string name="settings_vehicle_adapter_obd_usb">USB OBD-II（STN、CDC-ACM）</string>
+    <string name="settings_vehicle_adapter_can_usb">USB CAN（slcan，只监听）</string>
+    <string name="settings_vehicle_adapter_bluetooth">蓝牙适配器</string>
+    <string name="settings_vehicle_adapter_bluetooth_none">未选择</string>
+    <string name="settings_vehicle_adapter_bluetooth_empty">没有已配对的蓝牙设备。请先在 Android 蓝牙设置中配对 OBD-II 适配器（PIN 通常为 1234 或 0000）。</string>
+    <string name="settings_vehicle_adapter_bluetooth_permission">请允许“附近的设备”，以便 Tarmac 连接已配对的 OBD-II 适配器。</string>
+    <string name="settings_vehicle_adapter_usb_missing">未插入 USB 串口适配器（CDC-ACM）。暂不支持 FTDI、CH340 或 CP210x 芯片的适配器。</string>
+    <string name="settings_vehicle_adapter_usb_allow">允许使用 USB 适配器</string>
+    <string name="settings_vehicle_adapter_map">信号映射</string>
+    <string name="settings_vehicle_adapter_map_none">无</string>
+    <string name="settings_vehicle_adapter_map_custom">自定义</string>
+    <string name="settings_vehicle_adapter_map_can">CAN 适配器需要该车的信号映射（JSON），才能知道哪些帧携带电量、续航和挡位。</string>
+    <string name="settings_vehicle_adapter_map_obd">没有映射时，Tarmac 读取标准电池 PID，但很少有纯电车会响应。映射可加入车辆自有的 PID，例如电量或挡位。</string>
+    <string name="settings_vehicle_adapter_map_hint">粘贴该车的 JSON 信号映射</string>
+    <string name="settings_vehicle_adapter_map_remove">移除</string>
+    <string name="settings_vehicle_adapter_map_invalid">信号映射未保存：%1$s</string>
+    <string name="settings_vehicle_adapter_ev">为 Apple 地图提供电量和续航</string>
+    <string name="settings_vehicle_adapter_ev_description">把适配器读到的电量和续航告诉 iPhone，让 Apple 地图规划充电站。下次连接时生效。</string>
+    <string name="settings_vehicle_adapter_full_range">满电续航</string>
+    <string name="settings_vehicle_adapter_full_range_unknown">从车辆读取</string>
+    <string name="settings_vehicle_adapter_full_range_km">%1$d 公里</string>
+    <string name="settings_vehicle_adapter_full_range_description">车辆只提供电量时，Tarmac 用这个数值估算续航。没有续航数据时，不会告诉 iPhone 这是电动车。</string>
+    <string name="settings_vehicle_adapter_connectors">充电接口</string>
+    <string name="settings_vehicle_adapter_state_off">未读取</string>
+    <string name="settings_vehicle_adapter_state_connecting">正在连接适配器…</string>
+    <string name="settings_vehicle_adapter_state_not_found">未找到适配器。请检查它是否已插入或已配对，以及车辆是否已启动。</string>
+    <string name="settings_vehicle_adapter_state_no_permission">Tarmac 尚无权使用该适配器。</string>
+    <string name="settings_vehicle_adapter_state_no_answer">适配器没有响应。点火开关打开了吗？</string>
+    <string name="settings_vehicle_adapter_state_no_listen_only">该 CAN 适配器没有只监听模式，因此 Tarmac 不会打开它。</string>
+    <string name="settings_vehicle_adapter_state_connected">已连接</string>
+    <string name="settings_vehicle_adapter_unknown">—</string>
+    <string name="settings_vehicle_adapter_reading">电量 %1$s · 续航 %2$s · 挡位 %3$s</string>
+</resources>

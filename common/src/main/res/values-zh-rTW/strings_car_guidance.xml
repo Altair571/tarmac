@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_car_guidance">原車儀表和 HUD</string>
+    <string name="settings_car_guidance_switch">把轉向資訊傳送到原車儀表和 HUD</string>
+    <string name="settings_car_guidance_description">以高德標準導航廣播傳送 CarPlay 的下一個轉向、距離和道路名稱。車機的協議盒或儀表服務監聽這個廣播時，會在原車儀表或 HUD 上顯示；不監聽的車機會忽略它。立即套用。</string>
+</resources>

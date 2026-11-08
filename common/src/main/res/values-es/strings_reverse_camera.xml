@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_reverse_camera">Cámara de marcha atrás</string>
+    <string name="settings_reverse_camera_switch">Cambiar a la cámara al dar marcha atrás</string>
+    <string name="settings_reverse_camera_switch_description">Cuando el coche entra en marcha atrás, Tarmac quita CarPlay de la pantalla o abre la app de cámara elegida abajo, y vuelve a mostrar CarPlay cuando el coche sale de marcha atrás. CarPlay sigue conectado.</string>
+    <string name="settings_reverse_camera_source">Marcha desde</string>
+    <string name="settings_reverse_camera_source_automatic">Automático</string>
+    <string name="settings_reverse_camera_source_byd">Marcha de BYD (ADB)</string>
+    <string name="settings_reverse_camera_source_ecarx">Sensor Geely / ECARX</string>
+    <string name="settings_reverse_camera_source_adapter">Adaptador de datos del coche</string>
+    <string name="settings_reverse_camera_source_broadcast">Difusión de la unidad principal</string>
+    <string name="settings_reverse_camera_source_none">Tarmac no conoce ninguna fuente de marcha en esta unidad principal. Añade una señal de marcha al adaptador de datos del coche (Avanzado) o configura la difusión de la unidad principal.</string>
+    <string name="settings_reverse_camera_source_using">La marcha se lee de: %1$s</string>
+    <string name="settings_reverse_camera_adapter_no_gear">El mapa del adaptador de datos del coche aún no tiene señal de marcha.</string>
+    <string name="settings_reverse_camera_app">App de cámara</string>
+    <string name="settings_reverse_camera_app_none">Ninguna (solo apartar CarPlay)</string>
+    <string name="settings_reverse_camera_app_description">Elige la app de cámara de la unidad principal solo si la cámara no aparece sola cuando CarPlay se aparta.</string>
+    <string name="settings_reverse_camera_broadcast">Difusión de la unidad principal</string>
+    <string name="settings_reverse_camera_broadcast_not_set">Sin configurar</string>
+    <string name="settings_reverse_camera_broadcast_action">Acción de la difusión</string>
+    <string name="settings_reverse_camera_broadcast_extra">Nombre del extra</string>
+    <string name="settings_reverse_camera_broadcast_value">Valor del extra en marcha atrás</string>
+    <string name="settings_reverse_camera_broadcast_description">Para unidades principales que anuncian la marcha atrás con una difusión. Busca la acción y el extra con una app que registre intents mientras metes la marcha atrás y escríbelos aquí.</string>
+    <string name="settings_reverse_camera_broadcast_remove">Quitar</string>
+    <string name="settings_reverse_camera_return_needed">Para volver a mostrar CarPlay tras la marcha atrás, Android necesita que Tarmac tenga «Mostrar sobre otras apps» o el servicio de teclas del volante activado.</string>
+    <string name="settings_reverse_camera_return_allow">Permitir mostrar sobre otras apps</string>
+</resources>

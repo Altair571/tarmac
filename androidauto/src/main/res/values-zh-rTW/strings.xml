@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="aa_status_connecting">正在連接 Android Auto…</string>
+    <string name="aa_status_waiting_for_phone">請用支援資料傳輸的 USB 線連接 Android 手機。</string>
+    <string name="aa_status_permission">請在 USB 提示中允許存取手機。</string>
+    <string name="aa_status_switching">正在手機上啟動 Android Auto…</string>
+    <string name="aa_status_no_identity">此版本沒有 Android Auto 主機身分，因此無法連接 Android Auto。請依 docs/ANDROID_AUTO.md 的說明安裝。</string>
+    <string name="aa_status_no_usb_host">此裝置無法作為 USB 主機，因此無法透過傳輸線連接手機。</string>
+    <string name="aa_button_retry">重試</string>
+    <string name="aa_button_close">關閉</string>
+    <string name="aa_notification_connected">已連接 Android Auto</string>
+    <string name="aa_action_previous">上一首</string>
+    <string name="aa_action_play_pause">播放或暫停</string>
+    <string name="aa_action_next">下一首</string>
+    <string name="aa_status_ended_by_phone">已在手機上關閉 Android Auto。</string>
+    <string name="aa_status_reconnecting">%1$d 秒後重試…</string>
+    <string name="aa_failure_permission">未獲允許透過 USB 存取手機。</string>
+    <string name="aa_failure_not_android_auto">此手機不支援透過 USB 使用 Android Auto。請確認已設定 Android Auto，且傳輸線支援資料傳輸。</string>
+    <string name="aa_failure_no_switch">手機未啟動 Android Auto。請解鎖後重新插入。</string>
+    <string name="aa_failure_usb">Android 無法開啟手機的 USB 連線。請拔除手機後重新插入。</string>
+    <string name="aa_failure_identity_rejected">手機拒絕了此車機的 Android Auto 身分。</string>
+    <string name="aa_failure_version">手機上的 Android Auto 版本不相容。</string>
+    <string name="aa_failure_silent">手機已停止回應。</string>
+    <string name="aa_failure_disconnected">手機已中斷連線。</string>
+    <string name="aa_failure_other">Android Auto 已停止：%1$s</string>
+    <string name="aa_status_waiting_for_wireless_phone">正在透過藍牙等待手機。請將手機與此車機配對，並在手機設定中開啟無線 Android Auto。如果手機已連線，請關閉手機藍牙後再開啟。</string>
+    <string name="aa_status_joining_wifi">手機正在加入此車機的 Wi-Fi…</string>
+    <string name="aa_button_wireless">無線連線</string>
+    <string name="aa_notification_waiting">正在透過藍牙等待手機</string>
+    <string name="aa_start_channel">Android Auto 啟動</string>
+    <string name="aa_start_text">已透過藍牙連線。輕觸即可啟動 Android Auto。</string>
+    <string name="aa_start_action">啟動 Android Auto</string>
+    <string name="aa_failure_bluetooth">藍牙已關閉，或此應用程式無法使用藍牙。請開啟藍牙並允許「附近的裝置」權限。</string>
+    <string name="aa_failure_no_wireless_phone">沒有手機啟動無線 Android Auto。請確認手機已與此車機配對，且手機設定中已開啟無線 Android Auto。</string>
+    <string name="aa_failure_wifi">無法為手機啟動 Wi-Fi。無線 Android Auto 會使用在「設定 → 連線」中為無線 CarPlay 設定的網路。</string>
+    <string name="aa_failure_phone_wifi">手機無法透過此車機的 Wi-Fi 連線。</string>
+    <string name="aa_failure_carplay">CarPlay 正在執行。請先關閉它，再啟動無線 Android Auto。</string>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_wheel_learned_keys">مزيد من أزرار المقود</string>
+    <string name="settings_wheel_learned_keys_description">تعلّم أي زر ترسله وحدة الرأس للمقطع التالي والسابق، والرد على المكالمة أو إنهائها، والشاشة الرئيسية لـ CarPlay. تعمل الأزرار أثناء اتصال CarPlay؛ ومن دون جلسة CarPlay يحتفظ كل زر بوظيفته في السيارة.</string>
+    <string name="settings_wheel_learned_next">المقطع التالي</string>
+    <string name="settings_wheel_learned_previous">المقطع السابق</string>
+    <string name="settings_wheel_learned_call">الرد / إنهاء المكالمة</string>
+    <string name="settings_wheel_learned_home">الشاشة الرئيسية لـ CarPlay</string>
+    <string name="settings_wheel_learned_keys_hint">لكل من Siri والتشغيل/الإيقاف المؤقت زر خاص أعلاه. لا يمكن تعلّم زر مستخدم هناك أو لتكبير الخريطة أو لعصا التحكم. أثناء المكالمة يعمل زر الرد / إنهاء المكالمة فقط.</string>
+    <string name="settings_wheel_learned_learn">تعلّم زرًا جديدًا</string>
+    <string name="settings_wheel_learned_remove">إزالة هذا الزر</string>
+</resources>

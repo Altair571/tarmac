@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_wheel_learned_keys">Інші кнопки керма</string>
+    <string name="settings_wheel_learned_keys_description">Запам’ятовує кнопку, яку головний пристрій надсилає для наступного й попереднього треку, відповіді чи завершення виклику та головного екрана CarPlay. Кнопки працюють, поки CarPlay під’єднано; без сеансу CarPlay кожна кнопка зберігає функцію автомобіля.</string>
+    <string name="settings_wheel_learned_next">наступний трек</string>
+    <string name="settings_wheel_learned_previous">попередній трек</string>
+    <string name="settings_wheel_learned_call">відповідь / завершення виклику</string>
+    <string name="settings_wheel_learned_home">головний екран CarPlay</string>
+    <string name="settings_wheel_learned_keys_hint">Siri та відтворення/пауза мають власні кнопки вище. Кнопку, зайняту там або для масштабу карти й джойстика, тут запам’ятати не можна. Під час виклику працює лише кнопка відповіді / завершення.</string>
+    <string name="settings_wheel_learned_learn">Запам’ятати нову кнопку</string>
+    <string name="settings_wheel_learned_remove">Видалити цю кнопку</string>
+</resources>
