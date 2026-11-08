@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.1
+
+- **Setup guide.** Back and Next stay on screen on short head-unit screens, and the steps are named under the progress bar. The last step lists what is still missing, such as an iPhone or the car hotspot's name and password, before it says you're ready. Features are grouped into tested and experimental, and the experimental hotspot repair stays in Settings.
+- **Android Auto identity in the release APK.** It now bundles the head-unit certificate that open-headunit publishes, as release APKs already bundle a CarPlay identity, so Android Auto no longer stops at "head-unit identity missing". Google can stop accepting it at any time.
+- **Guidance and calls on the driver's side (experimental, off by default; Settings → Advanced → Video and audio).** CarPlay navigation prompts and calls, and Android Auto guidance, play only from the speakers on the driver's side. A head unit that mixes these sounds to mono plays them as before, and Android Auto calls are not changed. Not yet tried in a car.
+
 ## 0.4.0
 
 - **CarPlay Ultra (experimental, off by default; Settings → Advanced).** Ported from LIVI. The iPhone shows climate in the CarPlay dock, and with CarPlay Ultra chosen on the iPhone, its Climate, Radio and Vehicle apps.

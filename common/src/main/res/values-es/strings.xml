@@ -692,6 +692,8 @@
     <string name="call_echo_cancellation_description">Intenta reducir el eco de los altavoces que recibe la otra persona en llamadas de CarPlay. El resultado depende del equipo del coche. Se aplica en la próxima conexión de CarPlay.</string>
     <string name="call_voice_filter">Voces más claras en llamadas (experimental)</string>
     <string name="call_voice_filter_description">Reduce los graves del audio de llamadas de CarPlay. Puede cambiar cómo suenan las voces. Se aplica en la próxima conexión de CarPlay.</string>
+    <string name="settings_driver_side_voice">Indicaciones y llamadas en el lado del conductor (experimental)</string>
+    <string name="settings_driver_side_voice_description">Las indicaciones de navegación y las llamadas de CarPlay, y las indicaciones de Android Auto, suenan solo por los altavoces del lado del conductor: los izquierdos, o los derechos con Volante a la derecha activado. Los pasajeros las oyen débilmente o no las oyen. Si la unidad principal mezcla estos sonidos en mono, suenan como antes. Las llamadas de Android Auto usan el Bluetooth del propio coche y no cambian. Se aplica en la próxima conexión.</string>
     <string name="phone_audio_route">Audio telefónico del coche en llamadas de CarPlay (experimental)</string>
     <string name="phone_audio_route_description">Mantiene una llamada de Telecom durante las llamadas de CarPlay para que el coche pase a su estado de audio telefónico y funcione su propia cancelación de eco. El cancelador de eco de Tarmac no actúa en esas llamadas. Tu voz puede sonar más fuerte o distorsionada. Desactivado por defecto; se aplica en la siguiente llamada.</string>
     <string name="phone_audio_route_apps">Audio telefónico del coche en llamadas VoIP de otras apps (experimental)</string>
@@ -767,6 +769,11 @@
     <string name="setup_badge_adb">Requiere ADB por red</string>
     <string name="setup_done_title">Todo listo</string>
     <string name="setup_done_description">Conecta tu iPhone ahora. Puedes volver a abrir esta guía desde Ajustes.</string>
+    <string name="setup_step_car">Coche</string>
+    <string name="setup_step_iphone">iPhone</string>
+    <string name="setup_step_finish">Finalizar</string>
+    <string name="setup_almost_ready_title">Casi listo</string>
+    <string name="setup_almost_ready_description">Completa lo marcado abajo o conecta ahora y Tarmac te pedirá lo que falte. Puedes volver a abrir esta guía desde Ajustes.</string>
     <string name="settings_discard_pending_title">¿Descartar los cambios?</string>
     <string name="settings_discard_pending_message">La resolución, la velocidad de fotogramas, la conexión y los demás ajustes que acabas de cambiar todavía no se han guardado. Guardar y reconectar los aplica.</string>
     <string name="settings_discard_pending_confirm">Descartar</string>

@@ -752,6 +752,8 @@
     <string name="call_echo_cancellation_description">尝试减少 CarPlay 通话中发送给对方的扬声器回声。效果取决于车载主机。下次连接 CarPlay 时生效。</string>
     <string name="call_voice_filter">更清晰的通话人声（实验性）</string>
     <string name="call_voice_filter_description">削减 CarPlay 通话音频的低音。这可能改变人声的音色。下次连接 CarPlay 时生效。</string>
+    <string name="settings_driver_side_voice">导航提示和通话仅从驾驶侧播放（实验性）</string>
+    <string name="settings_driver_side_voice_description">CarPlay 的导航提示和通话，以及 Android Auto 的导航提示，只从驾驶员一侧的扬声器播放：左侧，开启“右舵”时为右侧。乘客听到的声音很小或听不到。如果主机把这些声音混为单声道，则照常播放。Android Auto 通话使用车辆自身的蓝牙，不受影响。下次连接时生效。</string>
     <string name="phone_audio_route">CarPlay 通话使用车机电话音频（实验性）</string>
     <string name="phone_audio_route_description">CarPlay 通话期间保持一个 Telecom 通话，使车机切换到电话音频状态并启用自带的回声消除。这些通话中 Tarmac 自己的回声消除不会工作。你的声音可能变大或失真。默认关闭，下一次通话生效。</string>
     <string name="phone_audio_route_apps">其他应用的 VoIP 通话使用车机电话音频（实验性）</string>
@@ -890,6 +892,11 @@
     <string name="setup_badge_adb">需要网络 ADB</string>
     <string name="setup_done_title">准备就绪</string>
     <string name="setup_done_description">现在连接你的 iPhone。之后可在设置中再次打开本向导。</string>
+    <string name="setup_step_car">车辆</string>
+    <string name="setup_step_iphone">iPhone</string>
+    <string name="setup_step_finish">完成</string>
+    <string name="setup_almost_ready_title">即将就绪</string>
+    <string name="setup_almost_ready_description">请完成下方标出的项目，或现在连接，Tarmac 会提示缺少的内容。之后可在设置中再次打开本向导。</string>
     <string name="settings_discard_pending_title">要放弃更改吗？</string>
     <string name="settings_discard_pending_message">你刚更改的分辨率、帧率、连接以及其余设置尚未保存。“保存并重新连接”会应用它们。</string>
     <string name="settings_discard_pending_confirm">放弃</string>

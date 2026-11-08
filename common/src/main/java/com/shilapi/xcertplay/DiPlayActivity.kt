@@ -98,6 +98,7 @@ import com.shilapi.xcertplay.media.AmbientIdleBehavior
 import com.shilapi.xcertplay.media.AmbientMusicController
 import com.shilapi.xcertplay.media.AmbientColorSource
 import com.shilapi.xcertplay.media.AmbientMusicSettings
+import com.shilapi.xcertplay.media.DriverSideAudio
 import com.shilapi.xcertplay.media.MtkDecoderTuning
 import com.shilapi.xcertplay.network.CarHotspotConfigRead
 import com.shilapi.xcertplay.network.CarHotspotConfigWrite
@@ -302,6 +303,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
     private var renderedReadiness: SettingsReadiness? = null
     private var renderedPage: String? = null
     private var renderedSettingsCategory: SettingsCategory? = null
+    private var renderedSetupStep: Int? = null
     private var pendingScrollY: Int? = null
     private var pendingRailScrollY: Int? = null
     private var pendingRailFocus = false
@@ -756,7 +758,9 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         } else null
         // A restore still waiting for layout keeps its target: the old page was never laid out.
         val sameDestination = renderedPage == page &&
-            (page != "settings" || renderedSettingsCategory == settingsCategory)
+            (page != "settings" || renderedSettingsCategory == settingsCategory) &&
+            // Each setup step opens at its top, not where the driver left the previous one.
+            (page != "setup" || renderedSetupStep == setupStep)
         val previousScrollY = (pendingScrollY ?: rootScroll?.scrollY)?.takeIf { sameDestination }
         // The rail is one destination even when its selected category changes.
         val keepRailPosition = renderedPage == "settings" && page == "settings"
@@ -822,7 +826,12 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
                 "backup" -> backup(content)
                 else -> home(content)
             }
-            scroll
+            // The guide's Back and Next stay on screen: on a 720-pixel head unit they sat below the fold.
+            if (page == "setup") column().apply {
+                setBackgroundColor(BG)
+                addView(scroll, LinearLayout.LayoutParams(-1, 0, 1f))
+                addView(setupFooter(compact))
+            } else scroll
         }
         // Keep the background full screen, but all controls inside the camera and
         // visible system/keyboard bounds. Insets are physical pixels, not scaled dp.
@@ -857,6 +866,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         ViewCompat.requestApplyInsets(root)
         renderedPage = page
         renderedSettingsCategory = settingsCategory.takeIf { page == "settings" }
+        renderedSetupStep = setupStep.takeIf { page == "setup" }
         refreshStatus()
         focusSnapshot?.let { snapshot ->
             root.doOnLayout {
@@ -2654,6 +2664,12 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
                 AirPlayPersistence.saveCallVoiceFilter(this, it)
                 markReconnectNeeded()
             }
+            // Off by default: untested in a car, and it takes guidance and calls away from the passengers.
+            toggle(card, getString(R.string.settings_driver_side_voice), getString(R.string.settings_driver_side_voice_description),
+                DriverSideAudio.enabled(this)) {
+                DriverSideAudio.setEnabled(this, it)
+                markReconnectNeeded()
+            }
             toggle(card, getString(R.string.phone_audio_route), getString(R.string.phone_audio_route_description),
                 BydOutputSettings.phoneAudioRoute(this)) {
                 BydOutputSettings.setPhoneAudioRoute(this, it)
@@ -4304,19 +4320,9 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
                     phoneChosen = DiPlayPreferences.phoneAddress(this) != null)) markReconnectNeeded()
             setupStep = first
         }
-        val step = setupStep.coerceIn(SetupGuide.STEP_CAR, SetupGuide.STEP_DONE)
-        val shownSteps = SetupGuide.STEP_COUNT - first
-        content.addView(label(getString(R.string.setup_step_of, step - first + 1, shownSteps), 13, ACCENT, true)
-            .apply { letterSpacing = .12f })
-        val progress = row().apply { setPadding(0, dp(10), 0, dp(20)) }
-        repeat(shownSteps) { index ->
-            progress.addView(View(this).apply {
-                background = GradientDrawable().apply {
-                    setColor(if (index <= step - first) ACCENT else BUTTON); cornerRadius = dp(3).toFloat()
-                }
-            }, LinearLayout.LayoutParams(0, dp(6), 1f).apply { if (index > 0) marginStart = dp(8) })
-        }
-        content.addView(progress)
+        setupStep = setupStep.coerceIn(first, SetupGuide.STEP_DONE)
+        val step = setupStep
+        setupProgress(content, step, first)
         when (step) {
             SetupGuide.STEP_CAR -> setupCarStep(content)
             SetupGuide.STEP_CONNECTION -> setupConnectionStep(content)
@@ -4324,24 +4330,122 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
             SetupGuide.STEP_FEATURES -> setupFeaturesStep(content)
             else -> setupDoneStep(content)
         }
-        if (step == SetupGuide.STEP_DONE) return
-        val footer = row().apply { gravity = Gravity.CENTER_VERTICAL; setPadding(0, dp(6), 0, 0) }
-        footer.addView(button(getString(R.string.setup_skip), false) { closeSetupGuide() },
-            LinearLayout.LayoutParams(0, dp(60), 1f))
-        footer.addView(space(16), LinearLayout.LayoutParams(dp(16), 1))
-        footer.addView(button(getString(R.string.setup_next), true) {
-            if (step == SetupGuide.STEP_CAR && SetupGuide.applyFirstSetupDefaults(this,
-                    DiLinkGeneration.confirmed(this) ?: DiLinkGeneration.detect().generation,
-                    phoneChosen = DiPlayPreferences.phoneAddress(this) != null)) markReconnectNeeded()
-            setupStep = step + 1; render()
-        },
-            LinearLayout.LayoutParams(0, dp(60), 1f))
-        content.addView(footer)
+    }
+
+    /** The short name of each step, under its segment of the progress bar and on the last step's summary. */
+    private fun setupStepName(step: Int) = getString(when (step) {
+        SetupGuide.STEP_CAR -> R.string.setup_step_car
+        SetupGuide.STEP_CONNECTION -> R.string.setup_connection_title
+        SetupGuide.STEP_IPHONE -> R.string.setup_step_iphone
+        SetupGuide.STEP_FEATURES -> R.string.setup_features_title
+        else -> R.string.setup_step_finish
+    })
+
+    /** A short head unit (720 pixels at 240 dpi) keeps the guide's titles smaller so the step itself shows. */
+    private fun setupShortScreen() = resources.configuration.screenHeightDp < SETUP_SHORT_HEIGHT_DP
+
+    /**
+     * The paragraph direction of the language Tarmac shows, so "iPhone" in an Arabic guide lines up with the
+     * Arabic text beside it. TEXT_DIRECTION_LOCALE would follow the JVM default instead of the chosen language.
+     */
+    private fun appTextDirection() =
+        if (android.text.TextUtils.getLayoutDirectionFromLocale(resources.configuration.locales[0]) == View.LAYOUT_DIRECTION_RTL)
+            View.TEXT_DIRECTION_RTL else View.TEXT_DIRECTION_LTR
+
+    /**
+     * The bar, with each step's name under it on a wide screen so the driver sees what is left.
+     * A narrow screen has no room for the names and says "STEP 2 OF 5" above the bar instead.
+     */
+    private fun setupProgress(content: LinearLayout, step: Int, first: Int) {
+        val steps = (first..SetupGuide.STEP_DONE).toList()
+        val counter = getString(R.string.setup_step_of, step - first + 1, steps.size)
+        val named = resources.configuration.screenWidthDp >= SETUP_ONE_ROW_MIN_WIDTH_DP
+        val after = dp(if (setupShortScreen()) CONTROL_GAP_DP else GROUP_GAP_DP)
+        if (!named) content.addView(label(counter, 13, ACCENT, true).apply { letterSpacing = .12f })
+        val bar = row().apply { setPadding(0, if (named) 0 else dp(10), 0, if (named) 0 else after) }
+        val names = row().apply { setPadding(0, dp(8), 0, after); contentDescription = counter }
+        steps.forEachIndexed { index, candidate ->
+            bar.addView(View(this).apply {
+                background = GradientDrawable().apply {
+                    setColor(if (candidate <= step) ACCENT else BUTTON); cornerRadius = dp(3).toFloat()
+                }
+            }, LinearLayout.LayoutParams(0, dp(6), 1f).apply { if (index > 0) marginStart = dp(8) })
+            names.addView(label(setupStepName(candidate), 14, when {
+                candidate == step -> TEXT
+                candidate < step -> ACCENT
+                else -> MUTED
+            }, bold = candidate == step).apply {
+                maxLines = 1; ellipsize = android.text.TextUtils.TruncateAt.END
+                textDirection = appTextDirection()
+            },
+                LinearLayout.LayoutParams(0, -2, 1f).apply { if (index > 0) marginStart = dp(8) })
+        }
+        content.addView(bar)
+        if (named) content.addView(names)
+    }
+
+    /** Next from [step]; leaving the car question saves the defaults for the confirmed DiLink version. */
+    private fun advanceSetup(step: Int) {
+        if (step == SetupGuide.STEP_CAR && SetupGuide.applyFirstSetupDefaults(this,
+                DiLinkGeneration.confirmed(this) ?: DiLinkGeneration.detect().generation,
+                phoneChosen = DiPlayPreferences.phoneAddress(this) != null)) markReconnectNeeded()
+        setupStep = step + 1
+        render()
+    }
+
+    /**
+     * Outside the scrolling step: leave the guide (Skip setup, or Done at the end) on the start side,
+     * Back and the forward action on the end side. A phone stacks them so long translations fit.
+     */
+    private fun setupFooter(compact: Boolean): LinearLayout {
+        val step = setupStep
+        val done = step == SetupGuide.STEP_DONE
+        val leave = button(getString(if (done) R.string.done else R.string.setup_skip), false) { closeSetupGuide() }
+        val back = if (step > firstSetupStep()) button(getString(R.string.back), false) { navigateBack() } else null
+        // One primary action per screen: until an iPhone is chosen, Choose iPhone leads on its step.
+        val next = if (done) button(getString(R.string.connect_phone), true) { closeSetupGuide(connectNow = true) }
+            else button(getString(R.string.setup_next),
+                step != SetupGuide.STEP_IPHONE || DiPlayPreferences.phoneAddress(this) != null) { advanceSetup(step) }
+        val height = dp(CONTROL_HEIGHT_DP)
+        val buttons = if (resources.configuration.screenWidthDp >= SETUP_ONE_ROW_MIN_WIDTH_DP) row().apply {
+            gravity = Gravity.CENTER_VERTICAL
+            isBaselineAligned = false
+            addView(leave.apply { minWidth = dp(SETUP_SECONDARY_MIN_WIDTH_DP) }, LinearLayout.LayoutParams(-2, height))
+            addView(space(1), LinearLayout.LayoutParams(0, 1, 1f))
+            back?.let {
+                addView(it.apply { minWidth = dp(SETUP_SECONDARY_MIN_WIDTH_DP) }, LinearLayout.LayoutParams(-2, height)
+                    .apply { marginEnd = dp(CONTROL_GAP_DP) })
+            }
+            addView(next.apply { minWidth = dp(SETUP_PRIMARY_MIN_WIDTH_DP) }, LinearLayout.LayoutParams(-2, height))
+        } else column().apply {
+            // A half-width button shrinks a long label ("Connect phone" at a large font) instead of wrapping it.
+            listOfNotNull(leave, back, next).forEach {
+                it.maxLines = 1
+                androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+                    it, 12, 17, 1, android.util.TypedValue.COMPLEX_UNIT_SP)
+            }
+            addView(row().apply {
+                // A shrunk label has another baseline; aligning on it pushed that button down.
+                isBaselineAligned = false
+                back?.let { addView(it, LinearLayout.LayoutParams(0, height, 1f).apply { marginEnd = dp(CONTROL_GAP_DP) }) }
+                addView(next, LinearLayout.LayoutParams(0, height, 1f))
+            })
+            addView(leave, matchButton(CONTROL_GAP_DP, CONTROL_HEIGHT_DP))
+        }
+        return column().apply {
+            setBackgroundColor(BG)
+            addView(View(this@DiPlayActivity).apply { setBackgroundColor(BORDER) }, LinearLayout.LayoutParams(-1, dp(1)))
+            addView(buttons.apply {
+                val side = dp(if (compact) 12 else 32)
+                setPadding(side, dp(CONTROL_GAP_DP), side, dp(if (setupShortScreen()) CONTROL_GAP_DP else GROUP_GAP_DP))
+            })
+        }
     }
 
     private fun setupTitle(content: LinearLayout, title: Int, description: String) {
-        content.addView(label(getString(title), 34, TEXT, true))
-        content.addView(label(description, 17, MUTED).apply { setPadding(0, dp(8), 0, dp(24)) })
+        val short = setupShortScreen()
+        content.addView(label(getString(title), if (short) 28 else 34, TEXT, true))
+        content.addView(label(description, 17, MUTED).apply { setPadding(0, dp(if (short) 4 else 8), 0, dp(if (short) 16 else 24)) })
     }
 
     private fun setupCarStep(content: LinearLayout) {
@@ -4375,7 +4479,8 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
     private fun setupConnectionStep(content: LinearLayout) {
         setupTitle(content, R.string.setup_connection_title, getString(R.string.setup_connection_description))
         val card = card()
-        wirelessLinkControls(card)
+        // The ADB hotspot repair is experimental; it stays in Settings → Connection, not in a first setup.
+        wirelessLinkControls(card, hotspotRepair = false)
         content.addView(card, LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(SETTINGS_BLOCK_GAP_DP) })
     }
 
@@ -4388,7 +4493,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         setupTitle(content, R.string.setup_iphone_title, getString(R.string.keep_bluetooth_and_wi_fi_on_your_iphone_pair_with_the_car))
         val card = card()
         val chosen = DiPlayPreferences.phoneAddress(this) != null
-        card.addView(label(if (chosen) DiPlayPreferences.phoneName(this) else getString(R.string.setup_iphone_none), 22,
+        card.addView(label(if (chosen) "✓  ${DiPlayPreferences.phoneName(this)}" else getString(R.string.setup_iphone_none), 22,
             if (chosen) READY else TEXT, true))
         card.addView(button(chooseIphoneTitle(), !chosen) {
             choosePhone()
@@ -4421,76 +4526,114 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
             clusterRouteConflict(warning)
             content.addView(warning, LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(SETTINGS_BLOCK_GAP_DP) })
         }
-        val card = card()
-        SetupGuide.features(generation).forEach { entry ->
-            val before = card.childCount
-            when (entry.feature) {
-                SetupGuide.Feature.AUTO_CONNECT -> toggle(card, getString(R.string.connect_when_diplay_opens),
-                    getString(R.string.default_connection_description), DiPlayPreferences.autoConnect(this)) {
-                    DiPlayPreferences.saveAutoConnect(this, it)
-                }
-                SetupGuide.Feature.LOCATION -> toggle(card, getString(R.string.report_location_to_iphone),
-                    getString(R.string.sends_precise_android_location_as_carplay_gps_data_when_th),
-                    AirPlayPersistence.loadLocationReportingEnabled(this), save = ::onLocationReportingChanged)
-                SetupGuide.Feature.CLUSTER_MAP -> reconnectingToggle(card,
-                    getString(R.string.carplay_map_on_instrument_cluster_experimental),
-                    getString(R.string.shows_the_iphone_s_cluster_map_on_the_instrument_cluster_c),
-                    AirPlayPersistence.loadClusterMapEnabled(this)) {
-                    AirPlayPersistence.saveClusterMapEnabled(this, it)
-                    render()
-                }
-                SetupGuide.Feature.DILINK4_ADB_CLUSTER -> reconnectingToggle(card,
-                    getString(R.string.adb_cluster_activity_mode), getString(R.string.adb_cluster_activity_description),
-                    AirPlayPersistence.loadAdbClusterEnabled(this)) {
-                    AirPlayPersistence.saveAdbClusterEnabled(this, it)
-                    ClusterActivityOutput.stopForSettings()
-                    render()
-                }
-                SetupGuide.Feature.BYD_NAVIGATION -> if (BydOutputSettings.available(this)) {
-                    toggle(card, getString(R.string.navigation_on_hud_and_instrument_cluster),
-                        getString(R.string.show_phone_navigation_arrows_distance_and_street_names_on),
-                        BydOutputSettings.enabled(this)) { BydOutputSettings.setEnabled(this, it) }
-                }
-                SetupGuide.Feature.CALLS_ON_DASHBOARD -> toggle(card, getString(R.string.carplay_calls_on_dashboard),
-                    getString(R.string.carplay_calls_on_dashboard_description),
-                    BydOutputSettings.carPlayCalls(this), enabled = !adbSwitchChangePending) { applyCarPlayCalls(it) }
-                SetupGuide.Feature.CALL_KEYS -> toggle(card, getString(R.string.carplay_call_controls_experimental),
-                    getString(R.string.carplay_call_controls_experimental_description),
-                    BydOutputSettings.carPlayCallControls(this)) { applyCallKeys(it) }
+        // Tested and experimental features sit in their own cards, so a title marked "(experimental)"
+        // never carries a "Tested" badge beside it.
+        val features = SetupGuide.features(generation)
+        for ((status, heading) in listOf(SetupGuide.Status.TESTED to R.string.setup_badge_tested,
+                SetupGuide.Status.EXPERIMENTAL to R.string.setup_badge_experimental)) {
+            val card = card()
+            card.addView(label(getString(heading), 20, TEXT, true).apply { setPadding(0, 0, 0, dp(CONTROL_GAP_DP)) })
+            val headingOnly = card.childCount
+            features.filter { it.status == status }.forEach { setupFeatureRow(card, it) }
+            if (card.childCount > headingOnly) {
+                content.addView(card, LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(SETTINGS_BLOCK_GAP_DP) })
             }
-            if (card.childCount > before) card.addView(setupBadges(entry))
         }
-        content.addView(card, LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(SETTINGS_BLOCK_GAP_DP) })
     }
 
-    private fun setupBadges(entry: SetupGuide.Entry): LinearLayout = row().apply {
+    private fun setupFeatureRow(card: LinearLayout, entry: SetupGuide.Entry) {
+        val before = card.childCount
+        when (entry.feature) {
+            SetupGuide.Feature.AUTO_CONNECT -> toggle(card, getString(R.string.connect_when_diplay_opens),
+                getString(R.string.default_connection_description), DiPlayPreferences.autoConnect(this)) {
+                DiPlayPreferences.saveAutoConnect(this, it)
+            }
+            SetupGuide.Feature.LOCATION -> toggle(card, getString(R.string.report_location_to_iphone),
+                getString(R.string.sends_precise_android_location_as_carplay_gps_data_when_th),
+                AirPlayPersistence.loadLocationReportingEnabled(this), save = ::onLocationReportingChanged)
+            SetupGuide.Feature.CLUSTER_MAP -> reconnectingToggle(card,
+                getString(R.string.carplay_map_on_instrument_cluster_experimental),
+                getString(R.string.shows_the_iphone_s_cluster_map_on_the_instrument_cluster_c),
+                AirPlayPersistence.loadClusterMapEnabled(this)) {
+                AirPlayPersistence.saveClusterMapEnabled(this, it)
+                render()
+            }
+            SetupGuide.Feature.DILINK4_ADB_CLUSTER -> reconnectingToggle(card,
+                getString(R.string.adb_cluster_activity_mode), getString(R.string.adb_cluster_activity_description),
+                AirPlayPersistence.loadAdbClusterEnabled(this)) {
+                AirPlayPersistence.saveAdbClusterEnabled(this, it)
+                ClusterActivityOutput.stopForSettings()
+                render()
+            }
+            SetupGuide.Feature.BYD_NAVIGATION -> if (BydOutputSettings.available(this)) {
+                toggle(card, getString(R.string.navigation_on_hud_and_instrument_cluster),
+                    getString(R.string.show_phone_navigation_arrows_distance_and_street_names_on),
+                    BydOutputSettings.enabled(this)) { BydOutputSettings.setEnabled(this, it) }
+            }
+            SetupGuide.Feature.CALLS_ON_DASHBOARD -> toggle(card, getString(R.string.carplay_calls_on_dashboard),
+                getString(R.string.carplay_calls_on_dashboard_description),
+                BydOutputSettings.carPlayCalls(this), enabled = !adbSwitchChangePending) { applyCarPlayCalls(it) }
+            SetupGuide.Feature.CALL_KEYS -> toggle(card, getString(R.string.carplay_call_controls_experimental),
+                getString(R.string.carplay_call_controls_experimental_description),
+                BydOutputSettings.carPlayCallControls(this)) { applyCallKeys(it) }
+        }
+        // The card heading says how proven the feature is; only the ADB requirement is left to mark.
+        if (entry.needsAdb && card.childCount > before) card.addView(adbBadge())
+    }
+
+    private fun adbBadge(): LinearLayout = row().apply {
         setPadding(0, dp(2), 0, dp(14))
-        fun badge(text: String, color: Int) = label(text, 12, color, true).apply {
+        addView(label(getString(R.string.setup_badge_adb), 12, ACCENT, true).apply {
             background = GradientDrawable().apply {
-                setColor(Color.TRANSPARENT); cornerRadius = dp(10).toFloat(); setStroke(dp(1), color)
+                setColor(Color.TRANSPARENT); cornerRadius = dp(10).toFloat(); setStroke(dp(1), ACCENT)
             }
             setPadding(dp(10), dp(3), dp(10), dp(3))
-        }
-        val tested = entry.status == SetupGuide.Status.TESTED
-        addView(badge(getString(if (tested) R.string.setup_badge_tested else R.string.setup_badge_experimental),
-            if (tested) READY else WARNING), LinearLayout.LayoutParams(-2, -2))
-        if (entry.needsAdb) addView(badge(getString(R.string.setup_badge_adb), ACCENT),
-            LinearLayout.LayoutParams(-2, -2).apply { marginStart = dp(8) })
+        }, LinearLayout.LayoutParams(-2, -2))
     }
 
+    private fun wirelessModeLabel(mode: WirelessHotspotMode) = getString(when (mode) {
+        WirelessHotspotMode.WIFI_P2P -> R.string.wifi_direct
+        WirelessHotspotMode.EXISTING_WIFI -> R.string.existing_wifi_title
+        WirelessHotspotMode.MANUAL, WirelessHotspotMode.LOCAL_ONLY_HOTSPOT -> R.string.built_in_car_hotspot
+    })
+
+    /**
+     * What the guide set up, with what wireless CarPlay still needs. Each row opens its step, so
+     * "You're ready" is only said when the next connection has an iPhone and, on the car hotspot, its details.
+     */
     private fun setupDoneStep(content: LinearLayout) {
-        setupTitle(content, R.string.setup_done_title, getString(R.string.setup_done_description))
+        val wireless = AirPlayPersistence.loadWirelessEnabled(this)
+        val mode = if (pendingCarHotspotSetup) WirelessHotspotMode.MANUAL else AirPlayPersistence.loadWirelessHotspotMode(this)
+        val hotspotMissing = wireless && mode == WirelessHotspotMode.MANUAL && carHotspotDetailsMissing()
+        val phoneMissing = wireless && DiPlayPreferences.phoneAddress(this) == null
+        val ready = !hotspotMissing && !phoneMissing
+        setupTitle(content, if (ready) R.string.setup_done_title else R.string.setup_almost_ready_title,
+            getString(if (ready) R.string.setup_done_description else R.string.setup_almost_ready_description))
         val card = card()
-        card.addView(button(getString(R.string.connect_phone), true) { closeSetupGuide(connectNow = true) }, matchButton(0, 60))
-        card.addView(button(getString(R.string.settings), false) {
-            SetupGuide.markSeen(this)
-            setupFromSettings = false
-            setupStep = SetupGuide.STEP_CAR
-            page = "settings"
-            render()
-        }, matchButton(12, 60))
-        card.addView(button(getString(R.string.done), false) { closeSetupGuide() }, matchButton(12, 60))
+        if (firstSetupStep() == SetupGuide.STEP_CAR) {
+            setupSummaryRow(card, SetupGuide.STEP_CAR, dilinkLabel(DiLinkGeneration.current(this)), null)
+        }
+        setupSummaryRow(card, SetupGuide.STEP_CONNECTION, wirelessModeLabel(mode),
+            getString(R.string.save_the_name_and_password_from_the_car_s_hotspot_settings).takeIf { hotspotMissing })
+        setupSummaryRow(card, SetupGuide.STEP_IPHONE,
+            if (DiPlayPreferences.phoneAddress(this) == null) getString(R.string.setup_iphone_none) else DiPlayPreferences.phoneName(this),
+            getString(R.string.settings_choose_iphone_description).takeIf { phoneMissing })
         content.addView(card, LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(SETTINGS_BLOCK_GAP_DP) })
+    }
+
+    /** "Connection · Wi-Fi Direct" with a chevron; [problem] shows under it in the warning colour. */
+    private fun setupSummaryRow(card: LinearLayout, step: Int, value: String, problem: String?) {
+        card.addView(button("${setupStepName(step)}$VALUE_SEPARATOR$value", false) {
+            setupStep = step
+            render()
+        }.apply { textDirection = appTextDirection() },
+            matchButton(if (card.childCount == 0) 0 else CONTROL_GAP_DP, CONTROL_HEIGHT_DP))
+        problem?.let {
+            card.addView(label(it, 15, WARNING).apply {
+                textDirection = appTextDirection()
+                setPadding(dp(SETTINGS_CONTROL_INSET_DP), dp(NOTE_ATTACH_GAP_DP), dp(SETTINGS_CONTROL_INSET_DP), 0)
+            })
+        }
     }
 
     private fun connectionSetup(content: LinearLayout) {
@@ -4514,7 +4657,10 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         }
     }
 
-    private fun wirelessLinkControls(parent: LinearLayout) {
+    private fun wirelessLinkControls(parent: LinearLayout) = wirelessLinkControls(parent, hotspotRepair = true)
+
+    /** [hotspotRepair] adds the experimental ADB hotspot repair; the setup guide leaves it to Settings. */
+    private fun wirelessLinkControls(parent: LinearLayout, hotspotRepair: Boolean) {
         val mode = if (pendingCarHotspotSetup) WirelessHotspotMode.MANUAL else AirPlayPersistence.loadWirelessHotspotMode(this)
         val modes = listOf(WirelessHotspotMode.MANUAL, WirelessHotspotMode.WIFI_P2P, WirelessHotspotMode.EXISTING_WIFI)
         val titles = listOf(getString(R.string.settings_built_in_car_hotspot_recommended), getString(R.string.wifi_direct), getString(R.string.existing_wifi_title))
@@ -4590,11 +4736,13 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
                     setPadding(0, dp(12), 0, 0)
                 })
             }
-            val join = hotspotJoinControls ?: HotspotJoinControls(this,
-                { CarPlayBackgroundSession.hasSession() }, beforeAction = { startupHotspotCancelled = true },
-                labelFactory = { label(it, 15, MUTED) }, buttonFactory = { title, click -> button(title, false, click) })
-                .also { hotspotJoinControls = it }
-            parent.addView(join.build())
+            if (hotspotRepair) {
+                val join = hotspotJoinControls ?: HotspotJoinControls(this,
+                    { CarPlayBackgroundSession.hasSession() }, beforeAction = { startupHotspotCancelled = true },
+                    labelFactory = { label(it, 15, MUTED) }, buttonFactory = { title, click -> button(title, false, click) })
+                    .also { hotspotJoinControls = it }
+                parent.addView(join.build())
+            }
         } else if (mode == WirelessHotspotMode.EXISTING_WIFI) {
             parent.addView(label(getString(R.string.existing_wifi_instructions), 16, MUTED))
             parent.addView(button(getString(R.string.open_car_wi_fi_settings), false) { openCarClientWifiSettings() }, matchButton(12, 60))
@@ -8565,5 +8713,10 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         private const val SETTINGS_CONTROL_INSET_DP = 16
         /** Gap under an explanatory note, so it never touches the next control. */
         private const val SETTINGS_NOTE_GAP_DP = 12
+        /** From this width the setup guide names each step and keeps its footer buttons in one row. */
+        private const val SETUP_ONE_ROW_MIN_WIDTH_DP = 600
+        private const val SETUP_SECONDARY_MIN_WIDTH_DP = 200
+        private const val SETUP_PRIMARY_MIN_WIDTH_DP = 280
+        private const val SETUP_SHORT_HEIGHT_DP = 600
     }
 }

@@ -10,6 +10,7 @@ import android.media.AudioTrack
 import android.os.Build
 import com.shilapi.xcertplay.androidauto.AndroidAutoLog
 import com.shilapi.xcertplay.androidauto.aap.AapChannel
+import com.shilapi.xcertplay.media.DriverSideAudio
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 
@@ -22,6 +23,8 @@ internal class AndroidAutoAudio(
     context: Context,
     /** False puts guidance and system sounds on the media stream too; see AndroidAutoSettings.separateStreams. */
     private val separateStreams: Boolean = true,
+    /** Settings → Advanced: guidance plays on this side of a stereo track ([DriverSideAudio]); null leaves it mono. */
+    private val driverSide: DriverSideAudio.Side? = null,
 ) {
     private val audioManager = context.getSystemService(AudioManager::class.java)
     private val sinks = HashMap<Int, Sink>()
@@ -29,13 +32,14 @@ internal class AndroidAutoAudio(
 
     @Synchronized
     fun start(channel: Int) {
-        if (sinks[channel] == null) sinks[channel] = Sink(channel, separateStreams)
+        if (sinks[channel] == null) sinks[channel] = Sink(channel, separateStreams, driverSide)
         if (channel == AapChannel.AUDIO_MEDIA) requestFocus()
     }
 
     @Synchronized
     fun write(channel: Int, pcm: ByteArray, offset: Int, length: Int) {
-        (sinks[channel] ?: Sink(channel, separateStreams).also { sinks[channel] = it }).write(pcm.copyOfRange(offset, offset + length))
+        (sinks[channel] ?: Sink(channel, separateStreams, driverSide).also { sinks[channel] = it })
+            .write(pcm.copyOfRange(offset, offset + length))
     }
 
     @Synchronized
@@ -74,11 +78,15 @@ internal class AndroidAutoAudio(
         }
     }
 
-    private class Sink(private val channel: Int, separateStreams: Boolean) {
+    private class Sink(private val channel: Int, separateStreams: Boolean, driverSide: DriverSideAudio.Side?) {
         private val queue = LinkedBlockingQueue<ByteArray>(QUEUE_CAPACITY)
         @Volatile private var running = true
         private val sampleRate = if (channel == AapChannel.AUDIO_MEDIA) 48_000 else 16_000
-        private val channelMask = if (channel == AapChannel.AUDIO_MEDIA) AudioFormat.CHANNEL_OUT_STEREO else AudioFormat.CHANNEL_OUT_MONO
+        /** Guidance and Assistant speech share this channel; system sounds and music stay as sent. */
+        private val pan = driverSide?.takeIf { channel == AapChannel.AUDIO_SPEECH }
+        private var panned = ByteArray(0)
+        private val channelMask = if (channel == AapChannel.AUDIO_MEDIA || pan != null) AudioFormat.CHANNEL_OUT_STEREO
+            else AudioFormat.CHANNEL_OUT_MONO
         private val track: AudioTrack? = try {
             val minimum = AudioTrack.getMinBufferSize(sampleRate, channelMask, AudioFormat.ENCODING_PCM_16BIT)
             AudioTrack(
@@ -106,7 +114,14 @@ internal class AndroidAutoAudio(
             try {
                 while (running) {
                     val pcm = queue.poll(POLL_MILLIS, TimeUnit.MILLISECONDS) ?: continue
-                    track?.write(pcm, 0, pcm.size)
+                    val side = pan
+                    if (side == null) {
+                        track?.write(pcm, 0, pcm.size)
+                    } else {
+                        val needed = DriverSideAudio.outputBytes(pcm.size, 1)
+                        if (panned.size < needed) panned = ByteArray(needed)
+                        track?.write(panned, 0, DriverSideAudio.pan(pcm, 0, pcm.size, 1, side, panned))
+                    }
                 }
             } catch (_: InterruptedException) {
             }

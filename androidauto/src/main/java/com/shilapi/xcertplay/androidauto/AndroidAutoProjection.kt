@@ -30,6 +30,7 @@ import com.shilapi.xcertplay.androidauto.usb.AndroidAutoUsb
 import com.shilapi.xcertplay.androidauto.usb.AndroidAutoUsbKind
 import com.shilapi.xcertplay.androidauto.wireless.AndroidAutoStartNotification
 import com.shilapi.xcertplay.androidauto.wireless.AndroidAutoWireless
+import com.shilapi.xcertplay.media.DriverSideAudio
 import com.shilapi.xcertplay.transport.BlockingDuplexByteStream
 import com.shilapi.xcertplay.transport.UsbPermissionBroadcast
 import java.io.Closeable
@@ -470,7 +471,8 @@ object AndroidAutoProjection {
         private val tls: () -> AapTls,
     ) : AapSession.Listener {
         val video = AndroidAutoVideo(geometry.resolution.width, geometry.resolution.height, ::firstFrame)
-        val audio = AndroidAutoAudio(context, AndroidAutoSettings.separateStreams(context))
+        val audio = AndroidAutoAudio(context, AndroidAutoSettings.separateStreams(context),
+            DriverSideAudio.side(context))
         val microphone = AndroidAutoMicrophone(context) { pcm, length, timestamp -> session.sendMicrophone(pcm, length, timestamp) }
         val location = AndroidAutoLocation(context) { event -> sender.execute { runCatching { session.sendLocation(event) } } }
         lateinit var session: AapSession

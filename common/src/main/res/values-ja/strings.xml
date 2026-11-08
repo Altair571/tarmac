@@ -792,6 +792,8 @@
     <string name="call_echo_cancellation_description">CarPlay通話時に相手へ届くスピーカーの反響音を軽減します。効果は車載端末によって異なります。次回接続から有効です。</string>
     <string name="call_voice_filter">通話音声を聞き取りやすくする（実験的機能）</string>
     <string name="call_voice_filter_description">CarPlayの通話音声の低音を抑えます。声の聞こえ方が変わる場合があります。次回接続から有効です。</string>
+    <string name="settings_driver_side_voice">案内と通話を運転席側で再生（実験的機能）</string>
+    <string name="settings_driver_side_voice_description">CarPlay のナビ音声案内と通話、Android Auto の音声案内を運転席側のスピーカーだけで再生します（左側。右ハンドルがオンの場合は右側）。同乗者には小さく聞こえるか、聞こえません。これらの音をモノラルにまとめるヘッドユニットでは、従来どおり再生されます。Android Auto の通話は車の Bluetooth を使うため変わりません。次回の接続から反映されます。</string>
     <string name="phone_audio_route">CarPlay通話を車の電話音声で出力（実験的機能）</string>
     <string name="phone_audio_route_description">CarPlay通話中にTelecom通話を維持し、車を電話音声モードに切り替えて車側のエコーキャンセルを使います。この通話ではTarmac側のエコーキャンセルを使いません。声が大きくなったり、ひずんだりする場合があります。初期状態ではオフです。次の通話から反映されます。</string>
     <string name="phone_audio_route_apps">他アプリのVoIP通話を車の電話音声で出力（実験的機能）</string>
@@ -932,6 +934,11 @@
     <string name="setup_badge_adb">ネットワークADBが必要</string>
     <string name="setup_done_title">準備ができました</string>
     <string name="setup_done_description">iPhoneを接続してください。このガイドは設定画面から再度開けます。</string>
+    <string name="setup_step_car">車</string>
+    <string name="setup_step_iphone">iPhone</string>
+    <string name="setup_step_finish">完了</string>
+    <string name="setup_almost_ready_title">あと少しです</string>
+    <string name="setup_almost_ready_description">下に示された項目を完了するか、今すぐ接続してください。足りないものは Tarmac が案内します。このガイドは設定画面から再度開けます。</string>
     <string name="settings_discard_pending_title">変更を破棄しますか？</string>
     <string name="settings_discard_pending_message">解像度、フレームレート、接続などの変更がまだ保存されていません。「保存して再接続」を実行すると反映されます。</string>
     <string name="settings_discard_pending_confirm">破棄</string>

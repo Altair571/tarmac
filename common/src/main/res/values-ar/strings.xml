@@ -692,6 +692,8 @@
     <string name="call_echo_cancellation_description">يحاول تقليل صدى السماعات المرسل إلى الطرف الآخر أثناء مكالمات CarPlay. تعتمد النتيجة على وحدة السيارة. يُطبَّق عند الاتصال التالي بـ CarPlay.</string>
     <string name="call_voice_filter">أصوات مكالمات أوضح (تجريبي)</string>
     <string name="call_voice_filter_description">يخفض الجهير في صوت مكالمات CarPlay. قد يغيّر صوت المتحدثين. يُطبَّق عند الاتصال التالي بـ CarPlay.</string>
+    <string name="settings_driver_side_voice">التوجيه والمكالمات من جهة السائق (تجريبي)</string>
+    <string name="settings_driver_side_voice_description">تُشغَّل إرشادات التنقل والمكالمات في CarPlay، وإرشادات Android Auto، من مكبرات الصوت في جهة السائق فقط: اليسرى، أو اليمنى عند تفعيل قيادة يمنى. يسمعها الركاب بصوت خافت أو لا يسمعونها. إذا كانت الوحدة الرئيسية تدمج هذه الأصوات في قناة أحادية، فستُشغَّل كما كانت. تستخدم مكالمات Android Auto بلوتوث السيارة نفسها ولا تتغير. يُطبَّق عند الاتصال التالي.</string>
     <string name="phone_audio_route">صوت الهاتف في السيارة لمكالمات CarPlay (تجريبي)</string>
     <string name="phone_audio_route_description">يُبقي مكالمة Telecom مفتوحة أثناء مكالمات CarPlay ليتحول صوت السيارة إلى وضع الهاتف وتعمل خاصية إلغاء الصدى الخاصة بها. لا يعمل مُلغي الصدى في Tarmac في هذه المكالمات. قد يخرج صوتك أعلى أو مشوّهاً. متوقف افتراضياً، ويُطبَّق في المكالمة التالية.</string>
     <string name="phone_audio_route_apps">صوت الهاتف في السيارة لمكالمات VoIP في التطبيقات الأخرى (تجريبي)</string>
@@ -767,6 +769,11 @@
     <string name="setup_badge_adb">يتطلب ADB عبر الشبكة</string>
     <string name="setup_done_title">أنت جاهز</string>
     <string name="setup_done_description">اتصل بـ iPhone الآن. يمكنك فتح هذا الدليل مرة أخرى من الإعدادات.</string>
+    <string name="setup_step_car">السيارة</string>
+    <string name="setup_step_iphone">iPhone</string>
+    <string name="setup_step_finish">الإنهاء</string>
+    <string name="setup_almost_ready_title">على وشك الانتهاء</string>
+    <string name="setup_almost_ready_description">أكمل العناصر المُعلَّمة أدناه، أو اتصل الآن وسيطلب Tarmac ما ينقص. يمكنك فتح هذا الدليل مرة أخرى من الإعدادات.</string>
     <string name="settings_discard_pending_title">تجاهل التغييرات؟</string>
     <string name="settings_discard_pending_message">لم يتم بعد حفظ الدقة ومعدل الإطارات والاتصال وباقي الإعدادات التي غيرتها. حفظ وإعادة الاتصال يطبقها.</string>
     <string name="settings_discard_pending_confirm">تجاهل</string>

@@ -170,7 +170,9 @@ Rules for this repository, as for the MFi identity:
      adb shell rm /data/local/tmp/certificate.pem /data/local/tmp/private-key.pem
      ```
   `HeadUnitIdentity` looks in the app's private `files/android-auto/` first, then in the APK assets.
-- This is for the owner's personal use only. An APK built with an identity must not be shared.
+- Public release APKs from 0.4.1 bundle the open-headunit identity above, the same way they bundle the
+  CarPlay identity (see `docs/THIRD_PARTY_NOTICES.md`). Any other identity stays personal: an APK built
+  with one must not be shared.
 
 ## 5. Services the head unit announces
 

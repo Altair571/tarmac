@@ -10,7 +10,7 @@ Tarmac turns an Android head unit, or an Android phone or tablet mounted in the 
   <img src="docs/images/home-phone.png" alt="Tarmac Home on a phone" width="22%">
 </p>
 
-> **Early test release.** Tarmac 0.4.0 has been tested on an Android phone with an iPhone, and **not yet on a DUDU or FYT head unit**. Reports from real cars are very welcome; see [Reporting problems](#reporting-problems).
+> **Early test release.** Tarmac 0.4.1 builds on 0.4.0, which was tested on an Android phone with an iPhone, and **not yet on a DUDU or FYT head unit**. Reports from real cars are very welcome; see [Reporting problems](#reporting-problems).
 
 ## Features
 
@@ -37,6 +37,7 @@ Tarmac turns an Android head unit, or an Android phone or tablet mounted in the 
   - accent colour;
   - CarPlay car-button icon and name;
   - CarPlay size, dock side and right-hand drive;
+  - navigation prompts and calls from the driver's side speakers (experimental);
   - day/night mode;
   - an album-colour background you can turn off.
 
@@ -86,7 +87,7 @@ Before a change is done, run the checks in [AGENTS.md](AGENTS.md).
 ## Status and legal
 
 - **Not certified.** Tarmac is not certified by Apple or Google.
-- **Accessory identity.** Release APKs bundle an experimental CarPlay accessory identity recovered from public Carlinkit firmware, the same one the upstream DiPlay project ships. Its private key can be extracted from the APK, and a future iOS update may stop accepting it.
+- **Accessory identities.** Release APKs bundle an experimental CarPlay accessory identity recovered from public Carlinkit firmware, the same one the upstream DiPlay project ships. From 0.4.1 they also bundle the Android Auto head-unit certificate published by [open-headunit](https://github.com/andreknieriem/open-headunit) (`O=Google-Android-Reference`). Their private keys can be extracted from the APK, and a future iOS or Android Auto update may stop accepting either.
 - **Car controls.** CarPlay Ultra's own theme and gauges need a car maker's signed asset, which Tarmac does not have. The Ultra experiment covers climate, radio and car data instead. [docs/CARPLAY_ULTRA.md](docs/CARPLAY_ULTRA.md) and [docs/CAR_CONTROLS.md](docs/CAR_CONTROLS.md) explain what works.
 - **Safety.** Use Tarmac at your own risk, and set it up while parked.
 

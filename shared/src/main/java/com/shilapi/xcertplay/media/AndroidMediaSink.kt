@@ -221,6 +221,8 @@ class AndroidMediaSink(
     private val mtkDecoderTuningEnabled: Boolean = false,
     /** Opt-in (#946): navigation prompts request duckable focus while the iPhone ducks audio. Needs [audioFocusEnabled]. */
     navigationPromptAudioFocus: Boolean = false,
+    /** Opt-in: navigation prompts and calls play only on this side of a stereo track ([DriverSideAudio]); null leaves them as sent. */
+    private val driverSide: DriverSideAudio.Side? = null,
 ) : MediaSink {
     // Each downlink publishes its own reference; a mic must match that stream and sample rate.
     private val callEchoReferences = ConcurrentHashMap<AudioStreamId, EchoReference>()
@@ -750,6 +752,7 @@ class AndroidMediaSink(
                 appContext != null && BydBluetoothSuspend.isSuspendedByUs(appContext),
             echoReference = echoReference,
             voiceFilter = callVoiceFilter && format.audioType == TELEPHONY_AUDIO_TYPE,
+            driverSide = driverSide,
         ).also {
             it.setNavigationAttenuationDb(navigationAttenuationDb)
             if (format.audioType == TELEPHONY_AUDIO_TYPE) it.onRoutedToEarpiece = { moveCallToLoudspeaker(id) }
@@ -1773,6 +1776,8 @@ private class AudioRenderer(
     /** Receives the played call audio so the call microphone can cancel its echo. */
     private val echoReference: EchoReference? = null,
     voiceFilter: Boolean = false,
+    /** Plays navigation and calls on this side only; the track is then stereo whatever the source is. */
+    private val driverSide: DriverSideAudio.Side? = null,
 ) : Closeable {
     private data class AudioPacket(val rtp: ByteArray, val sample: Int, val arrivedNs: Long)
 
@@ -1814,7 +1819,11 @@ private class AudioRenderer(
     private val packetsDroppedTotal = AtomicInteger()
     private val lastArrivalNs = AtomicLong()
     private val maxArrivalGapMs = AtomicLong()
-    private val frameBytes = if (format.channels >= 2) 4 else 2
+    /** Bytes per frame of the track, not the source: a panned mono voice plays from a stereo track. */
+    private var frameBytes = if (format.channels >= 2) 4 else 2
+    /** The side this track plays on, set in [createTrack] for navigation and calls only. */
+    private var panSide: DriverSideAudio.Side? = null
+    private var panned = ByteArray(0)
     private var totalWrittenFrames = 0L
     private val ambientMedia = AmbientMusicActivityPolicy.acceptsAudio(format.audioType, format.payloadType)
     private val ambientEnvelope = AmbientMusicEnvelope()
@@ -1831,7 +1840,7 @@ private class AudioRenderer(
     private var statsWindowStartNs = 0L
     private var statsLastUnderruns = 0
     private var bytesPerSecond = 0
-    private val bufferProgress = AudioBufferProgress(if (format.channels >= 2) 4 else 2)
+    private var bufferProgress = AudioBufferProgress(if (format.channels >= 2) 4 else 2)
     private var underrunsAtPlaybackStart = 0
     private var headAtPlaybackStart = 0
     private var droppedAtLastTrim = 0
@@ -1991,7 +2000,15 @@ private class AudioRenderer(
     private fun createTrack() {
         diagnosticStage = "track-buffer-size"
         val encoding = AndroidAudioFormat.ENCODING_PCM_16BIT
-        val channelMask = if (format.channels >= 2) AndroidAudioFormat.CHANNEL_OUT_STEREO
+        val side = driverSide?.takeIf {
+            mappedSelection().channel.let { it == AudioChannel.NAVIGATION || it == AudioChannel.PHONE }
+        }
+        if (side != null) {
+            panSide = side
+            frameBytes = 4
+            bufferProgress = AudioBufferProgress(4)
+        }
+        val channelMask = if (format.channels >= 2 || side != null) AndroidAudioFormat.CHANNEL_OUT_STEREO
         else AndroidAudioFormat.CHANNEL_OUT_MONO
         val minBuffer = AudioTrack.getMinBufferSize(format.sampleRate, channelMask, encoding)
         if (minBuffer <= 0) {
@@ -2076,6 +2093,7 @@ private class AudioRenderer(
         report("Audio: ready audioType=${format.audioType} codec=${format.codec} " +
             "rate=${format.sampleRate} channels=${format.channels} " +
             "route=$routeLabel " +
+            (panSide?.let { "driverSide=${it.name.lowercase()} " } ?: "") +
             "bufferMs=${capacityBytes * 1000L / bytesPerSecond} startMs=${startThresholdBytes * 1000L / bytesPerSecond} " +
             trackMetadata)
         Log.i(
@@ -2413,16 +2431,32 @@ private class AudioRenderer(
             applyFadeIn(data, offset, length)
             fadeApplied = true
         }
+        // The track takes the panned copy and the call's echo reference keeps the source PCM. Music is never
+        // panned, so its analysis below reads the same bytes either way.
+        val side = panSide
+        val out: ByteArray
+        val outOffset: Int
+        val outLength: Int
+        if (side == null) {
+            out = data; outOffset = offset; outLength = length
+        } else {
+            val needed = DriverSideAudio.outputBytes(length, pcmChannels)
+            if (panned.size < needed) panned = ByteArray(needed)
+            out = panned; outOffset = 0
+            outLength = DriverSideAudio.pan(data, offset, length, pcmChannels, side, panned)
+        }
+        // Track bytes per source byte: a mono voice doubles in a stereo track.
+        val expansion = if (side != null && pcmChannels == 1) 2 else 1
         var written = 0
-        while (written < length && running) {
+        while (written < outLength && running) {
             val writeLength = if (playbackStarted) {
-                length - written
+                outLength - written
             } else {
-                minOf(length - written, PREBUFFER_WRITE_CHUNK_BYTES)
+                minOf(outLength - written, PREBUFFER_WRITE_CHUNK_BYTES)
             }
             val writeStarted = System.nanoTime()
             diagnosticStage = "track-write"
-            val count = track.write(data, offset + written, writeLength, AudioTrack.WRITE_BLOCKING)
+            val count = track.write(out, outOffset + written, writeLength, AudioTrack.WRITE_BLOCKING)
             maxWriteMs = maxOf(maxWriteMs, (System.nanoTime() - writeStarted) / 1_000_000L)
             if (count < 0) {
                 writeErrorsThisWindow++
@@ -2437,9 +2471,9 @@ private class AudioRenderer(
             val framesWritten = count / frameBytes
             if (ambientMedia && AmbientMusicController.wantsPcm(ambientRendererToken)) {
                 ambientEnvelope.append(totalWrittenFrames, framesWritten.toLong(),
-                    AmbientMusicEnvelope.pcmRms(data, offset + written, count),
-                    ambientBass.rms(data, offset + written, count),
-                    if (AmbientMusicController.wantsBands(ambientRendererToken)) ambientBands.analyze(data, offset + written, count) else null)
+                    AmbientMusicEnvelope.pcmRms(out, outOffset + written, count),
+                    ambientBass.rms(out, outOffset + written, count),
+                    if (AmbientMusicController.wantsBands(ambientRendererToken)) ambientBands.analyze(out, outOffset + written, count) else null)
             }
             written += count
             totalWrittenFrames += framesWritten
@@ -2461,7 +2495,8 @@ private class AudioRenderer(
                 } else {
                     null
                 }
-                reference.append(data, offset + written - count, count, pcmChannels, pending, System.nanoTime())
+                reference.append(data, offset + (written - count) / expansion, count / expansion, pcmChannels, pending,
+                    System.nanoTime())
             }
         }
     }

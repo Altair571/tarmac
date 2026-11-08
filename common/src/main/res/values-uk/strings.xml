@@ -704,6 +704,8 @@
     <string name="call_echo_cancellation_description">Намагається зменшити луну динаміків, яку чує співрозмовник під час дзвінків CarPlay. Результат залежить від головного пристрою. Застосовується під час наступного підключення CarPlay.</string>
     <string name="call_voice_filter">Чіткіші голоси у дзвінках (експериментально)</string>
     <string name="call_voice_filter_description">Зменшує баси у дзвінках CarPlay. Може змінити звучання голосів. Застосовується під час наступного підключення CarPlay.</string>
+    <string name="settings_driver_side_voice">Підказки й дзвінки з боку водія (експериментально)</string>
+    <string name="settings_driver_side_voice_description">Навігаційні підказки й дзвінки CarPlay, а також підказки Android Auto звучать лише з динаміків з боку водія: лівих або правих, якщо ввімкнено «Кермо праворуч». Пасажири чують їх тихо або не чують зовсім. Якщо головний пристрій зводить ці звуки в моно, вони звучать як раніше. Дзвінки Android Auto йдуть через Bluetooth самого авто й не змінюються. Застосовується з наступного підключення.</string>
     <string name="phone_audio_route">Телефонний звук автомобіля для дзвінків CarPlay (експериментально)</string>
     <string name="phone_audio_route_description">Утримує виклик Telecom під час дзвінків CarPlay, щоб автомобіль перейшов у телефонний режим звуку й запрацювало його власне ехозаглушення. Ехозаглушувач Tarmac у таких дзвінках не використовується. Ваш голос може звучати гучніше або зі спотвореннями. За замовчуванням вимкнено; діє з наступного дзвінка.</string>
     <string name="phone_audio_route_apps">Телефонний звук автомобіля для VoIP-дзвінків в інших застосунках (експериментально)</string>
@@ -779,6 +781,11 @@
     <string name="setup_badge_adb">Потрібен ADB через мережу</string>
     <string name="setup_done_title">Усе готово</string>
     <string name="setup_done_description">Під’єднайте iPhone зараз. Цей майстер можна знову відкрити в налаштуваннях.</string>
+    <string name="setup_step_car">Авто</string>
+    <string name="setup_step_iphone">iPhone</string>
+    <string name="setup_step_finish">Завершення</string>
+    <string name="setup_almost_ready_title">Майже готово</string>
+    <string name="setup_almost_ready_description">Завершіть позначені нижче пункти або під’єднайтеся зараз — Tarmac попросить те, чого бракує. Цей майстер можна знову відкрити в налаштуваннях.</string>
     <string name="settings_discard_pending_title">Відкинути зміни?</string>
     <string name="settings_discard_pending_message">Роздільна здатність, частота кадрів, підключення та інші змінені налаштування ще не збережені. «Зберегти та перепідключитися» застосує їх.</string>
     <string name="settings_discard_pending_confirm">Відкинути</string>

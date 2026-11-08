@@ -791,6 +791,8 @@
     <string name="call_echo_cancellation_description">Tries to reduce speaker echo sent to the other person during CarPlay calls. Results depend on the head unit. Applies at the next CarPlay connection.</string>
     <string name="call_voice_filter">Clearer call voices (experimental)</string>
     <string name="call_voice_filter_description">Cuts bass from CarPlay call audio. This may change how voices sound. Applies at the next CarPlay connection.</string>
+    <string name="settings_driver_side_voice">Guidance and calls on the driver’s side (experimental)</string>
+    <string name="settings_driver_side_voice_description">CarPlay navigation prompts and calls, and Android Auto guidance, play only from the speakers on the driver’s side: the left, or the right with Right-hand drive on. Passengers hear them faintly or not at all. A head unit that mixes these sounds to mono plays them as before. Android Auto calls use the car’s own Bluetooth and do not change. Applies at the next connection.</string>
     <string name="phone_audio_route">Car phone audio for CarPlay calls (experimental)</string>
     <string name="phone_audio_route_description">Holds a Telecom call during CarPlay calls so the car switches to its phone audio state and its own echo cancellation works. Tarmac’s echo canceller stays out of those calls. Your voice can come out louder or distorted. Off by default; applies at the next call.</string>
     <string name="phone_audio_route_apps">Car phone audio for VoIP calls in other apps (experimental)</string>
@@ -933,6 +935,11 @@
     <string name="setup_badge_adb">Needs ADB over network</string>
     <string name="setup_done_title">You’re ready</string>
     <string name="setup_done_description">Connect your iPhone now. You can open this guide again from Settings.</string>
+    <string name="setup_step_car">Car</string>
+    <string name="setup_step_iphone">iPhone</string>
+    <string name="setup_step_finish">Finish</string>
+    <string name="setup_almost_ready_title">Almost ready</string>
+    <string name="setup_almost_ready_description">Finish what’s marked below, or connect now and Tarmac will ask for what’s missing. You can open this guide again from Settings.</string>
     <string name="settings_discard_pending_title">Discard your changes?</string>
     <string name="settings_discard_pending_message">Resolution, frame rate, connection and the other settings you just changed are not saved yet. Save and reconnect applies them.</string>
     <string name="settings_discard_pending_confirm">Discard</string>

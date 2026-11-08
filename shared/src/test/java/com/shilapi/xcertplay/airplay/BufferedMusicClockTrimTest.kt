@@ -112,9 +112,9 @@ class BufferedMusicClockTrimTest {
 
     private class RendererWithModelledDecoder(format: AudioFormat, startMs: Int, drift: Double, reports: MutableList<String>) {
         private val type = Class.forName("com.shilapi.xcertplay.media.AudioRenderer")
-        private val renderer = type.declaredConstructors.single { it.parameterCount == 13 }.apply { isAccessible = true }
+        private val renderer = type.declaredConstructors.single { it.parameterCount == 14 }.apply { isAccessible = true }
             .newInstance(format, false, false, 0, 0, AudioFocusCoordinator(null, false), 0, startMs,
-                { line: String -> reports += line }, 0L, false, null, false)
+                { line: String -> reports += line }, 0L, false, null, false, null)
         private val createdMs = SystemClock.uptimeMillis()
         private val packets: LinkedBlockingQueue<*>
         private val track: AudioTrack

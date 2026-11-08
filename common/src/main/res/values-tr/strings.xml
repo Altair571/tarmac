@@ -755,6 +755,8 @@
     <string name="call_echo_cancellation_description">CarPlay aramaları sırasında karşı tarafa gönderilen hoparlör yankısını azaltmaya çalışır. Sonuçlar ana üniteye bağlıdır. Bir sonraki CarPlay bağlantısında geçerli olur.</string>
     <string name="call_voice_filter">Daha net arama sesleri (deneysel)</string>
     <string name="call_voice_filter_description">CarPlay arama sesindeki basları keser. Bu, seslerin tonunu değiştirebilir. Sonraki CarPlay bağlantısında geçerli olur.</string>
+    <string name="settings_driver_side_voice">Yönlendirmeler ve aramalar sürücü tarafında (deneysel)</string>
+    <string name="settings_driver_side_voice_description">CarPlay navigasyon yönlendirmeleri ve aramaları ile Android Auto yönlendirmeleri yalnızca sürücü tarafındaki hoparlörlerden çalar: sol taraf ya da Sağdan direksiyon açıksa sağ taraf. Yolcular bunları hafif duyar ya da hiç duymaz. Bu sesleri monoya karıştıran ana ünitelerde eskisi gibi çalar. Android Auto aramaları aracın kendi Bluetooth bağlantısını kullanır ve değişmez. Sonraki bağlantıda geçerli olur.</string>
     <string name="phone_audio_route">CarPlay aramaları için araç telefon sesi (deneysel)</string>
     <string name="phone_audio_route_description">CarPlay aramaları sırasında bir Telekom aramasını tutar, böylece araç telefon sesi durumuna geçer ve kendi yankı engellemesi çalışır. Tarmac\'in yankı engelleyicisi bu aramalardan uzak durur. Sesiniz daha yüksek veya bozuk çıkabilir. Varsayılan olarak kapalıdır; sonraki aramada geçerli olur.</string>
     <string name="phone_audio_route_apps">Diğer uygulamalardaki VoIP aramaları için araç telefon sesi (deneysel)</string>
@@ -890,6 +892,11 @@
     <string name="setup_badge_adb">Ağ üzerinden ADB gerektirir</string>
     <string name="setup_done_title">Hazırsınız</string>
     <string name="setup_done_description">iPhone\'unuzu şimdi bağlayın. Bu kılavuzu Ayarlar\'dan tekrar açabilirsiniz.</string>
+    <string name="setup_step_car">Araç</string>
+    <string name="setup_step_iphone">iPhone</string>
+    <string name="setup_step_finish">Bitiş</string>
+    <string name="setup_almost_ready_title">Neredeyse hazır</string>
+    <string name="setup_almost_ready_description">Aşağıda işaretlenenleri tamamlayın ya da şimdi bağlanın; Tarmac eksik olanı soracaktır. Bu kılavuzu Ayarlar\'dan tekrar açabilirsiniz.</string>
     <string name="settings_discard_pending_title">Değişiklikleriniz iptal edilsin mi?</string>
     <string name="settings_discard_pending_message">Çözünürlük, kare hızı, bağlantı ve az önce değiştirdiğiniz diğer ayarlar henüz kaydedilmedi. Kaydet ve yeniden bağlan bunları uygular.</string>
     <string name="settings_discard_pending_confirm">Değişiklikleri iptal et</string>
