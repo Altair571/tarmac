@@ -82,3 +82,23 @@ Spacing, size and shape in the Settings screen MUST come from one place.
    `AdaptiveSettingsUiTest.overviewLinksToEveryOtherCategory` checks this.
 5. A layout change MUST include compact and full screenshots with a large font scale.
    Add an Arabic (right-to-left) screenshot when the change touches row alignment.
+
+## Look and motion
+
+Tarmac's own screens share one look: a road at night and by day.
+The tokens are in `DiPlayPalette.kt`, `AppType.kt` and the `Motion` object in `HomeVisuals.kt`.
+
+1. A colour MUST come from `DiPlayPalette` or `Tints`. A new colour literal MUST NOT be added to a screen.
+2. `accent` fills a control. Text or a glyph in the tint MUST use `accentText`, which is the tint made readable on a card and on a button.
+3. Amber (`DiPlayPalette.LANE_AMBER`) is Tarmac's mark: the app icon, the centre-line progress (`LaneProgressView`) and the setup guide's progress.
+   It MUST NOT colour a control, a selection or a warning.
+4. Text uses `label()`, `eyebrow()` or `AppType.apply(view, weight)`. These choose the display cut for titles and the open digits.
+   A number that counts (a clock, a distance) passes `tabular = true`.
+5. The icon beside a title is `iconWell(icon, colour, size)` with a `Tints` colour.
+6. A card is `card()` or `rounded(CARD, HAIRLINE)`. A card is see-through only at night: by day it is solid and raised, and a shadow shows through a see-through card.
+7. An animation MUST use a duration and a curve from `Motion`, and MUST do nothing when `motionEnabled()` is false.
+   A repeating animation MUST stop when its view is hidden or detached.
+8. Before a block is shown or hidden in place, call `easeLayoutChange()`.
+   A change of page goes through `render()`, which fades the old page out and slides the new one in.
+9. The connecting screen's cabin is a still picture rendered from a 3D scene, not drawn in the app.
+   To change it, edit `scripts/cabin/render_cabin.c`, run `scripts/cabin/render.sh`, and copy the icon corners it prints into `ICON_QUAD` in `ConnectingScreen.kt`.

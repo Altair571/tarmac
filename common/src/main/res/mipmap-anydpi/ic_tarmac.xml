@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Android 7.x has no adaptive icons: the same art on a rounded square. -->
+<!-- Android 7.x has no adaptive icons: the same mark on a rounded square of asphalt. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="rectangle">
             <corners android:radius="24dp" />
-            <gradient android:angle="270" android:startColor="#FF48484A" android:endColor="#FF111113" />
+            <gradient android:angle="270" android:startColor="#FF262A32" android:endColor="#FF0A0B0D" />
         </shape>
     </item>
     <item android:drawable="@drawable/ic_tarmac_foreground" />

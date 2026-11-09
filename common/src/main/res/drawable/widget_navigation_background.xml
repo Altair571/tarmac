@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- The launcher widget is a Tarmac card at night: the card's colour, corner and hairline. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <solid android:color="#E6101820" />
-    <corners android:radius="20dp" />
+    <solid android:color="#EB14161A" />
+    <corners android:radius="24dp" />
+    <stroke android:width="1dp" android:color="#FF343942" />
 </shape>

@@ -23,7 +23,7 @@ internal enum class CarButtonStyle(
 ) {
     BYD("byd", R.string.settings_car_button_style_byd, null, 0, 0),
     TARMAC("tarmac", R.string.settings_car_button_style_tarmac, R.drawable.ic_tarmac_foreground,
-        Color.rgb(72, 72, 74), Color.rgb(17, 17, 19), fullBleed = true),
+        Color.rgb(38, 42, 50), Color.rgb(10, 11, 13), fullBleed = true),
     CAR("car", R.string.settings_car_button_style_car, R.drawable.ic_dp_car, Color.rgb(10, 132, 255), Color.rgb(0, 88, 208)),
     HOME("home", R.string.settings_car_button_style_home, R.drawable.ic_dp_home, Color.rgb(52, 199, 89), Color.rgb(36, 138, 61)),
     WHEEL("wheel", R.string.settings_car_button_style_wheel, R.drawable.ic_dp_steering_wheel,

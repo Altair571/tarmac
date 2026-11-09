@@ -87,10 +87,9 @@ class ConnectingScreenScreenshotsTest {
         val context = RuntimeEnvironment.getApplication()
         for ((name, night, rightHandDrive) in listOf(Triple("night", true, false), Triple("day", false, false),
             Triple("night-right-hand-drive", true, true))) {
-            val picture = ConnectingDashboardView(context, context.getDrawable(R.drawable.ic_carplay)).apply {
+            val picture = ConnectingDashboardView(context).apply {
                 this.night = night
                 this.rightHandDrive = rightHandDrive
-                pulse.state = PulseState.CONNECTING
             }
             val width = 1400
             val height = 1000

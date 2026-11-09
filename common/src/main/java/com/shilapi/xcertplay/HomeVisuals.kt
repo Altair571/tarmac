@@ -1,8 +1,6 @@
 package com.shilapi.xcertplay
 
-import android.animation.Animator
 import android.animation.ArgbEvaluator
-import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
@@ -14,13 +12,21 @@ import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
+import android.graphics.ColorFilter
+import android.graphics.LinearGradient
+import android.graphics.PixelFormat
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
+import android.graphics.Shader
 import android.os.Build
+import android.os.SystemClock
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.DecelerateInterpolator
+import android.view.animation.Interpolator
 import android.view.animation.LinearInterpolator
 import android.view.animation.OvershootInterpolator
+import android.view.animation.PathInterpolator
 import android.widget.FrameLayout
 import kotlin.math.max
 import kotlin.math.min
@@ -32,14 +38,40 @@ internal fun motionEnabled(): Boolean = Build.VERSION.SDK_INT < 26 || ValueAnima
 private fun withAlpha(color: Int, alpha: Int) = (color and 0x00FFFFFF) or (alpha.coerceIn(0, 255) shl 24)
 
 /**
+ * Tarmac's motion, in one place. Things arrive quickly and settle slowly, as a car does when it pulls up;
+ * they leave faster than they came. Every animation uses one of these durations and curves.
+ */
+internal object Motion {
+    /** A press, a tick appearing. */
+    const val QUICK = 120L
+    /** A state changing inside a screen: a status line, a selection sliding. */
+    const val BASE = 260L
+    /** A screen or a card arriving. */
+    const val ENTER = 440L
+    /** The old screen leaving before the new one arrives. */
+    const val EXIT = 110L
+    /** The new screen waits this long, so the old one is mostly gone before it shows: one page, then the other. */
+    const val HANDOVER = 70L
+    /** Between one card and the next when a page opens. */
+    const val STAGGER = 45L
+
+    /** Arrivals: out of the gate fast, a long settle. */
+    val enter: Interpolator = PathInterpolator(.16f, 1f, .3f, 1f)
+    /** Departures. */
+    val exit: Interpolator = PathInterpolator(.4f, 0f, 1f, 1f)
+    /** Moves from one place to another on the same screen. */
+    val move: Interpolator = PathInterpolator(.3f, 0f, 0f, 1f)
+}
+
+/**
  * The ambient light behind Home and Settings: two soft glows drifting slowly, tinted by the cover of
  * the song that is playing. Only view properties move, so the render thread animates them without a redraw.
  */
 internal class AmbientBackdropView(context: Context, base: Int, private val night: Boolean) : FrameLayout(context) {
     private val glows = List(3) { View(context).apply { background = GradientDrawable().apply { gradientType = GradientDrawable.RADIAL_GRADIENT } } }
-    private val drift = mutableListOf<Animator>()
     private var colors = IntArray(3) { Color.TRANSPARENT }
     private var tintAnimator: ValueAnimator? = null
+    private var drift: ValueAnimator? = null
 
     init {
         setBackgroundColor(base)
@@ -47,18 +79,42 @@ internal class AmbientBackdropView(context: Context, base: Int, private val nigh
         glows.forEach { addView(it) }
     }
 
+    /** Each glow is a square nine tenths of the longer side, whatever the window's shape. */
+    private fun glowSize(width: Int, height: Int) = (max(width, height) * 0.9f).toInt()
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val width = MeasureSpec.getSize(widthMeasureSpec)
+        val height = MeasureSpec.getSize(heightMeasureSpec)
+        setMeasuredDimension(width, height)
+        val exact = MeasureSpec.makeMeasureSpec(glowSize(width, height), MeasureSpec.EXACTLY)
+        glows.forEach { it.measure(exact, exact) }
+    }
+
+    /**
+     * The glows are placed here and not through layout parameters set while the size changes: those are
+     * only read at the next layout pass, and until one came each glow kept the window's own shape, which
+     * cut its light off along a straight edge.
+     */
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        val width = right - left
+        val height = bottom - top
+        val size = glowSize(width, height)
+        glows.forEachIndexed { index, glow ->
+            // Light from the top start, the end edge and below, as a low sun and a city light a road at dusk.
+            val centreX = floatArrayOf(.10f, .95f, .45f)[index] * width
+            val centreY = floatArrayOf(0f, .30f, 1.05f)[index] * height
+            val glowLeft = (centreX - size / 2f).toInt()
+            val glowTop = (centreY - size / 2f).toInt()
+            glow.layout(glowLeft, glowTop, glowLeft + size, glowTop + size)
+            (glow.background as GradientDrawable).gradientRadius = size / 2f
+        }
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         if (w == 0 || h == 0) return
-        val size = (max(w, h) * 0.9f).toInt()
-        glows.forEachIndexed { index, glow ->
-            glow.layoutParams = LayoutParams(size, size)
-            // Light from the top start, the right edge and below, like the soft colour fields of an iOS wallpaper.
-            glow.x = floatArrayOf(.10f, .95f, .45f)[index] * w - size / 2f
-            glow.y = floatArrayOf(0f, .30f, 1.05f)[index] * h - size / 2f
-            (glow.background as GradientDrawable).gradientRadius = size / 2f
-        }
         paint(colors)
+        place(SystemClock.uptimeMillis())
         restartDrift()
     }
 
@@ -87,9 +143,27 @@ internal class AmbientBackdropView(context: Context, base: Int, private val nigh
     private fun paint(next: IntArray) {
         colors = next
         // The palette is already toned down, so the glows can be fuller without a cover turning garish.
-        val alpha = if (night) 0x8C else 0x70
+        val alpha = if (night) 0x7A else 0x66
         glows.forEachIndexed { index, glow ->
             (glow.background as GradientDrawable).colors = intArrayOf(withAlpha(next[index], alpha), withAlpha(next[index], 0))
+        }
+    }
+
+    /**
+     * Where each glow is at [now]. The drift is a function of the clock, not of when this view was made, so
+     * a page that is rebuilt (every setting change rebuilds it) carries on from the same place without a jump.
+     */
+    private fun place(now: Long) {
+        if (width == 0) return
+        val seconds = now / 1000.0
+        glows.forEachIndexed { index, glow ->
+            val reach = width * .06f * if (index % 2 == 0) 1f else -1f
+            fun wave(periodSeconds: Int, shift: Double) = sin(seconds * 2 * Math.PI / periodSeconds + shift).toFloat()
+            glow.translationX = reach * wave(34 + index * 8, index * 2.1)
+            glow.translationY = reach * .6f * wave(26 + index * 6, index * 1.3)
+            val scale = 1.06f + .06f * wave(22 + index * 4, index * .7)
+            glow.scaleX = scale
+            glow.scaleY = scale
         }
     }
 
@@ -101,26 +175,18 @@ internal class AmbientBackdropView(context: Context, base: Int, private val nigh
     private fun restartDrift() {
         stopDrift()
         if (!motionEnabled() || width == 0 || !isAttachedToWindow) return
-        glows.forEachIndexed { index, glow ->
-            val reach = width * 0.06f * if (index % 2 == 0) 1f else -1f
-            fun loop(property: String, vararg values: Float, millis: Long) =
-                ObjectAnimator.ofFloat(glow, property, *values).apply {
-                    duration = millis
-                    repeatCount = ValueAnimator.INFINITE
-                    repeatMode = ValueAnimator.REVERSE
-                    interpolator = AccelerateDecelerateInterpolator()
-                    start()
-                }
-            drift += loop("translationX", 0f, reach, millis = 17_000L + index * 4_000L)
-            drift += loop("translationY", 0f, reach * 0.6f, millis = 13_000L + index * 3_000L)
-            drift += loop("scaleX", 1f, 1.12f, millis = 11_000L + index * 2_000L)
-            drift += loop("scaleY", 1f, 1.12f, millis = 11_000L + index * 2_000L)
+        drift = ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = 1_000
+            repeatCount = ValueAnimator.INFINITE
+            interpolator = LinearInterpolator()
+            addUpdateListener { place(SystemClock.uptimeMillis()) }
+            start()
         }
     }
 
     private fun stopDrift() {
-        drift.forEach(Animator::cancel)
-        drift.clear()
+        drift?.cancel()
+        drift = null
     }
 
     override fun onDetachedFromWindow() {
@@ -134,9 +200,9 @@ internal class AmbientBackdropView(context: Context, base: Int, private val nigh
 internal enum class PulseState { READY, CONNECTING, CONNECTED, ATTENTION }
 
 /**
- * The CarPlay app icon with its state, drawn as iOS draws an app's state: a plain icon while it waits,
- * ripples in the icon's own rounded-square shape while it connects, and a corner badge (a tick, or an
- * exclamation mark) once it is connected or needs attention.
+ * The CarPlay app icon with its state: a plain icon while it waits, ripples in the icon's own
+ * rounded-square shape while it connects, and a corner badge (a tick, or an exclamation mark) that
+ * pops in once it is connected or needs attention.
  */
 internal class ConnectionPulseView(context: Context, private val icon: Drawable?) : View(context) {
     private val ripple = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
@@ -152,6 +218,8 @@ internal class ConnectionPulseView(context: Context, private val icon: Drawable?
     private val density = resources.displayMetrics.density
     private var phase = 0f
     private var animator: ValueAnimator? = null
+    private var badge = 1f
+    private var badgeAnimator: ValueAnimator? = null
     /** The state's colour: the ripples and the badge. */
     var color: Int = Color.WHITE
         set(value) { field = value; invalidate() }
@@ -163,11 +231,26 @@ internal class ConnectionPulseView(context: Context, private val icon: Drawable?
             if (field == value) return
             field = value
             restart()
+            popBadge()
             invalidate()
         }
 
     init {
         importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
+    }
+
+    /** The badge springs out of the icon's corner when the state it marks begins. */
+    private fun popBadge() {
+        badgeAnimator?.cancel()
+        badge = 1f
+        if (state != PulseState.CONNECTED && state != PulseState.ATTENTION) return
+        if (!motionEnabled() || !isAttachedToWindow) return
+        badgeAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = Motion.ENTER
+            interpolator = OvershootInterpolator(2.6f)
+            addUpdateListener { badge = it.animatedValue as Float; invalidate() }
+            start()
+        }
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -179,10 +262,11 @@ internal class ConnectionPulseView(context: Context, private val icon: Drawable?
         if (state == PulseState.CONNECTING && motionEnabled()) {
             ripple.strokeWidth = max(1.5f * density, size * 0.018f)
             val reach = (size - iconSize) / 2 - ripple.strokeWidth
-            for (wave in 0 until 2) {
-                val t = (phase + wave / 2f) % 1f
-                val grow = t * reach
-                ripple.color = withAlpha(color, ((1f - t) * 170).toInt())
+            for (wave in 0 until RIPPLES) {
+                val t = (phase + wave / RIPPLES.toFloat()) % 1f
+                // A ripple slows as it spreads and thins out before it reaches the edge.
+                val grow = (1f - (1f - t) * (1f - t)) * reach
+                ripple.color = withAlpha(color, ((1f - t) * (1f - t) * 190).toInt())
                 bounds.set(left - grow, top - grow, left + iconSize + grow, top + iconSize + grow)
                 canvas.drawRoundRect(bounds, corner + grow * .5f, corner + grow * .5f, ripple)
             }
@@ -192,9 +276,10 @@ internal class ConnectionPulseView(context: Context, private val icon: Drawable?
             it.draw(canvas)
         }
         if (state != PulseState.CONNECTED && state != PulseState.ATTENTION) return
-        val radius = iconSize * 0.19f
-        val cx = left + iconSize - radius * .45f
-        val cy = top + iconSize - radius * .45f
+        val radius = iconSize * 0.19f * badge
+        if (radius <= 0f) return
+        val cx = left + iconSize - iconSize * 0.19f * .45f
+        val cy = top + iconSize - iconSize * 0.19f * .45f
         fill.color = surface
         canvas.drawCircle(cx, cy, radius + max(2f * density, radius * .24f), fill)
         fill.color = color
@@ -227,7 +312,7 @@ internal class ConnectionPulseView(context: Context, private val icon: Drawable?
         stop()
         if (state != PulseState.CONNECTING || !motionEnabled() || !isAttachedToWindow) return
         animator = ValueAnimator.ofFloat(0f, 1f).apply {
-            duration = 1_600
+            duration = 2_400
             repeatCount = ValueAnimator.INFINITE
             interpolator = LinearInterpolator()
             addUpdateListener { phase = it.animatedValue as Float; invalidate() }
@@ -238,6 +323,10 @@ internal class ConnectionPulseView(context: Context, private val icon: Drawable?
     private fun stop() {
         animator?.cancel()
         animator = null
+    }
+
+    private companion object {
+        const val RIPPLES = 3
     }
 }
 
@@ -300,29 +389,198 @@ internal class EqualizerView(context: Context, private val color: Int) : View(co
     }
 }
 
-/** A gentle press: the control sinks a little under the finger and springs back on release. */
+/**
+ * A press: the control sinks a little under the finger and springs back on release. Without [depth] the
+ * control gives by the same few dp whatever its size, so a full-width row does not shrink more than a chip.
+ */
 @SuppressLint("ClickableViewAccessibility")
-internal fun View.pressFeedback(depth: Float = 0.965f) {
+internal fun View.pressFeedback(depth: Float = 0f) {
     setOnTouchListener { view, event ->
         if (motionEnabled()) when (event.actionMasked) {
-            MotionEvent.ACTION_DOWN -> view.animate().scaleX(depth).scaleY(depth)
-                .setDuration(110).setInterpolator(DecelerateInterpolator()).start()
+            MotionEvent.ACTION_DOWN -> {
+                val target = if (depth > 0f) depth else {
+                    val longest = max(view.width, view.height)
+                    if (longest == 0) .97f
+                    else (1f - PRESS_GIVE_DP * view.resources.displayMetrics.density / longest).coerceIn(.9f, .99f)
+                }
+                view.animate().scaleX(target).scaleY(target).setDuration(Motion.QUICK).setInterpolator(Motion.move).start()
+            }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> view.animate().scaleX(1f).scaleY(1f)
-                .setDuration(320).setInterpolator(OvershootInterpolator(2.4f)).start()
+                .setDuration(Motion.ENTER).setInterpolator(OvershootInterpolator(2.2f)).start()
         }
         false
     }
 }
 
-/** Cards rise into place one after another when a page opens. */
-internal fun staggerIn(views: List<View>, rise: Float) {
+/** How far a pressed control gives, across its longer side. */
+private const val PRESS_GIVE_DP = 10f
+
+/** Cards rise into place one after another when a page opens, after [delay]. */
+internal fun staggerIn(views: List<View>, rise: Float, delay: Long = 0L) {
     if (!motionEnabled()) return
     views.forEachIndexed { index, view ->
         view.alpha = 0f
         view.translationY = rise
         view.animate().alpha(1f).translationY(0f)
-            .setStartDelay(index * 70L).setDuration(460)
-            .setInterpolator(DecelerateInterpolator(2.2f)).start()
+            .setStartDelay(delay + index * Motion.STAGGER).setDuration(Motion.ENTER)
+            .setInterpolator(Motion.enter).start()
+    }
+}
+
+/**
+ * A road's centre line as a progress mark: amber dashes in a row, faint and still while nothing happens,
+ * bright and streaming toward the end edge while Tarmac works (connecting, checking, downloading).
+ * It is Tarmac's mark for "under way", the same dashes as the app icon's.
+ */
+internal class LaneProgressView(context: Context, private val color: Int = DiPlayPalette.LANE_AMBER) : View(context) {
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val fade = Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_IN) }
+    private val density = resources.displayMetrics.density
+    private var phase = 0f
+    private var energy = 0f
+    private var stream: ValueAnimator? = null
+    private var energyAnimator: ValueAnimator? = null
+    /** The faint line shown at rest; 0 hides the dashes until they are [active]. */
+    var restAlpha = .22f
+        set(value) { field = value; invalidate() }
+    var active = false
+        set(value) {
+            if (field == value) return
+            field = value
+            restart()
+        }
+
+    init {
+        importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        setMeasuredDimension(getDefaultSize(suggestedMinimumWidth, widthMeasureSpec),
+            resolveSize((DASH_HEIGHT_DP * density).toInt(), heightMeasureSpec))
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        if (w == 0) return
+        // The row fades out toward both ends, so dashes come from nowhere and leave the same way.
+        fade.shader = LinearGradient(0f, 0f, w.toFloat(), 0f,
+            intArrayOf(0, Color.BLACK, Color.BLACK, 0), floatArrayOf(0f, .12f, .88f, 1f), Shader.TileMode.CLAMP)
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        val alpha = restAlpha + (1f - restAlpha) * energy
+        if (alpha <= 0f || width == 0) return
+        val dash = DASH_LENGTH_DP * density
+        val pitch = dash + DASH_GAP_DP * density
+        val thickness = height.toFloat()
+        val layer = canvas.saveLayer(0f, 0f, width.toFloat(), thickness, null)
+        paint.color = withAlpha(color, (alpha * 255).toInt())
+        val direction = if (layoutDirection == LAYOUT_DIRECTION_RTL) -1f else 1f
+        var x = -pitch + (phase * pitch * direction).let { if (it < 0) it + pitch else it }
+        while (x < width) {
+            canvas.drawRoundRect(x, 0f, x + dash, thickness, thickness / 2, thickness / 2, paint)
+            x += pitch
+        }
+        canvas.drawRect(0f, 0f, width.toFloat(), thickness, fade)
+        canvas.restoreToCount(layer)
+    }
+
+    override fun onVisibilityAggregated(isVisible: Boolean) {
+        super.onVisibilityAggregated(isVisible)
+        if (isVisible) restart() else stop()
+    }
+
+    override fun onDetachedFromWindow() {
+        stop()
+        super.onDetachedFromWindow()
+    }
+
+    private fun restart() {
+        stop()
+        val target = if (active) 1f else 0f
+        if (!motionEnabled() || !isAttachedToWindow) {
+            energy = target
+            invalidate()
+            return
+        }
+        energyAnimator = ValueAnimator.ofFloat(energy, target).apply {
+            duration = Motion.BASE * 2
+            interpolator = Motion.move
+            addUpdateListener { energy = it.animatedValue as Float; invalidate() }
+            start()
+        }
+        if (!active) return
+        stream = ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = STREAM_MILLIS
+            repeatCount = ValueAnimator.INFINITE
+            interpolator = LinearInterpolator()
+            addUpdateListener { phase = it.animatedValue as Float; invalidate() }
+            start()
+        }
+    }
+
+    private fun stop() {
+        stream?.cancel()
+        stream = null
+        energyAnimator?.cancel()
+        energyAnimator = null
+    }
+
+    private companion object {
+        const val DASH_LENGTH_DP = 18f
+        const val DASH_GAP_DP = 12f
+        const val DASH_HEIGHT_DP = 4f
+        /** One dash and its gap pass in this time: an unhurried road, not a spinner. */
+        const val STREAM_MILLIS = 620L
+    }
+}
+
+/**
+ * Tarmac's mark drawn to any size: the horizon bar in [bar] over the three centre-line dashes in [dash],
+ * the same geometry as the app icon.
+ */
+internal class TarmacMarkDrawable(private val bar: Int, private val dash: Int = DiPlayPalette.LANE_AMBER) : Drawable() {
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val path = Path()
+    private val rect = RectF()
+
+    override fun draw(canvas: Canvas) {
+        val box = bounds
+        val unit = min(box.width(), box.height()) / MARK_SIZE
+        val left = box.left + (box.width() - MARK_SIZE * unit) / 2f
+        val top = box.top + (box.height() - MARK_SIZE * unit) / 2f
+        fun x(value: Float) = left + (value - MARK_LEFT) * unit
+        fun y(value: Float) = top + (value - MARK_TOP) * unit
+        paint.color = bar
+        rect.set(x(30f), y(29.5f), x(78f), y(38.5f))
+        canvas.drawRoundRect(rect, 4.5f * unit, 4.5f * unit, paint)
+        paint.color = dash
+        // Each dash is longer and wider than the one beyond it, as a centre line is seen from the driver's seat.
+        for ((near, far) in DASHES) {
+            path.rewind()
+            path.moveTo(x(54f - halfWidth(near)), y(near))
+            path.lineTo(x(54f + halfWidth(near)), y(near))
+            path.lineTo(x(54f + halfWidth(far)), y(far))
+            path.lineTo(x(54f - halfWidth(far)), y(far))
+            path.close()
+            canvas.drawPath(path, paint)
+        }
+    }
+
+    private fun halfWidth(y: Float) = 2.8f + .11f * (y - 43f)
+
+    override fun setAlpha(alpha: Int) = Unit
+    override fun setColorFilter(colorFilter: ColorFilter?) = Unit
+    @Deprecated("Deprecated in Java")
+    override fun getOpacity() = PixelFormat.TRANSLUCENT
+
+    private companion object {
+        /** The mark's box in the app icon's 108-unit grid. */
+        const val MARK_LEFT = 28f
+        const val MARK_TOP = 28f
+        const val MARK_SIZE = 52f
+        /** Where each dash starts and ends in that grid, as in ic_tarmac_foreground.xml. */
+        val DASHES = listOf(43f to 49f, 53.5f to 62f, 67f to 79f)
     }
 }
 
@@ -331,9 +589,9 @@ internal fun staggerIn(views: List<View>, rise: Float) {
  * brightness range, so a brown, neon or black cover all give a calm tint, and a grey cover stays neutral.
  */
 internal object CoverPalette {
-    /** Tarmac's own colours when nothing plays: deep blue, teal and indigo. */
+    /** Tarmac's own colours when nothing plays, a road at dusk: deep blue above, indigo at the edge, a low amber glow. */
     fun default(night: Boolean): IntArray = intArrayOf(
-        tone(Color.rgb(10, 116, 226), night), tone(Color.rgb(48, 176, 199), night), tone(Color.rgb(94, 92, 230), night),
+        tone(Color.rgb(22, 104, 227), night), tone(Color.rgb(98, 92, 222), night), tone(Color.rgb(214, 138, 64), night),
     )
 
     fun of(cover: Bitmap, night: Boolean): IntArray {

@@ -1,3 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tarmac's mark for the status bar: the horizon bar over the three centre-line dashes. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
-    <path android:fillColor="#FFFFFFFF" android:pathData="M3,4L21,4L21,18L14,18L14,20L10,20L10,18L3,18ZM5,6L5,16L19,16L19,6ZM10,8L16,11L10,14Z" android:fillType="evenOdd" />
+    <path android:fillColor="#FFFFFFFF" android:pathData="M5.5,4h13a1.6,1.6 0 0 1 1.6,1.6a1.6,1.6 0 0 1 -1.6,1.6h-13a1.6,1.6 0 0 1 -1.6,-1.6a1.6,1.6 0 0 1 1.6,-1.6z" />
+    <path android:fillColor="#FFFFFFFF" android:pathData="M11.05,9L12.95,9L13.15,11.1L10.85,11.1Z" />
+    <path android:fillColor="#FFFFFFFF" android:pathData="M10.7,12.7L13.3,12.7L13.6,15.6L10.4,15.6Z" />
+    <path android:fillColor="#FFFFFFFF" android:pathData="M10.2,17.2L13.8,17.2L14.25,21L9.75,21Z" />
 </vector>

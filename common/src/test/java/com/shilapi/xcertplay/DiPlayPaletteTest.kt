@@ -14,36 +14,50 @@ import kotlin.math.min
 import kotlin.math.pow
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [33], manifest = Config.NONE)
+@Config(sdk = [33])
 class DiPlayPaletteTest {
-    @Test fun darkPaletteUsesTheIosSystemColors() {
+    @Test fun darkPaletteIsTarmacAtNight() {
         val palette = DiPlayPalette.DARK
-        assertEquals(Color.rgb(0, 0, 0), palette.background)
-        assertEquals(Color.rgb(28, 28, 30), palette.surface)
-        assertEquals(Color.rgb(44, 44, 46), palette.button)
-        assertEquals(Color.rgb(255, 255, 255), palette.primaryText)
-        assertEquals(Color.rgb(152, 152, 159), palette.secondaryText)
-        assertEquals(Color.rgb(10, 116, 226), palette.accent)
-        assertEquals(Color.rgb(48, 209, 88), palette.accentTrack)
-        assertEquals(Color.rgb(255, 159, 10), palette.warning)
+        assertEquals(Color.rgb(7, 8, 10), palette.background)
+        assertEquals(Color.rgb(20, 22, 26), palette.surface)
+        assertEquals(Color.rgb(32, 35, 42), palette.button)
+        assertEquals(Color.rgb(245, 246, 248), palette.primaryText)
+        assertEquals(Color.rgb(154, 161, 172), palette.secondaryText)
+        assertEquals(Color.rgb(22, 104, 227), palette.accent)
+        assertEquals(Color.rgb(116, 172, 255), palette.accentText)
+        assertEquals(Color.rgb(255, 178, 36), palette.warning)
         assertFalse(palette.systemBarIconsAreDark)
     }
 
-    @Test fun waitingScreenDelegationKeepsItsExactLightAndDarkColors() {
-        assertEquals(
-            WaitingScreenColors(Color.rgb(0, 0, 0), Color.rgb(255, 255, 255), Color.rgb(152, 152, 159)),
-            WaitingScreenColors.of(night = true),
-        )
-        assertEquals(
-            WaitingScreenColors(Color.rgb(242, 242, 247), Color.BLACK, Color.rgb(108, 108, 112)),
-            WaitingScreenColors.of(night = false),
-        )
+    @Test fun waitingScreenTakesItsColoursFromThePalette() {
+        for (night in listOf(true, false)) {
+            val palette = DiPlayPalette.of(night)
+            assertEquals(
+                WaitingScreenColors(palette.background, palette.primaryText, palette.secondaryText),
+                WaitingScreenColors.of(night),
+            )
+        }
+    }
+
+    /** The themes cannot read the palette, so colors.xml repeats it for the window and dialog backgrounds. */
+    @Test fun themeColourResourcesRepeatThePalette() {
+        val resources = org.robolectric.RuntimeEnvironment.getApplication().resources
+        fun color(id: Int) = resources.getColor(id, null)
+        assertEquals(DiPlayPalette.DARK.background, color(com.shilapi.xcertplay.host.R.color.window_background_dark))
+        assertEquals(DiPlayPalette.DARK.surface, color(com.shilapi.xcertplay.host.R.color.dialog_background_dark))
+        assertEquals(DiPlayPalette.DARK.hairline, color(com.shilapi.xcertplay.host.R.color.dialog_hairline_dark))
+        assertEquals(DiPlayPalette.LIGHT.background, color(com.shilapi.xcertplay.host.R.color.window_background_light))
+        assertEquals(DiPlayPalette.LIGHT.surface, color(com.shilapi.xcertplay.host.R.color.dialog_background_light))
+        assertEquals(DiPlayPalette.LIGHT.hairline, color(com.shilapi.xcertplay.host.R.color.dialog_hairline_light))
     }
 
     @Test fun aChosenAccentKeepsTextReadableOnIt() {
         for (night in listOf(true, false)) for (tint in AccentTint.entries) {
             val palette = DiPlayPalette.of(night).withAccent(tint, night)
             assertContrastAtLeast(palette.onAccent, palette.accent, 3.0)
+            // The tint as text: on a card and on a button, where secondary actions are written in it.
+            assertContrastAtLeast(palette.accentText, palette.surface, 4.5)
+            assertContrastAtLeast(palette.accentText, palette.button, 4.5)
         }
         assertSame(DiPlayPalette.DARK, DiPlayPalette.DARK.withAccent(AccentTint.BLUE, night = true))
     }
@@ -52,10 +66,18 @@ class DiPlayPaletteTest {
         for (palette in listOf(DiPlayPalette.DARK, DiPlayPalette.LIGHT)) {
             assertContrastAtLeast(palette.primaryText, palette.background, 4.5)
             assertContrastAtLeast(palette.secondaryText, palette.background, 4.5)
-            assertContrastAtLeast(palette.accent, palette.background, 4.5)
+            assertContrastAtLeast(palette.secondaryText, palette.surface, 4.5)
+            assertContrastAtLeast(palette.secondaryText, palette.button, 4.5)
+            // The accent fills controls; as text it is accentText, wherever text is written.
+            assertContrastAtLeast(palette.accent, palette.background, 3.0)
+            assertContrastAtLeast(palette.accentText, palette.background, 4.5)
+            assertContrastAtLeast(palette.accentText, palette.surface, 4.5)
+            assertContrastAtLeast(palette.accentText, palette.button, 4.5)
             assertContrastAtLeast(palette.onAccent, palette.accent, 4.5)
             assertContrastAtLeast(palette.warning, palette.background, 4.5)
+            assertContrastAtLeast(palette.warning, palette.surface, 4.5)
             assertContrastAtLeast(palette.success, palette.background, 4.5)
+            assertContrastAtLeast(palette.success, palette.surface, 4.5)
             // The legacy dark danger role is used for graphical/status emphasis, not body text.
             assertContrastAtLeast(palette.danger, palette.background, 3.0)
             assertContrastAtLeast(palette.overlayPrimaryText, palette.overlayBackground, 4.5)

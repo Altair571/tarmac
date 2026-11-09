@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Tarmac's icon: asphalt, lit from above. -->
+<!-- Asphalt at dusk: one dark surface, the road a shade darker on it, and a low amber glow at the horizon. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
     <path android:pathData="M0,0h108v108h-108z">
         <aapt:attr name="android:fillColor">
             <gradient android:type="linear" android:startX="54" android:startY="0" android:endX="54" android:endY="108"
-                android:startColor="#FF48484A" android:endColor="#FF111113" />
+                android:startColor="#FF262A32" android:endColor="#FF0A0B0D" />
+        </aapt:attr>
+    </path>
+    <!-- The road itself, with its edge lines barely lit. -->
+    <path android:fillColor="#8C08090B" android:pathData="M49,34L59,34L98,108L10,108Z" />
+    <path android:fillColor="#29FFFFFF" android:pathData="M49,34L49.8,34L13,108L10,108Z" />
+    <path android:fillColor="#29FFFFFF" android:pathData="M58.2,34L59,34L98,108L95,108Z" />
+    <path android:pathData="M0,0h108v108h-108z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="radial" android:centerX="54" android:centerY="35" android:gradientRadius="38"
+                android:startColor="#42FFC53D" android:endColor="#00FFC53D" />
         </aapt:attr>
     </path>
 </vector>

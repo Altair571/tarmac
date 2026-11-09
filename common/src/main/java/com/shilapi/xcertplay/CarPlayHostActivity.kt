@@ -25,7 +25,6 @@ import android.graphics.RenderEffect
 import android.graphics.Shader
 import android.graphics.Matrix
 import android.graphics.SurfaceTexture
-import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
@@ -162,6 +161,7 @@ open class CarPlayHostActivity : ComponentActivity() {
 
     private var connectionPanel: View? = null
     private var connectingDashboard: ConnectingDashboardView? = null
+    private var connectionLane: LaneProgressView? = null
     private var connectionInstructionsView: TextView? = null
     private var connectionHelpView: TextView? = null
     private var wifiRecoveryButton: View? = null
@@ -2105,15 +2105,11 @@ open class CarPlayHostActivity : ComponentActivity() {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER
         }
-        // A car's cabin with the CarPlay icon rippling on its centre screen.
-        val dashboard = ConnectingDashboardView(this, getDrawable(R.drawable.ic_carplay)).apply {
+        // A still of a car's cabin with CarPlay's icon on its head unit.
+        val dashboard = ConnectingDashboardView(this).apply {
             rightHandDrive = AirPlayPersistence.loadRightHandDrive(this@CarPlayHostActivity)
         }
         connectingDashboard = dashboard
-        dashboard.pulse.apply {
-            state = PulseState.CONNECTING
-            contentDescription = getString(R.string.carplay)
-        }
         val details = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         fun text(weight: AppType.Weight) = TextView(this).apply { typeface = AppType.of(this@CarPlayHostActivity, weight) }
         // Tarmac's own icon and name above the status, as an iOS app signs its screens.
@@ -2127,6 +2123,13 @@ open class CarPlayHostActivity : ComponentActivity() {
             letterSpacing = -.01f
         }
         details.addView(stage, LinearLayout.LayoutParams(-1, -2))
+        // The centre line under the status, streaming while Tarmac connects, as on Home's CarPlay card.
+        val lane = LaneProgressView(this).apply {
+            restAlpha = .28f
+            active = true
+        }
+        connectionLane = lane
+        details.addView(lane, LinearLayout.LayoutParams(dp(PREPARATION_LANE_WIDTH_DP), dp(PREPARATION_LANE_HEIGHT_DP)))
         val instructions = text(AppType.Weight.REGULAR).apply {
             text = connectionInstructions(null)
             setLineSpacing(0f, 1.12f)
@@ -2185,8 +2188,8 @@ open class CarPlayHostActivity : ComponentActivity() {
             }
             viewport.background = android.graphics.drawable.LayerDrawable(arrayOf(
                 android.graphics.drawable.ColorDrawable(colors.background),
-                glow(IosColors.blue(appNight), .15f, 0f),
-                glow(IosColors.indigo(appNight), .9f, 1f),
+                glow(Tints.blue(appNight), .15f, 0f),
+                glow(Tints.indigo(appNight), .9f, 1f),
             ))
             dashboard.night = appNight
             title.setTextColor(colors.text)
@@ -2237,7 +2240,8 @@ open class CarPlayHostActivity : ComponentActivity() {
                 actions.minButtonWidth = dp(200)
                 actions.maxButtonWidth = dp(340)
                 (title.layoutParams as LinearLayout.LayoutParams).bottomMargin = spacing(8f, 12f)
-                (stage.layoutParams as LinearLayout.LayoutParams).bottomMargin = spacing(6f, 10f)
+                (stage.layoutParams as LinearLayout.LayoutParams).bottomMargin = spacing(8f, 14f)
+                (lane.layoutParams as LinearLayout.LayoutParams).bottomMargin = spacing(8f, 14f)
                 for (view in listOf(instructions, help)) {
                     (view.layoutParams as LinearLayout.LayoutParams).bottomMargin = spacing(14f, 24f)
                 }
@@ -3019,7 +3023,7 @@ open class CarPlayHostActivity : ComponentActivity() {
     /** Tarmac's launcher icon as a small rounded square, for the connecting screen's title. */
     private fun tarmacIcon(size: Int): Drawable {
         val background = GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
-            intArrayOf(Color.rgb(72, 72, 74), Color.rgb(17, 17, 19))).apply { cornerRadius = size * .225f }
+            intArrayOf(Color.rgb(38, 42, 50), Color.rgb(10, 11, 13))).apply { cornerRadius = size * .225f }
         return LayerDrawable(arrayOf(background, getDrawable(R.drawable.ic_tarmac_foreground))).apply { setBounds(0, 0, size, size) }
     }
 
@@ -4897,7 +4901,8 @@ open class CarPlayHostActivity : ComponentActivity() {
         this.text = text
         textSize = sizeSp
         setTextColor(color)
-        typeface = if (bold) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
+        // The in-car menu is lettered as the rest of Tarmac is.
+        AppType.apply(this, if (bold) AppType.Weight.SEMIBOLD else AppType.Weight.REGULAR)
         includeFontPadding = false
     }
 
@@ -6930,6 +6935,8 @@ open class CarPlayHostActivity : ComponentActivity() {
     private fun setConnectionStage(message: String, englishMessage: String = message) {
         latestStage = message
         stageStatusView?.text = stageText(friendlyStage(message, englishMessage))
+        // Once Tarmac has stopped trying and offers Retry, the line rests.
+        connectionLane?.active = startupRetryButton?.visibility != View.VISIBLE
         updateDebugOverlays()
     }
 
@@ -7164,6 +7171,9 @@ open class CarPlayHostActivity : ComponentActivity() {
         /** The connecting screen puts its cabin beside the text from this width, on a landscape window. */
         const val PREPARATION_SIDE_BY_SIDE_MIN_WIDTH_DP = 660
         const val PREPARATION_BUTTON_GAP_DP = 12
+        /** The centre-line progress under the connecting status. */
+        const val PREPARATION_LANE_WIDTH_DP = 200
+        const val PREPARATION_LANE_HEIGHT_DP = 4
         /** Below this width the connecting screen's picture gives way to the text. */
         const val PREPARATION_MIN_PICTURE_WIDTH_DP = 280
         const val SWIPE_PANEL_MARGIN_DP = 16

@@ -86,7 +86,6 @@
     <string name="status_attaching_ncm">NCM/AirPlayネットワークに接続しています</string>
     <string name="status_failed">失敗：%1$s</string>
     <string name="msg_car_hotspot_off">車載ホットスポット「%1$s」がオフです。接続前に車の設定でオンにしてください。</string>
-    <string name="home_public_preview">公開プレビュー\u0020·\u0020%1$s</string>
     <string name="choose_iphone_prefix">iPhoneを選択 ·\u0020</string>
     <string name="audio_saved_value">保存済み：%1$d</string>
     <string name="about_public_preview_prefix">公開プレビュー\u0020·\u0020%1$s</string>

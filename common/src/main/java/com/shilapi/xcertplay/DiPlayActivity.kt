@@ -251,6 +251,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
     private var connectButton: Button? = null
     private var disconnectButton: Button? = null
     private var homePulse: ConnectionPulseView? = null
+    private var homeLane: LaneProgressView? = null
     private var homeEqualizer: EqualizerView? = null
     private var homeMediaBackdrop: ImageView? = null
     private var homeCoverSource: android.graphics.Bitmap? = null
@@ -777,7 +778,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         settingsSearchBox = null
         if (page != "settings") clearSettingsSearchState()
         status = null; homeLastProblem = null; connectButton = null; disconnectButton = null; lastRunning = null; carButtonCard = null
-        homePulse = null; homeEqualizer = null; homeMediaBackdrop = null; backdrop = null
+        homePulse = null; homeLane = null; homeEqualizer = null; homeMediaBackdrop = null; backdrop = null
         homeMediaArtwork = null; homeMediaArtworkSource = null; homeMediaTitle = null
         homeMediaArtist = null; homeMediaPlayPause = null; homeMediaControls = emptyList()
         homeClockTime = null; homeClockDate = null
@@ -792,7 +793,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
             "settings" -> !SettingsLayoutPreferences.isActive(this)
             else -> true
         }
-        // iOS hides scroll indicators until you scroll; Tarmac leaves them off.
+        // No scroll indicator: a page shows that it continues by what is cut off at its edge.
         val scroll = ScrollView(this).apply { setBackgroundColor(BG); isFillViewport = true; clipToPadding = false; isVerticalScrollBarEnabled = false }
         rootScroll = scroll
         val content = column()
@@ -854,14 +855,28 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
             root.background = null
             scroll.background = null
         }
+        // The page being left, as a picture: it fades over the new page, so one gives way to the other.
+        val departing = if (entranceAnimation || appearanceOnly) departingPicture() else null
         setContentView(if (!ambient) root else FrameLayout(this).apply {
             addView(AmbientBackdropView(this@DiPlayActivity, BG, appNight).also { backdrop = it }, FrameLayout.LayoutParams(-1, -1))
             addView(root, FrameLayout.LayoutParams(-1, -1))
         })
         tintBackdrop()
-        if (entranceAnimation && page == "settings") {
-            staggerIn((0 until content.childCount).map(content::getChildAt).filter { it !== header && it.tag != SPACER }.take(8),
-                dp(14).toFloat())
+        departing?.let { leave(it, appearanceOnly) }
+        if (entranceAnimation) {
+            val forward = pageDepth(page, settingsCategory, setupStep) >=
+                pageDepth(renderedPage ?: page, renderedSettingsCategory ?: SettingsCategory.OVERVIEW, renderedSetupStep ?: setupStep)
+            when {
+                // Home's cards rise one after another; see home().
+                page == "home" -> Unit
+                // Another category beside the same rail: only its cards arrive.
+                page == "settings" && renderedPage == "settings" && isExpandedSettingsLayout -> staggerIn(
+                    (0 until content.childCount).map(content::getChildAt).filter { it !== header && it.tag != SPACER }.take(8),
+                    dp(14).toFloat(), delay = if (departing != null) Motion.HANDOVER else 0L)
+                // Another step of the guide: the step changes above the buttons, which stay where they are.
+                page == "setup" && renderedPage == "setup" -> arrive(scroll, forward, departing != null)
+                else -> arrive(root, forward, departing != null)
+            }
         }
         ViewCompat.requestApplyInsets(root)
         renderedPage = page
@@ -910,12 +925,80 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         }
     }
 
+    /**
+     * Call before showing or hiding a block in place: the page then eases into its new layout, the block
+     * fading while its neighbours slide, instead of everything below it jumping.
+     */
+    private fun easeLayoutChange(within: ViewGroup? = rootScroll) {
+        val scene = within ?: return
+        if (!motionEnabled() || !scene.isLaidOut) return
+        android.transition.TransitionManager.beginDelayedTransition(scene, android.transition.AutoTransition().apply {
+            ordering = android.transition.TransitionSet.ORDERING_TOGETHER
+            duration = Motion.BASE
+            interpolator = Motion.move
+        })
+    }
+
+    /** How deep a page is, so going deeper arrives from the end side and going back from the start side. */
+    private fun pageDepth(page: String, category: SettingsCategory, step: Int): Int = when (page) {
+        "home" -> 0
+        "settings" -> if (!isExpandedSettingsLayout && category != SettingsCategory.OVERVIEW) 2 else 1
+        "setup" -> 10 + step
+        else -> 3
+    }
+
+    /** The shown page drawn into a bitmap, at half size on a large screen: it is only seen while it fades. */
+    private fun departingPicture(): android.graphics.Bitmap? {
+        if (!motionEnabled()) return null
+        val shown = findViewById<ViewGroup>(android.R.id.content)?.getChildAt(0) ?: return null
+        if (!shown.isLaidOut || shown.width <= 0 || shown.height <= 0) return null
+        val scale = if (shown.width.toLong() * shown.height > DEPARTING_FULL_SIZE_MAX_AREA) .5f else 1f
+        return runCatching {
+            android.graphics.Bitmap.createBitmap((shown.width * scale).roundToInt().coerceAtLeast(1),
+                (shown.height * scale).roundToInt().coerceAtLeast(1), android.graphics.Bitmap.Config.ARGB_8888).also { bitmap ->
+                android.graphics.Canvas(bitmap).apply { scale(scale, scale); shown.draw(this) }
+            }
+        }.getOrNull()
+    }
+
+    /** Lays [picture] of the old page over the new one and fades it away; [slow] for a change of light and dark. */
+    private fun leave(picture: android.graphics.Bitmap, slow: Boolean) {
+        val veil = ImageView(this).apply {
+            setImageBitmap(picture)
+            scaleType = ImageView.ScaleType.FIT_XY
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        }
+        addContentView(veil, ViewGroup.LayoutParams(-1, -1))
+        veil.animate().alpha(0f)
+            .setDuration(if (slow) Motion.ENTER else Motion.EXIT)
+            .setInterpolator(if (slow) Motion.move else Motion.exit)
+            .withEndAction {
+                (veil.parent as? ViewGroup)?.removeView(veil)
+                veil.setImageDrawable(null)
+                picture.recycle()
+            }.start()
+    }
+
+    /** The new page slides a short way into place as it appears, from the side it was opened toward. */
+    private fun arrive(target: View, forward: Boolean, afterDeparture: Boolean) {
+        if (!motionEnabled()) return
+        val rtl = resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
+        val shift = dp(PAGE_SHIFT_DP) * (if (forward) 1 else -1) * (if (rtl) -1 else 1)
+        target.alpha = 0f
+        target.translationX = shift.toFloat()
+        target.animate().alpha(1f).translationX(0f).setStartDelay(if (afterDeparture) Motion.HANDOVER else 0L)
+            .setDuration(Motion.ENTER).setInterpolator(Motion.enter).start()
+    }
+
     private fun standardHeader(compact: Boolean): LinearLayout = row().apply {
         gravity = Gravity.CENTER_VERTICAL
         val logoSize = dp(if (compact) 30 else 36)
         addView(ImageView(this@DiPlayActivity).apply {
-            setImageResource(R.drawable.ic_carplay)
-            contentDescription = getString(R.string.carplay)
+            setImageDrawable(tarmacMark())
+            val inset = (logoSize * .16f).roundToInt()
+            setPadding(inset, inset, inset, inset)
+            background = GradientDrawable().apply { setColor(BUTTON); cornerRadius = logoSize * .28f }
+            contentDescription = getString(R.string.diplay)
         }, LinearLayout.LayoutParams(logoSize, logoSize))
         addView(label(getString(R.string.diplay), if (compact) 20 else 26, TEXT, true,
             centreGlyphs = resources.configuration.locales[0].language != "zh").apply {
@@ -1071,17 +1154,21 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
             surface = SURFACE
             contentDescription = getString(R.string.carplay_icon)
         }
-        // iOS writes a group's name as a small grey caption above it.
-        val cardTitle = label(getString(R.string.wireless_carplay), 13, MUTED)
+        // What is connecting, as a small caption, above what state it is in.
+        val cardTitle = eyebrow(getString(R.string.wireless_carplay))
         val cardStatus = label(getString(R.string.ready_when_you_are), when { compact -> 20; short -> 24; else -> 28 }, TEXT).apply {
-            typeface = AppType.of(this@DiPlayActivity, AppType.Weight.BOLD)
-            letterSpacing = -.01f
-            setPadding(0, dp(2), 0, 0)
+            AppType.apply(this, AppType.Weight.BOLD)
+            letterSpacing = -.018f
+            setPadding(0, dp(4), 0, 0)
         }
+        // The centre line under the status: faint while Tarmac waits, streaming while it connects.
+        val lane = LaneProgressView(this)
         homePulse = pulse
         homeCardTitle = cardTitle
+        homeLane = lane
         status = cardStatus
         val buttonsGap = dp(if (dense) 12 else 20)
+        val laneGap = (buttonsGap - dp(LANE_HEIGHT_DP)) / 2
         if (oneRow) {
             // The card is as tall as the row: the icon stands above the status and grows into that height,
             // as the cover does in Now Playing, and the buttons stay at the bottom edge.
@@ -1095,7 +1182,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
                 })
                 addView(cardStatus, LinearLayout.LayoutParams(-1, -2))
             }, LinearLayout.LayoutParams(-1, 0, 1f))
-            card.addView(View(this), LinearLayout.LayoutParams(1, buttonsGap))
+            card.addView(lane, LinearLayout.LayoutParams(-1, dp(LANE_HEIGHT_DP)).apply { setMargins(0, laneGap, 0, buttonsGap - dp(LANE_HEIGHT_DP) - laneGap) })
         } else {
             card.addView(row().apply {
                 gravity = Gravity.CENTER_VERTICAL
@@ -1108,7 +1195,8 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
                 }, LinearLayout.LayoutParams(0, -2, 1f))
             })
             // When the widget is stretched beside taller ones, its buttons settle at the bottom edge.
-            card.addView(View(this), LinearLayout.LayoutParams(1, buttonsGap, 1f))
+            card.addView(View(this), LinearLayout.LayoutParams(1, laneGap, 1f))
+            card.addView(lane, LinearLayout.LayoutParams(-1, dp(LANE_HEIGHT_DP)).apply { bottomMargin = buttonsGap - dp(LANE_HEIGHT_DP) - laneGap })
         }
         connectButton = homeButton(getString(R.string.connect_phone), true) {
             if (CarPlayBackgroundSession.hasSession()) openProjection()
@@ -1192,13 +1280,13 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         }
         val shortcuts = column().apply {
             // Given the column's height, the list takes it and its rows share it; otherwise each row keeps its own.
-            // A short row lists at iOS's own row height, so Navigation fits under it while a route runs.
-            addView(homeList(if (oneRow && dense) HOME_SHORT_ROW_HEIGHT_DP else HOME_ROW_HEIGHT_DP,
-                Triple(R.drawable.ic_dp_usb, getString(R.string.connect_with_usb)) { connect(false) } to IosColors.orange(appNight),
+            // A short row keeps its tiles low, so Navigation fits under them while a route runs.
+            addView(homeList(if (oneRow && dense) HOME_SHORT_ROW_HEIGHT_DP else HOME_ROW_HEIGHT_DP, tiles = oneRow, large = oneRow && !dense,
+                Triple(R.drawable.ic_dp_usb, getString(R.string.connect_with_usb)) { connect(false) } to Tints.orange(appNight),
                 Triple(com.shilapi.xcertplay.androidauto.R.drawable.ic_android_auto, getString(R.string.home_android_auto)) {
                     startActivity(AndroidAuto.projectionIntent(this@DiPlayActivity))
-                } to IosColors.green(appNight),
-                Triple(R.drawable.ic_dp_settings, getString(R.string.settings)) { page = "settings"; render() } to IosColors.gray(appNight),
+                } to Tints.green(appNight),
+                Triple(R.drawable.ic_dp_settings, getString(R.string.settings)) { page = "settings"; render() } to Tints.gray(appNight),
             ), LinearLayout.LayoutParams(-1, 0, 1f))
             usbHint?.let {
                 addView(label(it, 13, if (usbUnavailable) WARNING else MUTED).apply {
@@ -1232,44 +1320,41 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         // The page fills the screen, so one row takes the height the clock and footer leave. When the widgets
         // need more, as with a very large font, the page scrolls instead.
         content.addView(body, LinearLayout.LayoutParams(-1, if (oneRow) 0 else -2, if (oneRow) 1f else 0f))
-        content.addView(homeFooter(compact), LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(gap) })
+        // With no update to announce there is no footer, and the cards keep its height.
+        if (availableUpdate != null) content.addView(homeFooter(compact), LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(gap) })
         setupError?.let { content.addView(label(it, 15, WARNING).apply { setPadding(0, dp(16), 0, 0) }) }
         showHomeMedia(homeMediaSnapshot)
         refreshHomeNavigation()
-        if (entranceAnimation) staggerIn(listOf(card, navigation, media, shortcuts), dp(16).toFloat())
+        if (entranceAnimation) staggerIn(listOf(card, navigation, media, shortcuts), dp(16).toFloat(),
+            delay = if (renderedPage != null) Motion.HANDOVER else 0L)
     }
 
-    /** Home's header, as iOS opens a Today page: the date small above a large title, with round toolbar buttons. */
+    /** Home's header: the date as a small caption above the time, with the header controls at the end. */
     private fun homeHeader(compact: Boolean): LinearLayout = row().apply {
         gravity = Gravity.CENTER_VERTICAL
         val control = dp(44)
         // A phone or tablet has its own home gesture; "Car home" belongs to head units.
         val carHome = !DeviceProfile.handheld(this@DiPlayActivity)
         addView(homeClock(compact), LinearLayout.LayoutParams(0, -2, 1f))
-        addView(appearanceButton().apply {
-            background = RippleDrawable(ColorStateList.valueOf(RIPPLE),
-                GradientDrawable().apply { shape = GradientDrawable.OVAL; setColor(BUTTON) }, null)
-            foreground = focusRing(radiusDp = 22)
-        }, LinearLayout.LayoutParams(control, control).apply { if (carHome) marginEnd = dp(CONTROL_GAP_DP) })
-        if (carHome) addView(iosCapsule(getString(R.string.car_home), R.drawable.ic_dp_car) {
+        addView(appearanceButton(), LinearLayout.LayoutParams(control, control).apply { if (carHome) marginEnd = dp(CONTROL_GAP_DP) })
+        if (carHome) addView(headerPill(getString(R.string.car_home), R.drawable.ic_dp_car) {
             startActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME))
         }, LinearLayout.LayoutParams(-2, control))
     }
 
-    /** An iOS capsule button: tinted label and glyph on the grey fill. */
-    private fun iosCapsule(title: String, icon: Int, click: () -> Unit) = TextView(this).apply {
+    /** A header pill with a label: the glyph in the tint, the label in the text colour. */
+    private fun headerPill(title: String, icon: Int, click: () -> Unit) = TextView(this).apply {
         text = title
-        textSize = 17f
-        typeface = AppType.of(this@DiPlayActivity, AppType.Weight.SEMIBOLD)
-        setTextColor(ACCENT)
+        textSize = 16f
+        AppType.apply(this, AppType.Weight.SEMIBOLD)
+        setTextColor(TEXT)
         gravity = Gravity.CENTER
         includeFontPadding = false
-        setPadding(dp(16), 0, dp(18), 0)
+        setPaddingRelative(dp(14), 0, dp(18), 0)
         val glyph = dp(20)
-        setCompoundDrawablesRelative(getDrawable(icon)?.mutate()?.apply { setTint(ACCENT); setBounds(0, 0, glyph, glyph) }, null, null, null)
+        setCompoundDrawablesRelative(getDrawable(icon)?.mutate()?.apply { setTint(ACCENT_TEXT); setBounds(0, 0, glyph, glyph) }, null, null, null)
         compoundDrawablePadding = dp(8)
-        background = RippleDrawable(ColorStateList.valueOf(RIPPLE),
-            GradientDrawable().apply { setColor(BUTTON); cornerRadius = dp(22).toFloat() }, null)
+        background = RippleDrawable(ColorStateList.valueOf(RIPPLE), pillShape(CHROME), null)
         foreground = focusRing(radiusDp = 22)
         isClickable = true
         isFocusable = true
@@ -1277,10 +1362,10 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         pressFeedback()
     }
 
-    /** An iOS widget: one rounded surface, no outline, a soft shadow in light mode. */
+    /** A Home card: one rounded surface with a hairline edge, and a soft shadow by day. */
     private fun homeWidget(compact: Boolean): LinearLayout = column().apply {
-        val radius = dp(22).toFloat()
-        background = GradientDrawable().apply { setColor(SURFACE); cornerRadius = radius }
+        val radius = cardRadius()
+        background = rounded(CARD, HAIRLINE)
         if (!appNight) elevation = dp(2).toFloat()
         outlineProvider = object : android.view.ViewOutlineProvider() {
             override fun getOutline(view: View, outline: android.graphics.Outline) =
@@ -1290,55 +1375,91 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         setPadding(padding, padding, padding, padding)
     }
 
-    /** An iOS inset grouped list: rows with coloured icon squares, a chevron, and hairlines between them. */
-    private fun homeList(rowHeightDp: Int, vararg rows: Pair<Triple<Int, String, () -> Unit>, Int>): LinearLayout = column().apply {
-        background = GradientDrawable().apply { setColor(SURFACE); cornerRadius = dp(16).toFloat() }
-        if (!appNight) elevation = dp(1).toFloat()
-        clipToOutline = true
+    /**
+     * Home's shortcuts. Stacked under the other cards they are one list card, rows with hairlines between
+     * them. As [tiles], in the column of a one-row Home, each is a card of its own that takes a share of the
+     * column's height, so a tall column holds three large targets and not three thin rows in an empty card.
+     */
+    private fun homeList(rowHeightDp: Int, tiles: Boolean, large: Boolean,
+        vararg rows: Pair<Triple<Int, String, () -> Unit>, Int>): LinearLayout = column().apply {
+        if (!tiles) {
+            background = rounded(CARD, HAIRLINE)
+            if (!appNight) elevation = dp(2).toFloat()
+            clipToOutline = true
+        }
+        val well = if (large) 40 else 32
         rows.forEachIndexed { index, (row, color) ->
             val (icon, title, click) = row
-            if (index > 0) addView(View(this@DiPlayActivity).apply { setBackgroundColor(BORDER) },
-                LinearLayout.LayoutParams(-1, maxOf(1, dp(1) / 2)).apply { marginStart = dp(16 + 30 + 14) })
+            if (index > 0 && !tiles) addView(View(this@DiPlayActivity).apply { setBackgroundColor(BORDER) },
+                LinearLayout.LayoutParams(-1, maxOf(1, dp(1) / 2)).apply { marginStart = dp(16 + well + 14) })
             addView(row().apply {
                 gravity = Gravity.CENTER_VERTICAL
                 minimumHeight = dp(rowHeightDp)
-                // The 30 dp icon sets a row's own height; a short row trims its padding to fit.
-                val inset = dp(minOf(10, (rowHeightDp - 30) / 2))
-                setPaddingRelative(dp(16), inset, dp(14), inset)
-                background = RippleDrawable(ColorStateList.valueOf(RIPPLE), null, ColorDrawable(Color.WHITE))
-                foreground = focusRing(radiusDp = 12)
+                // The icon sets a row's own height; a short row trims its padding to fit.
+                val inset = dp(minOf(10, (rowHeightDp - well).coerceAtLeast(0) / 2))
+                setPaddingRelative(dp(if (large) 20 else 16), inset, dp(if (large) 18 else 14), inset)
+                if (tiles) {
+                    background = RippleDrawable(ColorStateList.valueOf(RIPPLE), rounded(CARD, HAIRLINE), null)
+                    if (!appNight) elevation = dp(2).toFloat()
+                    foreground = focusRing(radiusDp = (cardRadius() / resources.displayMetrics.density).roundToInt())
+                    pressFeedback()
+                } else {
+                    background = RippleDrawable(ColorStateList.valueOf(RIPPLE), null, ColorDrawable(Color.WHITE))
+                    foreground = focusRing(radiusDp = 12)
+                }
                 isClickable = true
                 isFocusable = true
                 setOnClickListener { click() }
-                addView(iosIcon(icon, color, 30))
-                addView(label(title, 17, TEXT).apply { setPaddingRelative(dp(14), 0, dp(8), 0) }, LinearLayout.LayoutParams(0, -2, 1f))
+                addView(iconWell(icon, color, well))
+                addView(label(title, if (large) 19 else 17, TEXT).apply {
+                    AppType.apply(this, AppType.Weight.MEDIUM)
+                    setPaddingRelative(dp(if (large) 16 else 14), 0, dp(8), 0)
+                }, LinearLayout.LayoutParams(0, -2, 1f))
                 addView(View(this@DiPlayActivity).apply {
                     background = getDrawable(R.drawable.ic_dp_chevron)?.mutate()?.apply { setTint(MUTED) }
                     importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
                 }, LinearLayout.LayoutParams(dp(20), dp(20)))
-            }, LinearLayout.LayoutParams(-1, 0, 1f))
+            }, LinearLayout.LayoutParams(-1, 0, 1f).apply { if (tiles && index > 0) topMargin = dp(if (large) CONTROL_GAP_DP else HOME_TILE_GAP_DP) })
         }
     }
 
-    /** A white glyph on a solid coloured square, the icon of an iOS Settings row. */
-    private fun iosIcon(icon: Int, color: Int, sizeDp: Int) = ImageView(this).apply {
+    /** The cover while nothing plays: a note on the control colour of this theme, not a dark slab on a white card. */
+    private fun coverPlaceholder(): android.graphics.drawable.Drawable {
+        val note = getDrawable(R.drawable.ic_dp_music)?.mutate()?.apply { setTint(MUTED) }
+        return android.graphics.drawable.LayerDrawable(listOfNotNull(ColorDrawable(BUTTON), note).toTypedArray()).apply {
+            // The note is 24 dp, so this inset makes it the middle two fifths of the cover at any size.
+            val inset = dp(COVER_NOTE_INSET_DP)
+            if (note != null) setLayerInset(1, inset, inset, inset, inset)
+        }
+    }
+
+    /** Tarmac's mark for this theme: the horizon in the text colour over the amber centre line. */
+    private fun tarmacMark() = TarmacMarkDrawable(TEXT)
+
+    /** A glyph in its signal colour on a well of the same colour thinned out: the icon of a row, a card or a page. */
+    private fun iconWell(icon: Int, color: Int, sizeDp: Int) = ImageView(this).apply {
         setImageResource(icon)
-        imageTintList = ColorStateList.valueOf(Color.WHITE)
+        imageTintList = ColorStateList.valueOf(color)
         scaleType = ImageView.ScaleType.FIT_CENTER
-        val inset = (dp(sizeDp) * .19f).roundToInt()
+        val inset = (dp(sizeDp) * .22f).roundToInt()
         setPadding(inset, inset, inset, inset)
-        background = GradientDrawable().apply { setColor(color); cornerRadius = dp(sizeDp) * .23f }
+        background = GradientDrawable().apply {
+            setColor(androidx.core.graphics.ColorUtils.setAlphaComponent(color, if (appNight) WELL_NIGHT_ALPHA else WELL_DAY_ALPHA))
+            cornerRadius = dp(sizeDp) * .3f
+        }
         importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
         layoutParams = LinearLayout.LayoutParams(dp(sizeDp), dp(sizeDp))
     }
 
     /**
-     * Now Playing as iOS draws its Music widget: the cover's colours behind, the song and plain glyph controls.
+     * Now Playing: the cover's colours behind, the song, and the media controls with play on a disc of its own.
      * With [stackedCoverDp] the cover stands above the song and grows into the widget's spare height, from that
      * preferred size; without it the cover sits beside the song.
      */
-    private fun homeMediaWidget(compact: Boolean, short: Boolean, stackedCoverDp: Int? = null): View = HomeRoundedFrame(this, dp(22).toFloat()).apply {
-        background = GradientDrawable().apply { setColor(SURFACE); cornerRadius = dp(22).toFloat() }
+    private fun homeMediaWidget(compact: Boolean, short: Boolean, stackedCoverDp: Int? = null): View = HomeRoundedFrame(this, cardRadius()).apply {
+        background = rounded(CARD, HAIRLINE)
+        // The cover's colours fill the card, so its edge is drawn over them.
+        foreground = rounded(Color.TRANSPARENT, HAIRLINE)
         if (!appNight) elevation = dp(2).toFloat()
         homeMediaBackdrop = ImageView(this@DiPlayActivity).apply {
             scaleType = ImageView.ScaleType.CENTER_CROP
@@ -1351,19 +1472,20 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
             setPadding(padding, padding, padding, padding)
             addView(row().apply {
                 gravity = Gravity.CENTER_VERTICAL
-                addView(iosIcon(R.drawable.ic_dp_music, IosColors.pink(appNight), 22))
-                addView(label(getString(R.string.notification_channel_now_playing), 13, MUTED, true).apply {
-                    setPaddingRelative(dp(8), 0, dp(8), 0)
-                    setSingleLine(true)
+                addView(iconWell(R.drawable.ic_dp_music, Tints.pink(appNight), 24))
+                addView(eyebrow(getString(R.string.notification_channel_now_playing)).apply {
+                    setPaddingRelative(dp(10), 0, dp(8), 0)
+                    // Not setSingleLine: it would replace the capitals' transformation.
+                    maxLines = 1
                     ellipsize = android.text.TextUtils.TruncateAt.END
                 }, LinearLayout.LayoutParams(0, -2, 1f))
-                homeEqualizer = EqualizerView(this@DiPlayActivity, IosColors.pink(appNight))
+                homeEqualizer = EqualizerView(this@DiPlayActivity, Tints.pink(appNight))
                 addView(homeEqualizer, LinearLayout.LayoutParams(dp(18), dp(13)))
             })
             val headerGap = dp(if (compact) HomeHero.COMPACT_HEADER_GAP_DP else HomeHero.HEADER_GAP_DP)
             val cover = HomeCoverView(this@DiPlayActivity).apply {
                 scaleType = ImageView.ScaleType.CENTER_CROP
-                setImageResource(R.drawable.art_now_playing_placeholder)
+                setImageDrawable(coverPlaceholder())
                 val sideCorner = dp(10).toFloat()
                 corner = { side -> if (stackedCoverDp != null) side * HomeHero.CORNER_SHARE else sideCorner }
                 elevation = dp(4).toFloat()
@@ -1415,7 +1537,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
             val previous = transportButton(R.drawable.ic_dp_skip_previous, R.string.home_media_previous, if (compact) 44 else 48, .22f) {
                 com.shilapi.xcertplay.airplay.CarPlayMediaButton.PREVIOUS
             }
-            val playPause = transportButton(R.drawable.ic_dp_play, R.string.home_media_play_pause, if (compact) 52 else 60, .12f) {
+            val playPause = transportButton(R.drawable.ic_dp_play, R.string.home_media_play_pause, if (compact) 52 else 60, .24f, filled = true) {
                 if (homeMediaSnapshot.info.playing) com.shilapi.xcertplay.airplay.CarPlayMediaButton.PAUSE
                 else com.shilapi.xcertplay.airplay.CarPlayMediaButton.PLAY
             }
@@ -1437,13 +1559,13 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         }, FrameLayout.LayoutParams(-1, -1))
     }
 
-    /** The next turn, as the iOS Maps widget shows it: arrow, distance, road and arrival. Tapping it opens CarPlay. */
+    /** The next turn: arrow, distance, road and arrival. Tapping it opens CarPlay. */
     private fun homeNavigationWidget(compact: Boolean): LinearLayout = homeWidget(compact).apply {
         addView(row().apply {
             gravity = Gravity.CENTER_VERTICAL
-            addView(iosIcon(R.drawable.ic_dp_navigation, IosColors.green(appNight), 22))
-            addView(label(getString(R.string.settings_navigation), 13, MUTED, true).apply {
-                setPaddingRelative(dp(8), 0, 0, 0)
+            addView(iconWell(R.drawable.ic_dp_navigation, Tints.green(appNight), 24))
+            addView(eyebrow(getString(R.string.settings_navigation)).apply {
+                setPaddingRelative(dp(10), 0, 0, 0)
             })
         })
         // Stretched to its column's height, the widget keeps the turn centred below its caption.
@@ -1460,7 +1582,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
             addView(column().apply {
                 setPaddingRelative(dp(14), 0, 0, 0)
                 homeNavDistance = label("", if (compact) 20 else 24, TEXT).apply {
-                    typeface = AppType.of(this@DiPlayActivity, AppType.Weight.BOLD)
+                    AppType.apply(this, AppType.Weight.BOLD, tabular = true)
                 }
                 addView(homeNavDistance)
                 homeNavRoad = label("", 15, TEXT).apply {
@@ -1484,8 +1606,14 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         val distance = homeNavDistance ?: return
         val glance = com.shilapi.xcertplay.glance.CarPlayGlance.snapshot()
         val type = glance.maneuverType
-        // Like an iOS Smart Stack widget, Navigation appears only while a route runs, so it never crowds Home.
-        homeNavWidget?.visibility = if (glance.connected && type != null) View.VISIBLE else View.GONE
+        // Navigation appears only while a route runs, so it never crowds Home.
+        homeNavWidget?.let { widget ->
+            val shown = if (glance.connected && type != null) View.VISIBLE else View.GONE
+            if (widget.visibility != shown) {
+                easeLayoutChange()
+                widget.visibility = shown
+            }
+        }
         if (!glance.connected || type == null) {
             homeNavArrow?.setImageResource(R.drawable.ic_dp_navigation)
             homeNavArrow?.alpha = .35f
@@ -1502,18 +1630,22 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         homeNavEta?.apply { text = eta; visibility = if (eta.isEmpty()) View.GONE else View.VISIBLE }
     }
 
-    /** A plain glyph button, as iOS media controls are: no fill, a round highlight under the finger. */
-    private fun transportButton(icon: Int, description: Int, sizeDp: Int, insetRatio: Float, button: () -> Int) =
+    /**
+     * A media control. Play and pause are [filled], a disc in the text colour with the glyph cut from it, so the
+     * control a driver reaches for most is the easiest to find; skip buttons are plain glyphs.
+     */
+    private fun transportButton(icon: Int, description: Int, sizeDp: Int, insetRatio: Float, filled: Boolean = false, button: () -> Int) =
         ImageButton(this).apply {
             setImageResource(icon)
             contentDescription = getString(description)
-            imageTintList = ColorStateList.valueOf(TEXT)
+            imageTintList = ColorStateList.valueOf(if (filled) SURFACE else TEXT)
             scaleType = ImageView.ScaleType.FIT_CENTER
             val inset = (dp(sizeDp) * insetRatio).roundToInt()
             setPadding(inset, inset, inset, inset)
             stateListAnimator = null
-            background = RippleDrawable(ColorStateList.valueOf(RIPPLE), null,
-                GradientDrawable().apply { shape = GradientDrawable.OVAL; setColor(Color.WHITE) })
+            val disc = GradientDrawable().apply { shape = GradientDrawable.OVAL; setColor(if (filled) TEXT else Color.WHITE) }
+            background = if (filled) RippleDrawable(ColorStateList.valueOf(RIPPLE), disc, null)
+                else RippleDrawable(ColorStateList.valueOf(RIPPLE), null, disc)
             foreground = focusRing(radiusDp = sizeDp / 2)
             setOnClickListener { CarPlayMediaKeys.onAppMediaKey(button(), "home") }
             pressFeedback(0.88f)
@@ -1543,7 +1675,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
             val copy = source?.let { runCatching { it.copy(it.config ?: android.graphics.Bitmap.Config.ARGB_8888, false) }.getOrNull() }
             homeMediaArtwork?.let { view ->
                 val next: android.graphics.drawable.Drawable = copy?.let { android.graphics.drawable.BitmapDrawable(resources, it) }
-                    ?: getDrawable(R.drawable.art_now_playing_placeholder)!!
+                    ?: coverPlaceholder()
                 val previous = view.drawable
                 if (previous != null && motionEnabled() && view.isAttachedToWindow) {
                     view.setImageDrawable(android.graphics.drawable.TransitionDrawable(arrayOf(previous, next)).apply {
@@ -1566,7 +1698,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         refreshHomeMediaControls()
     }
 
-    /** Like the iOS Lock Screen, the page takes the cover's colours while a song plays, and Tarmac's own otherwise. */
+    /** The page takes the cover's colours while a song plays, and Tarmac's own dusk colours otherwise. */
     private fun tintBackdrop() {
         val cover = homeCoverSource?.takeUnless { it.isRecycled }?.takeIf { AirPlayPersistence.loadAlbumLight(this) }
         backdrop?.tint(cover?.let { runCatching { CoverPalette.of(it, appNight) }.getOrNull() } ?: CoverPalette.default(appNight))
@@ -1578,12 +1710,16 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
             it.isEnabled = enabled
             it.alpha = if (enabled) 1f else .35f
         }
+        // Dimmed, the play disc would be a grey slab; without a session it takes the control colour instead.
+        homeMediaPlayPause?.let { play ->
+            play.alpha = 1f
+            play.imageTintList = ColorStateList.valueOf(if (enabled) SURFACE else MUTED)
+            play.backgroundTintList = ColorStateList.valueOf(if (enabled) TEXT else BUTTON)
+        }
     }
 
+    /** Under Home's cards: only the notice that an update is ready. The version itself is in Settings, under About. */
     private fun homeFooter(compact: Boolean): LinearLayout = column().apply {
-        addView(label(getString(R.string.home_public_preview, version()), 12, MUTED).apply {
-            setPaddingRelative(dp(16), 0, 0, 0)
-        })
         availableUpdate?.let { release ->
             val message = getString(R.string.update_available_home)
             val tint = { alpha: Int -> (WARNING and 0x00FFFFFF) or (alpha shl 24) }
@@ -1605,21 +1741,18 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
                 )
                 foreground = focusRing(radiusDp = 16)
                 setOnClickListener { openAvailableUpdate(release) }
-            }, LinearLayout.LayoutParams(if (compact) -1 else -2, -2).apply { topMargin = dp(12) })
+            }, LinearLayout.LayoutParams(if (compact) -1 else -2, -2))
         }
     }
 
     /** The date as a small caption above the time as a large title. The status tick keeps both current. */
     private fun homeClock(compact: Boolean): LinearLayout = column().apply {
         gravity = Gravity.CENTER_VERTICAL or Gravity.START
-        homeClockDate = label("", 13, MUTED, true).apply {
-            includeFontPadding = false
-            isAllCaps = true
-        }
+        homeClockDate = eyebrow("")
         addView(homeClockDate, LinearLayout.LayoutParams(-2, -2))
         homeClockTime = label("", if (compact) 30 else 40, TEXT).apply {
-            typeface = AppType.of(this@DiPlayActivity, AppType.Weight.BOLD)
-            letterSpacing = -.02f
+            AppType.apply(this, AppType.Weight.SEMIBOLD, tabular = true)
+            letterSpacing = -.025f
             includeFontPadding = false
             setSingleLine(true)
             setPadding(0, dp(4), 0, 0)
@@ -1666,14 +1799,21 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         addView(split, LinearLayout.LayoutParams(-1, 0, 1f))
     }
 
-    private fun settingsRail(): LinearLayout = column().apply {
-        background = rounded(SURFACE, BORDER)
+    private fun settingsRail(): LinearLayout = SettingsRailLayout(this).apply {
+        layoutParams = LinearLayout.LayoutParams(-1, -2)
+        background = rounded(CARD, HAIRLINE)
         setPadding(dp(12), dp(12), dp(12), dp(12))
+        selectionColor = BUTTON
+        markerColor = ACCENT
+        selectionRadius = controlRadius(dp(SETTINGS_RAIL_ROW_DP))
         SettingsCategory.entries.forEach { category ->
-            addView(settingsRailDestination(category), matchButton(0, 52).apply {
-                bottomMargin = if (category == SettingsCategory.entries.last()) 0 else dp(8)
+            addView(settingsRailDestination(category), matchButton(0, SETTINGS_RAIL_ROW_DP).apply {
+                bottomMargin = if (category == SettingsCategory.entries.last()) 0 else dp(4)
             })
         }
+        // Coming from another category, the selection slides from that category's row.
+        val previous = renderedSettingsCategory?.takeIf { renderedPage == "settings" && it != settingsCategory }
+        if (previous != null) slideFrom(SettingsCategory.entries.indexOf(previous))
     }
 
     private fun settingsRailDestination(category: SettingsCategory): View {
@@ -1684,29 +1824,23 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
             isClickable = true
             isFocusable = true
             isSelected = selected
-            foreground = focusRing(12)
+            val corner = controlRadius(dp(SETTINGS_RAIL_ROW_DP))
+            foreground = focusRing((corner / resources.displayMetrics.density).roundToInt())
             contentDescription = getString(R.string.settings_open_category, title)
-            background = android.graphics.drawable.RippleDrawable(
-                ColorStateList.valueOf(RIPPLE),
-                GradientDrawable().apply {
-                    setColor(if (selected) RAIL_SELECTED else Color.TRANSPARENT)
-                    cornerRadius = dp(12).toFloat()
-                    if (selected) setStroke(dp(1), RAIL_SELECTED_BORDER)
-                },
-                null,
-            )
+            // The rail draws the selection behind its rows, so it can slide; a row only shows the touch.
+            background = android.graphics.drawable.RippleDrawable(ColorStateList.valueOf(RIPPLE), null,
+                GradientDrawable().apply { setColor(Color.WHITE); cornerRadius = corner })
             setPadding(dp(8), 0, dp(12), 0)
-            // As the iPad Settings sidebar: coloured icon squares, the open row filled with the tint.
-            addView(iosIcon(settingsCategoryIcon(category), settingsCategoryColor(category), 30).apply {
+            addView(iconWell(settingsCategoryIcon(category), settingsCategoryColor(category), 32).apply {
                 (layoutParams as LinearLayout.LayoutParams).marginEnd = dp(CONTROL_GAP_DP)
             })
-            addView(label(title, 17, if (selected) ON_ACCENT else TEXT, selected,
+            addView(label(title, 16, TEXT, selected,
                 centreGlyphs = usesChineseGlyphAlignment(resources.configuration.locales[0].language, title)),
                 LinearLayout.LayoutParams(0, -1, 1f))
             setOnClickListener {
                 openSettingsCategory(category)
             }
-            pressFeedback(0.975f)
+            pressFeedback()
         }
     }
 
@@ -1788,12 +1922,9 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
             val columns = row().apply { gravity = Gravity.TOP }
             val setup = column()
             setup.addView(settingsSectionHeading(R.string.settings_your_setup))
-            destinations.forEach { item ->
-                setup.addView(settingsSummaryCard(item.first, getString(item.second)),
-                    LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = categoryGap })
-            }
+            setup.addView(settingsSummaryList(destinations))
             columns.addView(setup, LinearLayout.LayoutParams(0, -2, 1f))
-            columns.addView(space(14), LinearLayout.LayoutParams(dp(14), 1))
+            columns.addView(space(SETTINGS_BLOCK_GAP_DP), LinearLayout.LayoutParams(dp(SETTINGS_BLOCK_GAP_DP), 1))
             val quick = column()
             quick.addView(settingsSectionHeading(R.string.settings_quick_settings))
             quick.addView(quickSettingsCard())
@@ -1801,10 +1932,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
             content.addView(columns, LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(SETTINGS_BLOCK_GAP_DP) })
         } else {
             content.addView(settingsSectionHeading(R.string.settings_your_setup))
-            destinations.forEach { item ->
-                content.addView(settingsSummaryCard(item.first, getString(item.second)),
-                    LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = categoryGap })
-            }
+            content.addView(settingsSummaryList(destinations), LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = categoryGap })
             content.addView(settingsSectionHeading(R.string.settings_quick_settings).apply { setPadding(0, dp(10), 0, dp(8)) })
             content.addView(quickSettingsCard(), LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(SETTINGS_BLOCK_GAP_DP) })
         }
@@ -1888,36 +2016,46 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         render()
     }
 
-    private fun settingsSectionHeading(title: Int) = label(getString(title), 22, TEXT, true).apply {
-        setPadding(0, 0, 0, dp(10))
+    private fun settingsSectionHeading(title: Int) = label(getString(title), 20, TEXT, true).apply {
+        setPadding(dp(4), 0, 0, dp(10))
     }
 
-    private fun settingsSummaryCard(category: SettingsCategory, summary: String): LinearLayout = card().apply {
+    /** Overview's links to the categories: one list card, a row for each with its icon, name and what it holds. */
+    private fun settingsSummaryList(destinations: List<Pair<SettingsCategory, Int>>): LinearLayout = column().apply {
+        background = rounded(CARD, HAIRLINE)
+        clipToOutline = true
+        destinations.forEachIndexed { index, (category, summary) ->
+            if (index > 0) addView(View(this@DiPlayActivity).apply { setBackgroundColor(BORDER) },
+                LinearLayout.LayoutParams(-1, maxOf(1, dp(1) / 2)).apply {
+                    marginStart = dp(SETTINGS_CONTROL_INSET_DP + 36 + SETTINGS_CONTROL_INSET_DP)
+                })
+            addView(settingsSummaryRow(category, getString(summary)))
+        }
+    }
+
+    private fun settingsSummaryRow(category: SettingsCategory, summary: String): LinearLayout = row().apply {
         val warning = category == SettingsCategory.ADVANCED
-        setPadding(dp(24), dp(10), dp(24), dp(10))
+        gravity = Gravity.CENTER_VERTICAL
+        minimumHeight = dp(CONTROL_HEIGHT_DP)
+        setPaddingRelative(dp(SETTINGS_CONTROL_INSET_DP), dp(10), dp(SETTINGS_CONTROL_INSET_DP), dp(10))
         isClickable = true
         isFocusable = true
-        foreground = android.graphics.drawable.LayerDrawable(arrayOf(
-            android.graphics.drawable.RippleDrawable(ColorStateList.valueOf(RIPPLE), null, null),
-            focusRing((layoutCornerRadius() * 1.35f / resources.displayMetrics.density).roundToInt())))
+        background = RippleDrawable(ColorStateList.valueOf(RIPPLE), null, ColorDrawable(Color.WHITE))
+        foreground = focusRing(12)
         contentDescription = getString(R.string.settings_open_category, settingsCategoryTitle(category))
-        addView(row().apply {
-            gravity = Gravity.CENTER_VERTICAL
-            addView(iosIcon(settingsCategoryIcon(category), settingsCategoryColor(category), 32).apply {
-                (layoutParams as LinearLayout.LayoutParams).marginEnd = dp(SETTINGS_CONTROL_INSET_DP)
-            })
-            addView(column().apply {
-                addView(label(settingsCategoryTitle(category), 17, if (warning) WARNING else TEXT, true))
-                addView(label(summary, 13, MUTED).apply { setPadding(0, dp(3), 0, 0) })
-            }, LinearLayout.LayoutParams(0, -2, 1f))
-            // Decoration, not a second icon: the card keeps one icon for its category.
-            addView(View(this@DiPlayActivity).apply {
-                background = getDrawable(R.drawable.ic_dp_chevron)?.mutate()?.apply { setTint(MUTED) }
-                importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
-            }, LinearLayout.LayoutParams(dp(24), dp(24)))
+        addView(iconWell(settingsCategoryIcon(category), settingsCategoryColor(category), 36).apply {
+            (layoutParams as LinearLayout.LayoutParams).marginEnd = dp(SETTINGS_CONTROL_INSET_DP)
         })
+        addView(column().apply {
+            addView(label(settingsCategoryTitle(category), 17, if (warning) WARNING else TEXT, true))
+            addView(label(summary, 13, MUTED).apply { setPadding(0, dp(2), 0, 0) })
+        }, LinearLayout.LayoutParams(0, -2, 1f))
+        // Decoration, not a second icon: the row keeps one icon for its category.
+        addView(View(this@DiPlayActivity).apply {
+            background = getDrawable(R.drawable.ic_dp_chevron)?.mutate()?.apply { setTint(MUTED) }
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        }, LinearLayout.LayoutParams(dp(20), dp(20)))
         setOnClickListener { openSettingsCategory(category) }
-        pressFeedback()
     }
 
     private fun settingsPageTitle(content: LinearLayout, title: String, subtitle: String) {
@@ -1925,31 +2063,31 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         content.addView(row().apply {
             gravity = Gravity.CENTER_VERTICAL
             setPadding(0, 0, 0, dp(20))
-            if (page == "settings") addView(iosIcon(settingsCategoryIcon(settingsCategory),
+            if (page == "settings") addView(iconWell(settingsCategoryIcon(settingsCategory),
                 settingsCategoryColor(settingsCategory), if (isExpandedSettingsLayout) 56 else 44).apply {
                 (layoutParams as LinearLayout.LayoutParams).marginEnd = dp(SETTINGS_CONTROL_INSET_DP)
             })
             addView(column().apply {
-                // An iOS large title: bold, tracked a little tighter.
-                addView(label(title, if (isExpandedSettingsLayout) 34 else 28, TEXT).apply {
-                    typeface = AppType.of(this@DiPlayActivity, AppType.Weight.BOLD)
-                    letterSpacing = -.015f
+                // A page's title: the largest, heaviest line on it.
+                addView(label(title, if (isExpandedSettingsLayout) 32 else 28, TEXT).apply {
+                    AppType.apply(this, AppType.Weight.BOLD)
+                    letterSpacing = -.02f
                 })
-                addView(label(subtitle, 16, MUTED).apply { setPadding(0, dp(6), 0, 0) })
+                addView(label(subtitle, 16, MUTED).apply { setPadding(0, dp(4), 0, 0) })
             }, LinearLayout.LayoutParams(0, -2, 1f))
         })
     }
 
-    /** Each category's iOS colour, as iOS Settings colours its rows. */
+    /** Each category's signal colour, for its icon well on the rail, on Overview and on its own page. */
     private fun settingsCategoryColor(category: SettingsCategory): Int = when (category) {
-        SettingsCategory.OVERVIEW, SettingsCategory.DIAGNOSTICS, SettingsCategory.ABOUT -> IosColors.gray(appNight)
-        SettingsCategory.CONNECTION -> IosColors.blue(appNight)
-        SettingsCategory.DISPLAY -> IosColors.indigo(appNight)
-        SettingsCategory.AUDIO -> IosColors.pink(appNight)
-        SettingsCategory.NAVIGATION -> IosColors.green(appNight)
-        SettingsCategory.VEHICLE -> IosColors.orange(appNight)
-        SettingsCategory.LANGUAGE -> IosColors.teal(appNight)
-        SettingsCategory.ADVANCED -> IosColors.red(appNight)
+        SettingsCategory.OVERVIEW, SettingsCategory.DIAGNOSTICS, SettingsCategory.ABOUT -> Tints.gray(appNight)
+        SettingsCategory.CONNECTION -> Tints.blue(appNight)
+        SettingsCategory.DISPLAY -> Tints.indigo(appNight)
+        SettingsCategory.AUDIO -> Tints.pink(appNight)
+        SettingsCategory.NAVIGATION -> Tints.green(appNight)
+        SettingsCategory.VEHICLE -> Tints.orange(appNight)
+        SettingsCategory.LANGUAGE -> Tints.teal(appNight)
+        SettingsCategory.ADVANCED -> Tints.red(appNight)
     }
 
     private fun connectionSettings(content: LinearLayout) {
@@ -2090,8 +2228,9 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         // without compensating for scroll or for the text's vertical centring.
         val iconSize = headerIconSize(compact)
         val icon = getDrawable(R.drawable.ic_dp_search)?.mutate()?.apply { setTint(MUTED) }
+        AppType.apply(this, AppType.Weight.REGULAR)
         background = android.graphics.drawable.LayerDrawable(
-            listOfNotNull(buttonShape(BUTTON, BORDER), icon, buttonFocusRing()).toTypedArray(),
+            listOfNotNull(pillShape(CHROME), icon, focusRing(PILL_RADIUS_DP)).toTypedArray(),
         ).apply {
             if (icon != null) {
                 setLayerGravity(1, Gravity.START or Gravity.CENTER_VERTICAL)
@@ -2101,7 +2240,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         }
         gravity = Gravity.CENTER_VERTICAL or Gravity.START
         includeFontPadding = false
-        setPaddingRelative(dp(16) + if (icon != null) iconSize + dp(10) else 0, 0, dp(16), 0)
+        setPaddingRelative(dp(16) + if (icon != null) iconSize + dp(10) else 0, 0, dp(18), 0)
         inputType = android.text.InputType.TYPE_CLASS_TEXT
         // Landscape head units would otherwise cover the results with a full-screen editor.
         imeOptions = android.view.inputmethod.EditorInfo.IME_FLAG_NO_EXTRACT_UI or
@@ -2492,6 +2631,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
                 reconnects = false,
             ) { index ->
                 AirPlayPersistence.saveCarPlayNightMode(this, nightModes[index])
+                easeLayoutChange()
                 ambientControls.visibility = if (nightModes[index] == CarPlayNightMode.AMBIENT) View.VISIBLE else View.GONE
                 scheduleControls.visibility = if (nightModes[index] == CarPlayNightMode.SCHEDULE) View.VISIBLE else View.GONE
                 handler.post(::checkForAppearanceChange)
@@ -4361,20 +4501,18 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         val counter = getString(R.string.setup_step_of, step - first + 1, steps.size)
         val named = resources.configuration.screenWidthDp >= SETUP_ONE_ROW_MIN_WIDTH_DP
         val after = dp(if (setupShortScreen()) CONTROL_GAP_DP else GROUP_GAP_DP)
-        if (!named) content.addView(label(counter, 13, ACCENT, true).apply { letterSpacing = .12f })
+        if (!named) content.addView(eyebrow(counter, ACCENT_TEXT))
         val bar = row().apply { setPadding(0, if (named) 0 else dp(10), 0, if (named) 0 else after) }
         val names = row().apply { setPadding(0, dp(8), 0, after); contentDescription = counter }
         steps.forEachIndexed { index, candidate ->
+            // Each step is a dash of the centre line; the road so far is painted, the road ahead is not.
             bar.addView(View(this).apply {
                 background = GradientDrawable().apply {
-                    setColor(if (candidate <= step) ACCENT else BUTTON); cornerRadius = dp(3).toFloat()
+                    setColor(if (candidate <= step) DiPlayPalette.LANE_AMBER else BUTTON); cornerRadius = dp(3).toFloat()
                 }
             }, LinearLayout.LayoutParams(0, dp(6), 1f).apply { if (index > 0) marginStart = dp(8) })
-            names.addView(label(setupStepName(candidate), 14, when {
-                candidate == step -> TEXT
-                candidate < step -> ACCENT
-                else -> MUTED
-            }, bold = candidate == step).apply {
+            names.addView(label(setupStepName(candidate), 14, if (candidate == step) TEXT else MUTED,
+                bold = candidate == step).apply {
                 maxLines = 1; ellipsize = android.text.TextUtils.TruncateAt.END
                 textDirection = appTextDirection()
             },
@@ -4444,7 +4582,10 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
 
     private fun setupTitle(content: LinearLayout, title: Int, description: String) {
         val short = setupShortScreen()
-        content.addView(label(getString(title), if (short) 28 else 34, TEXT, true))
+        content.addView(label(getString(title), if (short) 28 else 34, TEXT).apply {
+            AppType.apply(this, AppType.Weight.BOLD)
+            letterSpacing = -.02f
+        })
         content.addView(label(description, 17, MUTED).apply { setPadding(0, dp(if (short) 4 else 8), 0, dp(if (short) 16 else 24)) })
     }
 
@@ -4637,7 +4778,10 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
     }
 
     private fun connectionSetup(content: LinearLayout) {
-        content.addView(label(getString(R.string.connection_setup), 34, TEXT, true))
+        content.addView(label(getString(R.string.connection_setup), 34, TEXT).apply {
+            AppType.apply(this, AppType.Weight.BOLD)
+            letterSpacing = -.02f
+        })
         content.addView(label(getString(R.string.set_up_once_your_details_stay_saved_for_the_next_drive_cha), 17, MUTED).apply { setPadding(0, dp(8), 0, dp(24)) })
         section(content, getString(R.string.s_1_choose_your_connection)) { card -> wirelessLinkControls(card) }
         section(content, getString(R.string.s_2_pair_your_iphone)) { card ->
@@ -6836,15 +6980,23 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
     }
 
     private fun refreshReconnectBar() {
-        reconnectBar?.visibility =
-            if (PendingReconnect.isPending(CarPlayBackgroundSession.snapshot()?.controller)) View.VISIBLE else View.GONE
+        val bar = reconnectBar ?: return
+        val shown = if (PendingReconnect.isPending(CarPlayBackgroundSession.snapshot()?.controller)) View.VISIBLE else View.GONE
+        if (bar.visibility == shown) return
+        // The bar sits above the scrolling page, so the whole window eases to make room for it.
+        if (bar.isLaidOut) easeLayoutChange(findViewById(android.R.id.content))
+        bar.visibility = shown
     }
 
     private fun reconnectBar(): View = row().apply {
         gravity = Gravity.CENTER_VERTICAL
-        background = rounded(RAIL_SELECTED, RAIL_SELECTED_BORDER)
+        // The card colour with the tint in it: a notice that belongs to the page and still stands out on it.
+        background = rounded(androidx.core.graphics.ColorUtils.blendARGB(SURFACE, ACCENT, .22f),
+            androidx.core.graphics.ColorUtils.blendARGB(SURFACE, ACCENT, .5f))
         setPadding(dp(20), dp(10), dp(12), dp(10))
-        addView(label(getString(R.string.settings_reconnect_pending), 16, TEXT), LinearLayout.LayoutParams(0, -2, 1f))
+        addView(label(getString(R.string.settings_reconnect_pending), 16, TEXT).apply {
+            AppType.apply(this, AppType.Weight.MEDIUM)
+        }, LinearLayout.LayoutParams(0, -2, 1f))
         addView(button(getString(R.string.settings_reconnect_now), true) {
             // No clear(): if connect() stops early (hotspot off, a permission prompt), the change is still pending.
             reconnectIfRunning()
@@ -7419,19 +7571,34 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         val wired = HomeCardTransport.wired(running, AirPlayPersistence.loadWirelessEnabled(this))
         homeCardTitle?.text = getString(if (wired) R.string.home_usb_carplay else R.string.wireless_carplay)
         homeConnectionHint?.visibility = if (wired) View.GONE else View.VISIBLE
-        status?.text = when {
-            setupError != null -> getString(R.string.setup_needs_attention)
-            CarPlayBackgroundSession.active -> getString(R.string.carplay_connected)
-            running -> getString(R.string.connecting_to_your_iphone)
-            DiPlayPreferences.phoneAddress(this) != null -> "${getString(R.string.status_ready_for_prefix)}${DiPlayPreferences.phoneName(this)}"
-            else -> getString(R.string.ready_when_you_are)
+        status?.let { line ->
+            val next = when {
+                setupError != null -> getString(R.string.setup_needs_attention)
+                CarPlayBackgroundSession.active -> getString(R.string.carplay_connected)
+                running -> getString(R.string.connecting_to_your_iphone)
+                DiPlayPreferences.phoneAddress(this) != null -> "${getString(R.string.status_ready_for_prefix)}${DiPlayPreferences.phoneName(this)}"
+                else -> getString(R.string.ready_when_you_are)
+            }
+            if (line.text.toString() != next) {
+                // A new status rises into the place of the old one; the first one is simply there.
+                val replaces = line.isLaidOut && line.text.isNotEmpty()
+                line.text = next
+                if (replaces && motionEnabled()) {
+                    line.alpha = 0f
+                    line.translationY = dp(6).toFloat()
+                    line.animate().alpha(1f).translationY(0f).setDuration(Motion.BASE).setInterpolator(Motion.enter).start()
+                }
+            }
         }
+        homeLane?.active = running && !CarPlayBackgroundSession.active && setupError == null
         homeLastProblem?.apply {
             val line = if (CarPlayBackgroundSession.active) null else LastConnectionProblem.homeLine(this@DiPlayActivity)
             visibility = if (line == null) View.GONE else View.VISIBLE
             if (line != null) text = line
         }
         if (lastRunning != running) {
+            // Disconnect appears beside or under Connect; the card makes room for it smoothly.
+            if (lastRunning != null) easeLayoutChange()
             connectButton?.text = if (running) getString(R.string.open_carplay) else getString(R.string.connect_phone)
             disconnectButton?.visibility = if (running) View.VISIBLE else View.GONE
             disconnectButton?.isEnabled = true
@@ -7448,7 +7615,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
             color = when (state) {
                 PulseState.ATTENTION -> WARNING
                 PulseState.CONNECTED -> READY
-                else -> ACCENT
+                else -> ACCENT_TEXT
             }
         }
         refreshHomeMediaControls()
@@ -7734,7 +7901,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         target.setTextColor(if (selected) ON_ACCENT else TEXT)
         target.background = android.graphics.drawable.RippleDrawable(
             ColorStateList.valueOf(RIPPLE),
-            buttonShape(if (selected) ACCENT else SURFACE, if (selected) ACCENT else BORDER, target.height),
+            buttonShape(if (selected) ACCENT else BUTTON, if (selected) ACCENT else BUTTON, target.height),
             null
         )
     }
@@ -7751,6 +7918,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
                 text = i.toString()
                 isAllCaps = false
                 textSize = 16f
+                AppType.apply(this, AppType.Weight.MEDIUM, tabular = true)
                 minHeight = dp(48)
                 stateListAnimator = null
                 setOnClickListener {
@@ -7791,8 +7959,8 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         searchIndexSink?.add(title)
         val card = card()
         val heading = row().apply { gravity = Gravity.CENTER_VERTICAL; setPadding(0, 0, 0, dp(16)) }
-        if (icon != null) heading.addView(iosIcon(icon,
-            if (page == "settings") settingsCategoryColor(settingsCategory) else ACCENT, 30).apply {
+        if (icon != null) heading.addView(iconWell(icon,
+            if (page == "settings") settingsCategoryColor(settingsCategory) else ACCENT_TEXT, 32).apply {
             (layoutParams as LinearLayout.LayoutParams).marginEnd = dp(CONTROL_GAP_DP)
         })
         heading.addView(label(title, 20, TEXT, true,
@@ -7816,6 +7984,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
             getString(R.string.contrib_audio_home_toggle_audio_focus_desc), enabled) {
             AirPlayPersistence.saveAudioFocusEnabled(this, it)
             markReconnectNeeded()
+            easeLayoutChange()
             dependent.visibility = if (it) View.VISIBLE else View.GONE
         }
         toggle(dependent, getString(R.string.audio_focus_auto_yield), getString(R.string.audio_focus_auto_yield_desc),
@@ -8100,7 +8269,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         }
         parent.addView(button, matchButton(0, 60)); parent.addView(space(12))
     }
-    private fun card() = column().apply { background = rounded(SURFACE, BORDER); setPadding(dp(24), dp(24), dp(24), dp(24)) }
+    private fun card() = column().apply { background = rounded(CARD, HAIRLINE); setPadding(dp(24), dp(24), dp(24), dp(24)) }
     private fun column() = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; layoutParams = LinearLayout.LayoutParams(-1, -2) }
     private fun row() = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL; layoutParams = LinearLayout.LayoutParams(-1, -2) }
     private class SettingsSearchEditText(context: android.content.Context) : EditText(context) {
@@ -8171,27 +8340,37 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
     private fun label(value: String, size: Int, color: Int, bold: Boolean = false, centreGlyphs: Boolean = false) =
         (if (centreGlyphs) HeaderTitleView(this) else TextView(this)).apply {
         text = value; textSize = size.toFloat(); setTextColor(color); gravity = Gravity.CENTER_VERTICAL
-        typeface = AppType.of(this@DiPlayActivity, if (bold) AppType.Weight.SEMIBOLD else AppType.Weight.REGULAR)
+        AppType.apply(this, if (bold) AppType.Weight.SEMIBOLD else AppType.Weight.REGULAR)
+        // Titles are set a little tighter, as the display cut is drawn to be.
+        if (size >= AppType.DISPLAY_FROM_SP) letterSpacing = TITLE_TRACKING
         setLineSpacing(dp(3).toFloat(), 1f)
     }
-    private fun headerIconSize(compact: Boolean) = dp(if (compact) 20 else 24)
 
+    /** The small capital caption above a group: what the block is, before what it says. */
+    private fun eyebrow(value: String, color: Int = MUTED) = label(value, 12, color, true).apply {
+        isAllCaps = true
+        letterSpacing = EYEBROW_TRACKING
+        includeFontPadding = false
+    }
+    private fun headerIconSize(compact: Boolean) = dp(if (compact) 20 else 22)
+
+    /** A header control: a pill on the page, its glyph in the tint and its label in the text colour. */
     private fun headerButton(title: String, icon: Int, compact: Boolean, click: () -> Unit) = button(title, false, click).apply {
         alignVisibleGlyphs = false
-        if (compact) textSize = 16f
+        textSize = if (compact) 15f else 16f
         includeFontPadding = false
-        setTextColor(ACCENT)
-        background = RippleDrawable(ColorStateList.valueOf(RIPPLE), null, GradientDrawable().apply {
-            setColor(Color.WHITE); cornerRadius = layoutCornerRadius()
-        })
-        doOnLayout { background = RippleDrawable(ColorStateList.valueOf(RIPPLE), null, GradientDrawable().apply {
-            setColor(Color.WHITE); cornerRadius = layoutCornerRadius()
-        }) }
+        setTextColor(TEXT)
+        setPaddingRelative(dp(14), 0, dp(18), 0)
+        background = RippleDrawable(ColorStateList.valueOf(RIPPLE), pillShape(CHROME), null)
+        doOnLayout {
+            background = RippleDrawable(ColorStateList.valueOf(RIPPLE), pillShape(CHROME, height), null)
+            foreground = focusRing((height / 2f / resources.displayMetrics.density).roundToInt())
+        }
         setSingleLine(true)
         gravity = Gravity.CENTER
         val iconSize = headerIconSize(compact)
         val drawable = getDrawable(icon)?.mutate()?.apply {
-            setTint(ACCENT)
+            setTint(ACCENT_TEXT)
             setBounds(0, 0, iconSize, iconSize)
         }
         setCompoundDrawablesRelative(drawable, null, null, null)
@@ -8210,13 +8389,31 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         }
     }
 
+    /** A control's corner before it has been measured: that of a header control on this layout. */
     private fun layoutCornerRadius(): Float {
         val compact = isCompactLayout && (page != "settings" || !SettingsLayoutPreferences.isActive(this))
-        return dp(if (compact) 44 else 52) * 12f / 50
+        return controlRadius(dp(if (compact) 44 else 52))
     }
 
-    private fun buttonShape(color: Int, stroke: Int, heightPx: Int = 0) = rounded(color, stroke).apply {
-        cornerRadius = if (heightPx > 0) minOf(dp(16).toFloat(), heightPx * 12f / 50) else layoutCornerRadius()
+    /** Every control's corner follows its height, and stops growing at a tall row. */
+    private fun controlRadius(heightPx: Int): Float = minOf(dp(CONTROL_MAX_RADIUS_DP).toFloat(), heightPx * CONTROL_RADIUS_SHARE)
+
+    /** A card's corner: one size on a full layout, a smaller one where the screen is small. */
+    private fun cardRadius(): Float {
+        val compact = isCompactLayout && (page != "settings" || !SettingsLayoutPreferences.isActive(this))
+        return dp(if (compact) COMPACT_CARD_RADIUS_DP else CARD_RADIUS_DP).toFloat()
+    }
+
+    private fun buttonShape(color: Int, stroke: Int, heightPx: Int = 0) = GradientDrawable().apply {
+        setColor(color)
+        if (stroke != color) setStroke(dp(1), stroke)
+        cornerRadius = if (heightPx > 0) controlRadius(heightPx) else layoutCornerRadius()
+    }
+
+    /** A header control or a chip: a full pill, whatever its height. */
+    private fun pillShape(color: Int, heightPx: Int = 0) = GradientDrawable().apply {
+        setColor(color)
+        cornerRadius = if (heightPx > 0) heightPx / 2f else dp(PILL_RADIUS_DP).toFloat()
     }
 
     private fun buttonFocusRing() = focusRing(
@@ -8224,38 +8421,37 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
     )
 
     private fun button(title: String, primary: Boolean, click: () -> Unit) = SettingButton(this, MUTED, ACCENT).apply {
-        isAllCaps = false; textSize = 17f; setTextColor(when { primary -> ON_ACCENT; VALUE_SEPARATOR in title -> TEXT; else -> ACCENT })
-        typeface = AppType.of(this@DiPlayActivity, AppType.Weight.SEMIBOLD)
-        background = android.graphics.drawable.RippleDrawable(ColorStateList.valueOf(RIPPLE), buttonShape(if (primary) ACCENT else BUTTON, if (primary) ACCENT else BORDER), null)
+        isAllCaps = false; textSize = 17f; setTextColor(when { primary -> ON_ACCENT; VALUE_SEPARATOR in title -> TEXT; else -> ACCENT_TEXT })
+        AppType.apply(this, AppType.Weight.SEMIBOLD)
+        background = android.graphics.drawable.RippleDrawable(ColorStateList.valueOf(RIPPLE), buttonShape(if (primary) ACCENT else BUTTON, if (primary) ACCENT else BUTTON), null)
         setPadding(dp(16), 0, dp(16), 0); minHeight = dp(56); stateListAnimator = null
         compoundDrawablePadding = dp(12)
         foreground = buttonFocusRing()
         text = title
         searchIndexSink?.add(title.substringBefore(VALUE_SEPARATOR))
         setOnClickListener { click() }
+        pressFeedback()
         doOnLayout {
-            val shape = buttonShape(if (primary) ACCENT else BUTTON, if (primary) ACCENT else BORDER, height)
+            val shape = buttonShape(if (primary) ACCENT else BUTTON, if (primary) ACCENT else BUTTON, height)
             background = android.graphics.drawable.RippleDrawable(ColorStateList.valueOf(RIPPLE), shape, null)
             foreground = focusRing((shape.cornerRadius / resources.displayMetrics.density).roundToInt())
         }
     }
 
+    /** A round header control with a glyph alone. */
     private fun iconButton(icon: Int, description: String, click: () -> Unit) = ImageButton(this).apply {
         setImageResource(icon)
-        imageTintList = ColorStateList.valueOf(ACCENT)
+        imageTintList = ColorStateList.valueOf(ACCENT_TEXT)
         contentDescription = description
         scaleType = ImageView.ScaleType.CENTER
         setPadding(dp(12), dp(12), dp(12), dp(12))
-        minimumWidth = dp(48)
-        minimumHeight = dp(48)
+        minimumWidth = dp(44)
+        minimumHeight = dp(44)
         stateListAnimator = null
-        background = android.graphics.drawable.RippleDrawable(
-            ColorStateList.valueOf(RIPPLE),
-            buttonShape(BUTTON, BORDER),
-            null,
-        )
-        foreground = buttonFocusRing()
+        background = android.graphics.drawable.RippleDrawable(ColorStateList.valueOf(RIPPLE), pillShape(CHROME), null)
+        foreground = focusRing(PILL_RADIUS_DP)
         setOnClickListener { click() }
+        pressFeedback()
     }
 
     // For an action whose label happens to contain the separator, such as "Turn on … · ADB".
@@ -8330,7 +8526,8 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         })
     }
 
-    private fun rounded(color: Int, stroke: Int) = GradientDrawable().apply { setColor(color); cornerRadius = layoutCornerRadius() * 1.35f; setStroke(dp(1), stroke) }
+    /** A card: one rounded surface with a hairline edge. */
+    private fun rounded(color: Int, stroke: Int) = GradientDrawable().apply { setColor(color); cornerRadius = cardRadius(); setStroke(dp(1), stroke) }
     private fun matchButton(top: Int = 0, height: Int = 68) = LinearLayout.LayoutParams(-1, dp(height)).apply { topMargin = dp(top) }
     private fun space(height: Int) = View(this).apply { layoutParams = LinearLayout.LayoutParams(1, dp(height)); tag = SPACER }
 
@@ -8490,12 +8687,21 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
 
     private val BG get() = palette.background
     private val SURFACE get() = palette.surface
+    /**
+     * At night a card on Home and Settings lets a little of the light behind the page through. By day a
+     * card is solid: it is raised on a shadow there, and a shadow under a see-through card shows as a grey
+     * frame inside its edge.
+     */
+    private val CARD get() = if (appNight && (page == "home" || page == "settings"))
+        androidx.core.graphics.ColorUtils.setAlphaComponent(palette.surface, CARD_ALPHA) else palette.surface
+    /** A header control sits on the page itself, so its fill is a veil over whatever light is there. */
+    private val CHROME get() = androidx.core.graphics.ColorUtils.setAlphaComponent(palette.button, CHROME_ALPHA)
     private val BUTTON get() = palette.button
     private val BORDER get() = palette.outline
+    private val HAIRLINE get() = palette.hairline
     private val ACCENT get() = palette.accent
+    private val ACCENT_TEXT get() = palette.accentText
     private val ON_ACCENT get() = palette.onAccent
-    private val RAIL_SELECTED get() = palette.railSelected
-    private val RAIL_SELECTED_BORDER get() = palette.railSelectedOutline
     private val TEXT get() = palette.primaryText
     private val MUTED get() = palette.secondaryText
     private val WARNING get() = palette.warning
@@ -8696,12 +8902,38 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         private const val SETTINGS_SEARCH_RESULTS_SHORT_HEIGHT_DP = 200
         private const val SETTINGS_SEARCH_RESULTS_HEIGHT_DP = 380
         private const val VALUE_SEPARATOR = " · "
+        /** A card's corner, and the smaller one of a compact layout. */
+        private const val CARD_RADIUS_DP = 24
+        private const val COMPACT_CARD_RADIUS_DP = 20
+        /** A control's corner is this share of its height, up to the maximum. */
+        private const val CONTROL_RADIUS_SHARE = .28f
+        private const val CONTROL_MAX_RADIUS_DP = 18
+        /** The corner of a pill before it is measured: half of the tallest header control. */
+        private const val PILL_RADIUS_DP = 26
+        /** How much of the page's light a card and a header control let through, of 255. */
+        private const val CARD_ALPHA = 0xE0
+        private const val CHROME_ALPHA = 0xD9
+        /** How strongly an icon's well takes its glyph's colour, of 255. */
+        private const val WELL_NIGHT_ALPHA = 0x30
+        private const val WELL_DAY_ALPHA = 0x24
+        /** Around the 24 dp note of an empty cover. */
+        private const val COVER_NOTE_INSET_DP = 18
+        /** How far a page slides as it arrives. */
+        private const val PAGE_SHIFT_DP = 28
+        /** A page with more pixels than this is pictured at half size while it fades out (1600 × 900). */
+        private const val DEPARTING_FULL_SIZE_MAX_AREA = 1_440_000L
+        /** The centre-line progress mark's thickness. */
+        private const val LANE_HEIGHT_DP = 4
+        private const val TITLE_TRACKING = -.012f
+        private const val EYEBROW_TRACKING = .08f
         private const val SEARCH_HIGHLIGHT_MILLIS = 900L
         private const val SPACER = "spacer"
         private const val CONTROL_HEIGHT_DP = 60
-        /** A row of Home's shortcuts list, and the iOS list row a short landscape row uses. */
+        /** A row of Home's shortcuts list, and the lower row a short landscape Home uses. */
         private const val HOME_ROW_HEIGHT_DP = 56
         private const val HOME_SHORT_ROW_HEIGHT_DP = 44
+        /** Between the shortcut tiles of a short one-row Home. */
+        private const val HOME_TILE_GAP_DP = 8
         private const val CONTROL_GAP_DP = 12
         /** The text inset of two buttons that share a narrow card. */
         private const val NARROW_BUTTON_INSET_DP = 8
@@ -8709,6 +8941,8 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         private const val NOTE_LINE_GAP_DP = 4
         private const val NOTE_ATTACH_GAP_DP = 6
         private const val SETTINGS_BLOCK_GAP_DP = 16
+        /** A destination row of the Settings rail. */
+        private const val SETTINGS_RAIL_ROW_DP = 52
         /** The inset a control uses for its text, so a note below it lines up instead of starting at 0. */
         private const val SETTINGS_CONTROL_INSET_DP = 16
         /** Gap under an explanatory note, so it never touches the next control. */

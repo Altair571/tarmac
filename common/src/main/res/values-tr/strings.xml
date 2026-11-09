@@ -77,7 +77,6 @@
     <string name="status_attaching_ncm">NCM/AirPlay ağı bağlanıyor</string>
     <string name="status_failed">Başarısız: %1$s</string>
     <string name="msg_car_hotspot_off">“%1$s” araç erişim noktası kapalı. Bağlanmadan önce araç ayarlarından açın.</string>
-    <string name="home_public_preview">GENEL ÖNİZLEME\u0020·\u0020%1$s</string>
     <string name="choose_iphone_prefix">iPhone seçin ·\u0020</string>
     <string name="audio_saved_value">Kaydedilen: %1$d</string>
     <string name="about_public_preview_prefix">Genel önizleme\u0020·\u0020%1$s</string>

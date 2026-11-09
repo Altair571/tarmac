@@ -3,7 +3,6 @@ package com.shilapi.xcertplay.settings
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.InsetDrawable
 import android.view.Gravity
@@ -16,6 +15,7 @@ import android.widget.SeekBar
 import android.widget.Switch
 import android.widget.TextView
 import androidx.core.graphics.ColorUtils
+import com.shilapi.xcertplay.AppType
 import com.shilapi.xcertplay.airplay.CarPlayDisplayScale
 import com.shilapi.xcertplay.host.R
 import kotlin.math.roundToInt
@@ -24,10 +24,10 @@ object SettingsWidgets {
 
     private fun TextView.applyTextStyle(context: Context, theme: SettingsTheme, bold: Boolean = false) {
         if (theme.isOverlay) {
-            typeface = if (bold) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
+            AppType.apply(this, if (bold) AppType.Weight.SEMIBOLD else AppType.Weight.REGULAR)
             includeFontPadding = false
         } else {
-            typeface = Typeface.create(if (bold) "sans-serif-medium" else "sans-serif", Typeface.NORMAL)
+            AppType.apply(this, if (bold) AppType.Weight.SEMIBOLD else AppType.Weight.REGULAR)
             gravity = Gravity.CENTER_VERTICAL
             setLineSpacing(theme.dp(context, 3).toFloat(), 1f)
         }
@@ -108,7 +108,7 @@ object SettingsWidgets {
         theme: SettingsTheme = SettingsTheme.OVERLAY,
         contentDescription: String = label,
         enabled: Boolean = true,
-        labelSizeSp: Float = 18f,
+        labelSizeSp: Float = 17f,
         onChanged: (Boolean) -> Unit,
     ): SwitchRowResult {
         val row = LinearLayout(context).apply {
@@ -148,7 +148,7 @@ object SettingsWidgets {
                 text = description
                 textSize = 14f
                 setTextColor(theme.textSecondary)
-                setPadding(0, theme.dp(context, 6), theme.dp(context, 16), 0)
+                setPadding(0, theme.dp(context, 4), theme.dp(context, 16), 0)
                 applyTextStyle(context, theme)
             }
             textCol.addView(labelView)

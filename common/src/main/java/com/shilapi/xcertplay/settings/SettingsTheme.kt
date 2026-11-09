@@ -29,7 +29,8 @@ class SettingsTheme private constructor(
             textPrimary = palette.primaryText,
             textSecondary = palette.secondaryText,
             accent = palette.accent,
-            accentTrack = palette.accentTrack,
+            // A switch that is on takes the driver's tint, as buttons and the selection do.
+            accentTrack = palette.accent,
             trackOff = palette.trackOff,
             buttonText = palette.onAccent,
             ripple = palette.ripple,

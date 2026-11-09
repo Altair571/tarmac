@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- A road running to the horizon: white edges, amber centre line, inside the adaptive icon's safe zone. -->
+<!--
+Tarmac's mark: a T made of the horizon and a road's centre line running to it. The white bar is the
+horizon; the amber dashes grow toward the driver. Everything sits inside the adaptive icon's safe zone.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
-    <path android:fillColor="#F2FFFFFF" android:pathData="M51,32L53,32L37,76L32,76Z" />
-    <path android:fillColor="#F2FFFFFF" android:pathData="M55,32L57,32L76,76L71,76Z" />
-    <path android:fillColor="#FFFFD60A" android:pathData="M53.5,35L54.5,35L54.8,41L53.2,41Z" />
-    <path android:fillColor="#FFFFD60A" android:pathData="M53,47L55,47L55.6,57L52.4,57Z" />
-    <path android:fillColor="#FFFFD60A" android:pathData="M52.2,63L55.8,63L56.8,76L51.2,76Z" />
+    <path android:fillColor="#FFF5F6F8"
+        android:pathData="M34.5,29.5h39a4.5,4.5 0 0 1 4.5,4.5a4.5,4.5 0 0 1 -4.5,4.5h-39a4.5,4.5 0 0 1 -4.5,-4.5a4.5,4.5 0 0 1 4.5,-4.5z" />
+    <path android:fillColor="#FFFFC53D" android:pathData="M51.2,43L56.8,43L57.46,49L50.54,49Z" />
+    <path android:fillColor="#FFFFC53D" android:pathData="M50.04,53.5L57.96,53.5L58.89,62L49.11,62Z" />
+    <path android:fillColor="#FFFFC53D" android:pathData="M48.56,67L59.44,67L60.76,79L47.24,79Z" />
 </vector>

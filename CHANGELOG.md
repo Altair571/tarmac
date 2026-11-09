@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.5.0
+
+- **A new look.** Tarmac's own screens are redrawn around one idea, a road at night and by day: asphalt-dark cards with a hairline edge, white and amber road paint, and your tint on the controls. Light mode is pale concrete with solid white cards.
+  - **New app icon:** a "T" made of the horizon and a road's centre line running to it. The notification icon and the Tarmac car button use the same mark.
+  - **Home:** the CarPlay card has a centre line under its status that streams while Tarmac connects; USB, Android Auto and Settings are three large tiles on a head unit; Play has its own disc. The version line under the cards is gone (it is in Settings → About).
+  - **Settings:** the open category is marked by a selection that slides along the rail; Overview lists the categories in one card; switches take your tint; header controls are pills.
+  - **Setup guide:** each step is a dash of the centre line, painted as you pass it.
+  - **Connecting screen:** the cabin is now a still picture, modelled and lit in 3D and rendered ahead of time, in place of the animated drawing: a steering wheel with the driver's display behind it, a head unit built into the dash with its knob and keys, a windscreen between proper pillars, a centre mirror, and city lights beyond the glass. Night and day versions; right-hand drive turns the cabin round and keeps CarPlay's icon the right way. The status has the same streaming centre line as Home.
+  - **Dialogs** are rounded cards with sentence-case buttons.
+- **Motion.** Pages fade out as the next one slides in, forward from the end side and back from the start side. Switching between light and dark crosses over instead of cutting. Blocks that appear in place (the reconnect bar, Disconnect, extra options) push their neighbours aside. The status line, the connected tick and every button respond to a press or a change. Android's "Remove animations" turns all of it off.
+- **Fixed:** on a head unit the soft glow behind Home and Settings was cut off along straight edges near the top and bottom of the screen, and it jumped back to its start each time a setting was changed.
+- Typeface: titles use Inter's display cut, and figures use open digits that keep their width in the clock and in distances.
+
 ## 0.4.1
 
 - **Setup guide.** Back and Next stay on screen on short head-unit screens, and the steps are named under the progress bar. The last step lists what is still missing, such as an iPhone or the car hotspot's name and password, before it says you're ready. Features are grouped into tested and experimental, and the experimental hotspot repair stays in Settings.

@@ -82,7 +82,6 @@
     <string name="status_attaching_ncm">Підключення мережі NCM/AirPlay</string>
     <string name="status_failed">Помилка: %1$s</string>
     <string name="msg_car_hotspot_off">Точку доступу автомобіля «%1$s» вимкнено. Увімкніть її в налаштуваннях автомобіля перед підключенням.</string>
-    <string name="home_public_preview">ПУБЛІЧНЕ ПРЕВ’Ю\u0020·\u0020%1$s</string>
     <string name="choose_iphone_prefix">Вибрати iPhone ·\u0020</string>
     <string name="audio_saved_value">Збережено: %1$d</string>
     <string name="about_public_preview_prefix">Попередня версія\u0020·\u0020%1$s</string>

@@ -247,7 +247,8 @@ class AdaptiveSettingsUiTest {
 
         assertTrue(dialog.isShowing)
         assertEquals("display", input.text.toString())
-        assertEquals(DiPlayPalette.LIGHT.accent, dialogAccent)
+        // A dialog writes its buttons in the tint, so its accent is the tint as text.
+        assertEquals(DiPlayPalette.LIGHT.accentText, dialogAccent)
         assertSame(DiPlayPalette.DARK, ReflectionHelpers.getField<DiPlayPalette>(screen, "palette"))
     }
 
@@ -1252,25 +1253,28 @@ class AdaptiveSettingsUiTest {
             Math.round(12 * density), currentRail.height - panelBottom)
     }
 
-    @Test fun overviewUtilitiesFollowAboutAsSeparateCategoryCards() {
+    /** Overview lists the categories as rows of one card; the utilities come last, after About. */
+    @Test fun overviewUtilitiesFollowAboutInTheCategoryList() {
         val screen = openSettings()
-        fun categoryCard(category: Int) = descendants(screen.window.decorView).single { candidate ->
+        fun categoryRow(category: Int) = descendants(screen.window.decorView).single { candidate ->
             candidate.contentDescription == screen.getString(
                 R.string.settings_open_category,
                 screen.getString(category),
             ) && descendants(candidate).filterIsInstance<TextView>().count() == 2
         }
-        val about = categoryCard(R.string.about)
-        val diagnostics = categoryCard(R.string.diagnostics)
-        val advanced = categoryCard(R.string.settings_advanced)
+        val about = categoryRow(R.string.about)
+        val diagnostics = categoryRow(R.string.diagnostics)
+        val advanced = categoryRow(R.string.settings_advanced)
         assertSame(about.parent, diagnostics.parent)
         assertSame(diagnostics.parent, advanced.parent)
-        val categories = about.parent as LinearLayout
-        assertEquals(categories.indexOfChild(about) + 1, categories.indexOfChild(diagnostics))
-        assertEquals(categories.indexOfChild(diagnostics) + 1, categories.indexOfChild(advanced))
-        val gap = Math.round(16 * screen.resources.displayMetrics.density)
-        assertEquals(gap, (diagnostics.layoutParams as LinearLayout.LayoutParams).bottomMargin)
-        assertEquals(gap, (advanced.layoutParams as LinearLayout.LayoutParams).bottomMargin)
+        val list = about.parent as LinearLayout
+        // Between two rows there is only the hairline that separates them.
+        val rows = (0 until list.childCount).map(list::getChildAt).filter { it.contentDescription != null }
+        assertEquals(rows.indexOf(about) + 1, rows.indexOf(diagnostics))
+        assertEquals(rows.indexOf(diagnostics) + 1, rows.indexOf(advanced))
+        assertSame(advanced, rows.last())
+        assertEquals(list.indexOfChild(about) + 2, list.indexOfChild(diagnostics))
+        assertEquals(list.indexOfChild(diagnostics) + 2, list.indexOfChild(advanced))
     }
     private fun installBydSettingsPackage() {
         shadowOf(context.packageManager).installPackage(PackageInfo().apply {
@@ -1309,6 +1313,26 @@ class AdaptiveSettingsUiTest {
         assertFalse(texts(screen).any { it.text == screen.getString(R.string.save_diagnostic_report) })
         screen.onBackPressedDispatcher.onBackPressed()
         assertTrue(texts(screen).any { it.text == screen.getString(R.string.save_diagnostic_report) })
+    }
+
+    /** A page change lays a picture of the old page over the new one; it must be gone once the change is over. */
+    @Test fun theDepartingPageIsRemovedOnceTheNewPageHasArrived() {
+        val screen = openSettings()
+        layoutRoot(screen)
+        val content = screen.findViewById<ViewGroup>(android.R.id.content)
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1))
+        assertEquals(1, content.childCount)
+
+        ReflectionHelpers.callInstanceMethod<Unit>(
+            screen, "openSettingsCategory",
+            ReflectionHelpers.ClassParameter(SettingsCategory::class.java, SettingsCategory.DISPLAY),
+        )
+        // The old page fades over the new one...
+        assertEquals(2, content.childCount)
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1))
+        // ...and is taken away once it has faded, leaving the new page fully shown.
+        assertEquals(1, content.childCount)
+        assertEquals(1f, content.getChildAt(0).alpha, 0f)
     }
 
     private fun openSettings(): DiPlayActivity = Robolectric.buildActivity(

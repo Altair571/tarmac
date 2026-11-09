@@ -4,9 +4,12 @@
     Window backgrounds must be resource references: Android 9 and older read windowBackground with
     getResourceId(), so a literal colour there leaves the window with no background at all and
     dialogs draw over the screen behind them (#640, #617).
+    These repeat DiPlayPalette's background, surface and hairline, which ThemeColorsTest keeps in step.
     -->
-    <color name="window_background_dark">#000000</color>
-    <color name="window_background_light">#F2F2F7</color>
-    <color name="dialog_background_dark">#1C1C1E</color>
+    <color name="window_background_dark">#07080A</color>
+    <color name="window_background_light">#F1F2F5</color>
+    <color name="dialog_background_dark">#14161A</color>
     <color name="dialog_background_light">#FFFFFF</color>
+    <color name="dialog_hairline_dark">#343942</color>
+    <color name="dialog_hairline_light">#DFE2E7</color>
 </resources>

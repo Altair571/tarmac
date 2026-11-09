@@ -1,7 +1,8 @@
 package com.shilapi.xcertplay
 
 import android.content.ContextWrapper
-import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.InsetDrawable
 import com.shilapi.xcertplay.host.R
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
@@ -71,8 +72,11 @@ class AppDialogsTest {
             intArrayOf(android.R.attr.colorAccent, android.R.attr.windowBackground),
         )
         try {
-            assertEquals(palette.accent, attributes.getColor(0, 0))
-            assertEquals(palette.surface, (attributes.getDrawable(1) as ColorDrawable).color)
+            // A dialog writes its buttons in the tint, so its accent is the tint as text.
+            assertEquals(palette.accentText, attributes.getColor(0, 0))
+            // The window is a card: the surface colour, rounded, inset from the screen's edge.
+            val card = (attributes.getDrawable(1) as InsetDrawable).drawable as GradientDrawable
+            assertEquals(palette.surface, card.color!!.defaultColor)
         } finally {
             attributes.recycle()
         }

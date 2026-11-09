@@ -81,7 +81,6 @@
     <string name="status_attaching_ncm">Collegamento della rete NCM/AirPlay</string>
     <string name="status_failed">Non riuscito: %1$s</string>
     <string name="msg_car_hotspot_off">L’hotspot dell’auto “%1$s” è spento. Accendilo nelle impostazioni dell’auto prima di connetterti.</string>
-    <string name="home_public_preview">ANTEPRIMA PUBBLICA\u0020·\u0020%1$s</string>
     <string name="choose_iphone_prefix">Scegli iPhone ·\u0020</string>
     <string name="audio_saved_value">Salvato: %1$d</string>
     <string name="about_public_preview_prefix">Anteprima pubblica\u0020·\u0020%1$s</string>

@@ -1,33 +1,66 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.Xcertplay" parent="android:Theme.Material.NoActionBar">
         <item name="android:fontFamily">sans</item>
-        <item name="android:colorAccent">#0A74E2</item>
+        <item name="android:colorAccent">#74ACFF</item>
         <item name="android:windowLightStatusBar">false</item>
-        <item name="android:navigationBarColor">#000000</item>
-        <item name="android:statusBarColor">#000000</item>
+        <item name="android:navigationBarColor">#07080A</item>
+        <item name="android:statusBarColor">#07080A</item>
         <item name="android:windowBackground">@color/window_background_dark</item>
         <!-- Without it, API 31+ draws a white splash before the dark Home screen. -->
-        <item name="android:windowSplashScreenBackground" tools:targetApi="31">#000000</item>
+        <item name="android:windowSplashScreenBackground" tools:targetApi="31">#07080A</item>
         <item name="android:windowActionModeOverlay">true</item>
     </style>
     <style name="Theme.Xcertplay.Light">
-        <item name="android:colorAccent">#0062CC</item>
+        <item name="android:colorAccent">#0B58C4</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar">true</item>
-        <item name="android:navigationBarColor">#F2F2F7</item>
-        <item name="android:statusBarColor">#F2F2F7</item>
+        <item name="android:navigationBarColor">#F1F2F5</item>
+        <item name="android:statusBarColor">#F1F2F5</item>
         <item name="android:windowBackground">@color/window_background_light</item>
-        <item name="android:windowSplashScreenBackground" tools:targetApi="31">#F2F2F7</item>
+        <item name="android:windowSplashScreenBackground" tools:targetApi="31">#F1F2F5</item>
     </style>
+    <!--
+    Dialogs: the accent here is the palette's accentText, the tint as it reads on a card, because a
+    dialog shows it as text (its buttons) and as glyphs (radio buttons, the cursor).
+    -->
     <style name="Theme.Xcertplay.Dialog.Dark" parent="android:Theme.Material.Dialog.Alert">
         <item name="android:fontFamily">sans</item>
-        <item name="android:colorAccent">#0A74E2</item>
-        <item name="android:windowBackground">@color/dialog_background_dark</item>
+        <item name="android:colorAccent">#74ACFF</item>
+        <item name="android:textColorPrimary">#F5F6F8</item>
+        <item name="android:textColorSecondary">#9AA1AC</item>
+        <item name="android:windowBackground">@drawable/dialog_surface_dark</item>
+        <item name="android:buttonBarButtonStyle">@style/Widget.Tarmac.DialogButton.Dark</item>
+        <item name="android:windowAnimationStyle">@style/Animation.Tarmac.Dialog</item>
+        <item name="android:backgroundDimAmount">0.62</item>
     </style>
     <style name="Theme.Xcertplay.Dialog.Light" parent="android:Theme.Material.Light.Dialog.Alert">
         <item name="android:fontFamily">sans</item>
-        <item name="android:colorAccent">#0062CC</item>
-        <item name="android:windowBackground">@color/dialog_background_light</item>
+        <item name="android:colorAccent">#0B58C4</item>
+        <item name="android:textColorPrimary">#0D0F12</item>
+        <item name="android:textColorSecondary">#5A616C</item>
+        <item name="android:windowBackground">@drawable/dialog_surface_light</item>
+        <item name="android:buttonBarButtonStyle">@style/Widget.Tarmac.DialogButton.Light</item>
+        <item name="android:windowAnimationStyle">@style/Animation.Tarmac.Dialog</item>
+        <item name="android:backgroundDimAmount">0.4</item>
+    </style>
+    <!-- A dialog's buttons are written as the app's are: sentence case, at a size a driver can hit. -->
+    <style name="Widget.Tarmac.DialogButton.Dark" parent="android:Widget.Material.Button.Borderless.Colored">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:minHeight">52dp</item>
+        <item name="android:minWidth">96dp</item>
+    </style>
+    <style name="Widget.Tarmac.DialogButton.Light" parent="android:Widget.Material.Light.Button.Borderless.Colored">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:minHeight">52dp</item>
+        <item name="android:minWidth">96dp</item>
+    </style>
+    <style name="Animation.Tarmac.Dialog" parent="android:Animation.Dialog">
+        <item name="android:windowEnterAnimation">@anim/dialog_enter</item>
+        <item name="android:windowExitAnimation">@anim/dialog_exit</item>
     </style>
     <style name="Theme.AdbCluster" parent="android:Theme.Material.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>

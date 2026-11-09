@@ -14,7 +14,7 @@ internal enum class DiPlayButtonKind { PRIMARY, SECONDARY, DANGER, TONAL_DANGER 
 
 /**
  * Button for views built in code outside `DiPlayActivity`, whose own `button()` stays private.
- * The corner radius follows the control height, as in `DiPlayActivity.buttonShape`.
+ * The corner radius follows the control height, as in `DiPlayActivity.controlRadius`.
  */
 internal class DiPlayButton(context: Context) : Button(context) {
     private var kind = DiPlayButtonKind.SECONDARY
@@ -24,7 +24,8 @@ internal class DiPlayButton(context: Context) : Button(context) {
     init {
         isAllCaps = false
         stateListAnimator = null
-        typeface = AppType.of(context, AppType.Weight.SEMIBOLD)
+        AppType.apply(this, AppType.Weight.SEMIBOLD)
+        pressFeedback()
     }
 
     /** [overlay] picks the in-car menu colours instead of the app chrome colours. */
@@ -55,7 +56,7 @@ internal class DiPlayButton(context: Context) : Button(context) {
             DiPlayButtonKind.SECONDARY -> {
                 fill = if (overlay) palette.overlayTrackOff else palette.button
                 text = if (overlay) palette.overlayPrimaryText else palette.primaryText
-                stroke = if (overlay) fill else palette.outline
+                stroke = fill
             }
             DiPlayButtonKind.DANGER -> {
                 fill = palette.overlayDanger
@@ -71,14 +72,14 @@ internal class DiPlayButton(context: Context) : Button(context) {
                 stroke = ColorUtils.blendARGB(surface, palette.overlayDanger, 0.48f)
             }
         }
-        val radius = minOf(16f * density, (if (height > 0) height else minHeight) * 12f / 50)
+        val radius = minOf(MAX_RADIUS_DP * density, (if (height > 0) height else minHeight) * RADIUS_SHARE)
         setTextColor(text)
         background = RippleDrawable(
             ColorStateList.valueOf(palette.ripple),
             GradientDrawable().apply {
                 setColor(fill)
                 cornerRadius = radius
-                setStroke((1 * density).toInt().coerceAtLeast(1), stroke)
+                if (stroke != fill) setStroke((1 * density).toInt().coerceAtLeast(1), stroke)
             },
             null,
         )
@@ -90,5 +91,11 @@ internal class DiPlayButton(context: Context) : Button(context) {
                 setStroke((3 * density).toInt(), palette.focusRing)
             })
         }
+    }
+
+    private companion object {
+        /** The same corner as `DiPlayActivity.controlRadius`: a share of the height, up to a maximum. */
+        const val RADIUS_SHARE = .28f
+        const val MAX_RADIUS_DP = 18f
     }
 }

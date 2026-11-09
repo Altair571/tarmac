@@ -10,18 +10,19 @@ Tarmac turns an Android head unit, or an Android phone or tablet mounted in the 
   <img src="docs/images/home-phone.png" alt="Tarmac Home on a phone" width="22%">
 </p>
 
-> **Early test release.** Tarmac 0.4.1 builds on 0.4.0, which was tested on an Android phone with an iPhone, and **not yet on a DUDU or FYT head unit**. Reports from real cars are very welcome; see [Reporting problems](#reporting-problems).
+> **Early test release.** Tarmac 0.5.0 gives the app a new look. It builds on 0.4.0, which was tested on an Android phone with an iPhone, and **not yet on a DUDU or FYT head unit**. The new screens were checked on an Android emulator and in screenshots at head-unit and phone sizes, not yet in a car. Reports from real cars are very welcome; see [Reporting problems](#reporting-problems).
 
 ## Features
 
 - **CarPlay, wireless and wired.** It connects over Wi-Fi Direct, the head unit's hotspot or a shared Wi-Fi network, or over USB, and it can connect automatically when your iPhone's Bluetooth connects.
 - **Android Auto (experimental).** Wired, plus wireless with Bluetooth auto-start. It can use the car's GPS instead of the phone's.
-- **An iOS-style Home screen:**
-  - the CarPlay status and connect buttons;
+- **A Home screen made for the car:**
+  - the CarPlay status and connect buttons, with a centre line that streams while Tarmac connects;
   - a Now Playing card with controls;
   - the next turn while a route runs;
-  - USB, Android Auto and Settings shortcuts;
-  - a background that takes calm colours from the album cover.
+  - USB, Android Auto and Settings as large tiles;
+  - a background that takes calm colours from the album cover;
+  - light and dark, with smooth changes between pages.
 - **CarPlay Ultra (experimental, off by default).** The iPhone shows climate in the CarPlay dock, and with CarPlay Ultra chosen on the iPhone, its Climate, Radio and Vehicle apps.
   - On TEYES and FYT units, the climate comes from the head unit. Climate changes from the iPhone are a separate opt-in.
   - The unit's FM stations are passed to the Radio app too, but its screen stays blank for now: iOS wants a car maker's theme for it.
